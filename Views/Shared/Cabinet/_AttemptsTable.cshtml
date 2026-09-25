@@ -1,0 +1,45 @@
+@model AttemptsTable
+@* Urinishlar jadvali (kichik ekranda kartochkalarga aylanadi) *@
+<div class="ca-table-wrap">
+    <table class="ca-table ca-table-cards">
+        <thead>
+            <tr>
+                <th data-i18n="cab.colTest">@L["cab.colTest"]</th>
+                <th data-i18n="cab.colDate">@L["cab.colDate"]</th>
+                <th class="num" data-i18n="cab.colResult">@L["cab.colResult"]</th>
+                <th data-i18n="cab.colStatus">@L["cab.colStatus"]</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var a in Model.Items)
+            {
+                <tr>
+                    <td data-label="@L["cab.colTest"]"><span class="ca-strong">@L.TestName(a.TestType, a.TestRef)</span></td>
+                    <td data-label="@L["cab.colDate"]" class="nowrap ca-muted">@L.Stamp(a.FinishedAt)</td>
+                    <td data-label="@L["cab.colResult"]" class="num">
+                        <span class="ca-strong">@a.Correct / @a.Total</span>
+                        <span class="ca-muted ca-small">(@Math.Round(a.Percent)%)</span>
+                    </td>
+                    <td data-label="@L["cab.colStatus"]">
+                        @if (a.IsErrorReview)
+                        {
+                            <span class="ca-badge ca-badge-info" data-i18n="testType.mistakes">@L["testType.mistakes"]</span>
+                        }
+                        else if (a.Passed)
+                        {
+                            <span class="ca-badge ca-badge-ok" data-i18n="cab.passed">@L["cab.passed"]</span>
+                        }
+                        else
+                        {
+                            <span class="ca-badge ca-badge-bad" data-i18n="cab.failed">@L["cab.failed"]</span>
+                        }
+                    </td>
+                    <td data-label="" class="num">
+                        <a class="ca-link" href="@Model.Cab.AttemptUrl(a.Id)" data-i18n="cab.details">@L["cab.details"]</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

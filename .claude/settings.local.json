@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -n \"CREATE TABLE\\\\|Questions\\\\|ExplanationUZ\\\\|Explanation\\\\|INSERT INTO \\\\`Questions\" /home/umidjon/Desktop/prr3.sql)",
+      "Bash(python3 *)",
+      "Bash(mysql -u root -p\"\" pronew2 -e \"SHOW COLUMNS FROM Questions LIKE 'ExplanationUZ';\")",
+      "Read(//usr/bin/**)",
+      "Read(//usr/local/bin/**)",
+      "Bash(dpkg -l)",
+      "Read(//opt/lampp/bin/**)",
+      "Read(//xampp/bin/**)",
+      "Read(//usr/local/mysql/bin/**)",
+      "Read(//snap/bin/**)",
+      "Bash(dotnet ef *)",
+      "Read(//home/umidjon/.dotnet/**)",
+      "Read(//usr/local/share/dotnet/**)"
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+@{
+    ViewData["TitleKey"] = "auth.deniedTitle";
+    ViewData["Title"] = L["auth.deniedTitle"];
+}
+
+<div class="container mt-5 text-center" style="max-width:480px;">
+    <div style="font-size:3rem;">🔒</div>
+    <h3 class="mb-3" data-i18n="auth.deniedTitle">@L["auth.deniedTitle"]</h3>
+    <p style="color:#aaa;" data-i18n="auth.deniedText">@L["auth.deniedText"]</p>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-outline-primary mt-2" data-i18n="auth.toHome">@L["auth.toHome"]</a>
+</div>

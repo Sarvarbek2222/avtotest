@@ -1,0 +1,51 @@
+@model UserStats
+@* Tayyorlik halqasi + imtihonga tayyor bo'lish sanasi prognozi *@
+@{
+    var color = Score.Color(Model.ReadinessScore);
+}
+<div class="ca-card">
+    <div class="ca-hero">
+        <div class="ca-ring" style="--p:@Model.ReadinessScore; --c:@color;" role="img" aria-label="@L["cab.readiness"]: @Model.ReadinessScore%">
+            <div>
+                <div class="ca-ring-value">@Model.ReadinessScore<small style="font-size:.9rem;">%</small></div>
+                <div class="ca-ring-label" data-i18n="cab.readiness">@L["cab.readiness"]</div>
+            </div>
+        </div>
+        <div class="ca-hero-body">
+            @if (Model.IsReady)
+            {
+                <h2 class="ca-hero-title" data-i18n="cab.readyTitle">@L["cab.readyTitle"]</h2>
+                <p class="ca-hero-note" data-i18n="cab.readyText">@L["cab.readyText"]</p>
+            }
+            else
+            {
+                <div class="ca-kpi-label" style="display:flex;align-items:center;gap:6px;">
+                    <span style="width:16px;height:16px;display:inline-flex;">@Icons.Calendar</span>
+                    <span data-i18n="cab.forecastTitle">@L["cab.forecastTitle"]</span>
+                </div>
+                @if (Model.PredictedReadyDate is DateTime date)
+                {
+                    <div class="ca-hero-date">@L.Date(date)</div>
+                    <p class="ca-hero-note">@L.F("cab.forecastDays", ("n", Model.DaysToReady))</p>
+                }
+                else if (Model.NeedMoreData)
+                {
+                    <p class="ca-hero-note" style="font-size:.98rem;color:var(--ca-text);">
+                        @L.F("cab.forecastNoData", ("n", StatsService.MinAnswersForForecast - Model.TotalAnswered))
+                    </p>
+                }
+                else
+                {
+                    <p class="ca-hero-note" style="font-size:.98rem;color:var(--ca-text);" data-i18n="cab.forecastUnknown">@L["cab.forecastUnknown"]</p>
+                }
+            }
+
+            <div style="margin-top:14px;">
+                <div class="ca-factor">
+                    <div class="ca-factor-top"><span data-i18n="cab.factorAccuracy">@L["cab.factorAccuracy"]</span><b>@Score.Pct(Model.RecentAccuracy)%</b></div>
+                    <div class="ca-bar @Score.BarClass(Model.RecentAccuracy * 100)"><i data-w="@Score.Pct(Model.RecentAccuracy)"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,163 @@
+@model AnalyticsModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "an.pageTitle";
+    ViewData["Title"] = L["an.pageTitle"];
+    var p = Model.Platform;
+    int readyCount = Model.Students.Count(s => s.IsReady);
+}
+
+<div class="ca-body-embed">
+    <div class="ca-page-head">
+        <div>
+            <div class="ca-eyebrow" data-i18n="admin.panel">@L["admin.panel"]</div>
+            <h1 class="ca-h1" data-i18n-html="an.title">@L.Html("an.title")</h1>
+            <p class="ca-sub" data-i18n="an.subtitle">@L["an.subtitle"]</p>
+        </div>
+    </div>
+
+    <div class="ca-grid ca-grid-kpi">
+        <div class="ca-card ca-card-hover"><div class="ca-kpi"><div class="ca-kpi-icon brand">@Icons.Users</div><div><div class="ca-kpi-label" data-i18n="an.students">@L["an.students"]</div><div class="ca-kpi-value">@p.TotalUsers</div></div></div></div>
+        <div class="ca-card ca-card-hover"><div class="ca-kpi"><div class="ca-kpi-icon ok">@Icons.Flame</div><div><div class="ca-kpi-label" data-i18n="an.active7d">@L["an.active7d"]</div><div class="ca-kpi-value">@p.ActiveUsers7d</div></div></div></div>
+        <div class="ca-card ca-card-hover"><div class="ca-kpi"><div class="ca-kpi-icon info">@Icons.List</div><div><div class="ca-kpi-label" data-i18n="an.attempts">@L["an.attempts"]</div><div class="ca-kpi-value">@p.TotalAttempts <small>+@p.Attempts7d</small></div></div></div></div>
+        <div class="ca-card ca-card-hover"><div class="ca-kpi"><div class="ca-kpi-icon warn">@Icons.Target</div><div><div class="ca-kpi-label" data-i18n="an.accuracy">@L["an.accuracy"]</div><div class="ca-kpi-value">@Score.Pct(p.OverallAccuracy)<small>%</small></div></div></div></div>
+        <div class="ca-card ca-card-hover"><div class="ca-kpi"><div class="ca-kpi-icon ok">@Icons.Trophy</div><div><div class="ca-kpi-label" data-i18n="an.examPass">@L["an.examPass"]</div><div class="ca-kpi-value">@Score.Pct(p.ExamPassRate)<small>%</small></div></div></div></div>
+        <div class="ca-card ca-card-hover"><div class="ca-kpi"><div class="ca-kpi-icon brand">@Icons.Ok</div><div><div class="ca-kpi-label" data-i18n="an.readyCount">@L["an.readyCount"]</div><div class="ca-kpi-value">@readyCount <small>/ @Model.Students.Count</small></div></div></div></div>
+    </div>
+
+    <div class="ca-card ca-section">
+        <div class="ca-card-head">
+            <h3 class="ca-card-title" data-i18n="an.students">@L["an.students"]</h3>
+            <label class="ca-search">
+                @Icons.Search
+                <input type="search" id="studentSearch" placeholder="@L["an.search"]" data-i18n-placeholder="an.search" aria-label="@L["an.search"]" />
+            </label>
+        </div>
+
+        @if (Model.Students.Count == 0)
+        {
+            <p class="ca-muted" data-i18n="an.noStudents">@L["an.noStudents"]</p>
+        }
+        else
+        {
+            <div class="ca-table-wrap">
+                <table class="ca-table ca-table-cards" id="studentsTable">
+                    <thead>
+                        <tr>
+                            <th data-i18n="an.colStudent">@L["an.colStudent"]</th>
+                            <th data-i18n="an.colReadiness">@L["an.colReadiness"]</th>
+                            <th class="num" data-i18n="cab.testsTaken">@L["cab.testsTaken"]</th>
+                            <th class="num" data-i18n="cab.avgResult">@L["cab.avgResult"]</th>
+                            <th class="num" data-i18n="an.colMistakes">@L["an.colMistakes"]</th>
+                            <th data-i18n="an.colLastActive">@L["an.colLastActive"]</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var s in Model.Students)
+                        {
+                            var initials = string.Concat((s.User.FullName ?? s.User.Username).Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(x => char.ToUpperInvariant(x[0])));
+                            <tr data-search="@((s.User.Username + " " + s.User.FullName).ToLowerInvariant())">
+                                <td data-label="@L["an.colStudent"]">
+                                    <div style="display:flex;align-items:center;gap:10px;min-width:0;">
+                                        <span class="ui-avatar">@initials</span>
+                                        <div style="min-width:0;text-align:left;">
+                                            <div class="ca-strong" style="overflow-wrap:anywhere;">@(s.User.FullName ?? s.User.Username)</div>
+                                            <div class="ca-muted ca-small">@@@s.User.Username</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td data-label="@L["an.colReadiness"]">
+                                    @if (s.TotalAnswered == 0)
+                                    {
+                                        <span class="ca-badge ca-badge-muted" data-i18n="an.noAnswers">@L["an.noAnswers"]</span>
+                                    }
+                                    else
+                                    {
+                                        <div style="display:flex;align-items:center;gap:10px;min-width:120px;">
+                                            <div class="ca-bar @Score.BarClass(s.ReadinessScore)" style="flex:1;"><i data-w="@s.ReadinessScore"></i></div>
+                                            <b style="color:@Score.Color(s.ReadinessScore);">@s.ReadinessScore%</b>
+                                            @if (s.IsReady)
+                                            {
+                                                <span class="ca-badge ca-badge-ok" data-i18n="an.readyBadge">@L["an.readyBadge"]</span>
+                                            }
+                                        </div>
+                                    }
+                                </td>
+                                <td data-label="@L["cab.testsTaken"]" class="num">@s.TotalAttempts</td>
+                                <td data-label="@L["cab.avgResult"]" class="num">@(s.TotalAttempts > 0 ? Math.Round(s.AveragePercent) + "%" : "—")</td>
+                                <td data-label="@L["an.colMistakes"]" class="num">@s.ActiveMistakes</td>
+                                <td data-label="@L["an.colLastActive"]" class="nowrap ca-muted">@(s.LastActivity is DateTime la ? L.Stamp(la) : "—")</td>
+                                <td data-label="" class="num">
+                                    <a class="ca-btn ca-btn-ghost ca-btn-sm" asp-action="Student" asp-route-id="@s.User.Id" data-i18n="an.open">@L["an.open"]</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+
+    <div class="ca-grid ca-grid-2 ca-section">
+        <div class="ca-card">
+            <div class="ca-card-head">
+                <h3 class="ca-card-title" data-i18n="an.hardQuestions">@L["an.hardQuestions"]</h3>
+            </div>
+            @if (p.HardestQuestions.Count == 0)
+            {
+                <p class="ca-muted" data-i18n="an.noData">@L["an.noData"]</p>
+            }
+            @foreach (var h in p.HardestQuestions)
+            {
+                var pct = Math.Round(h.WrongRate * 100);
+                <div class="ca-topic">
+                    <div style="min-width:0;">
+                        <div class="ca-topic-name">
+                            <a asp-controller="Question" asp-action="Edit" asp-route-id="@h.Question.Id" style="text-decoration:none;">#@h.Question.Id · @L.Pick(h.Question.QuestionUZ, h.Question.QuestionRU, h.Question.QuestionUZK)</a>
+                        </div>
+                        <div class="ca-topic-meta">@h.Wrong / @h.Total @(string.IsNullOrWhiteSpace(h.Question.Topic) ? "" : "· " + L.Topic(h.Question.Topic))</div>
+                    </div>
+                    <b style="color:var(--ca-bad);">@pct%</b>
+                    <div class="ca-bar"><i data-w="@pct"></i></div>
+                </div>
+            }
+        </div>
+
+        <div class="ca-card">
+            <div class="ca-card-head">
+                <h3 class="ca-card-title" data-i18n="an.hardTopics">@L["an.hardTopics"]</h3>
+            </div>
+            @if (p.Topics.Count == 0)
+            {
+                <p class="ca-muted" data-i18n="an.noData">@L["an.noData"]</p>
+            }
+            @foreach (var t in p.Topics)
+            {
+                var pct = Math.Round(t.Accuracy * 100);
+                <div class="ca-topic">
+                    <div style="min-width:0;">
+                        <div class="ca-topic-name">@L.Topic(t.Topic)</div>
+                        <div class="ca-topic-meta">@t.Correct / @t.Answered</div>
+                    </div>
+                    <b style="color:@Score.Color(pct);">@pct%</b>
+                    <div class="ca-bar @Score.BarClass(pct)"><i data-w="@pct"></i></div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    document.documentElement.setAttribute("data-lang-reload", "");
+    (function () {
+        var input = document.getElementById("studentSearch");
+        if (!input) return;
+        input.addEventListener("input", function () {
+            var q = input.value.trim().toLowerCase();
+            document.querySelectorAll("#studentsTable tbody tr").forEach(function (tr) {
+                tr.style.display = !q || tr.getAttribute("data-search").indexOf(q) !== -1 ? "" : "none";
+            });
+        });
+    })();
+</script>

@@ -1,0 +1,16 @@
+@* Til tanlash tugmalari. JS yoqilgan bo'lsa sahifa qayta yuklanmaydi (i18n.js), aks holda /Lang/Set orqali ishlaydi. *@
+@{
+    var returnUrl = Context.Request.Path + Context.Request.QueryString;
+    var langs = new[] { (Lang.Uz, "lang.uz", "lang.uz.full"), (Lang.Uzk, "lang.uzk", "lang.uzk.full"), (Lang.Ru, "lang.ru", "lang.ru.full") };
+}
+<style>
+    a.lang-btn { text-decoration: none; display: inline-block; }
+</style>
+@foreach (var (code, label, full) in langs)
+{
+    <a class="lang-btn @(L.Lang == code ? "active" : "")"
+       data-set-lang="@code"
+       href="/Lang/Set?lang=@code&returnUrl=@Uri.EscapeDataString(returnUrl)"
+       title="@L[full]"
+       role="button">@L[label]</a>
+}

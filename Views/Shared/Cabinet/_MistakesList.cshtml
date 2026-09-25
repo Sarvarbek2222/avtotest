@@ -1,0 +1,58 @@
+﻿@model CabinetModel
+@* Faol xato savollar: savol, to'g'ri javob, necha marta xato qilingani *@
+@{
+    var s = Model.Stats;
+}
+<div class="ca-card">
+    <div class="ca-card-head">
+        <div>
+            <h3 class="ca-card-title"><span data-i18n="cab.mistakesTitle">@L["cab.mistakesTitle"]</span> <span class="ca-badge ca-badge-warn" style="margin-left:6px;">@s.ActiveMistakes</span></h3>
+            <p class="ca-card-sub" data-i18n="cab.mistakesSub">@L["cab.mistakesSub"]</p>
+        </div>
+        <span class="ca-badge ca-badge-ok">@L.F("cab.mistakesResolved", ("n", s.ResolvedMistakes))</span>
+    </div>
+
+    @if (s.Mistakes.Count == 0)
+    {
+        <div class="ca-empty" style="padding:24px 8px;">
+            <div class="ca-empty-icon" style="background:var(--ca-ok-soft);color:var(--ca-ok);">@Icons.Trophy</div>
+            <h3 data-i18n="cab.noMistakes">@L["cab.noMistakes"]</h3>
+        </div>
+    }
+    else
+    {
+        foreach (var m in s.Mistakes)
+        {
+            if (!Model.Questions.TryGetValue(m.QuestionId, out var q)) { continue; }
+            var correct = q.Options.FirstOrDefault(o => o.IsCorrect);
+            <div class="ca-mistake">
+                @if (!string.IsNullOrEmpty(q.ImageUrl))
+                {
+                    <img class="ca-mistake-img" src="/uploads/@(q.ImageUrl)?w=480" decoding="async" alt="@L["test.imageAlt"]" loading="lazy" />
+                }
+                else
+                {
+                    <div class="ca-mistake-img" style="display:grid;place-items:center;color:var(--ca-faint);">@Icons.Help</div>
+                }
+                <div style="min-width:0;">
+                    <p class="ca-mistake-q">@L.Pick(q.QuestionUZ, q.QuestionRU, q.QuestionUZK)</p>
+                    <div class="ca-mistake-meta">
+                        <span class="ca-badge ca-badge-bad">@L.F("cab.wrongTimes", ("n", m.WrongCount))</span>
+                        @if (!string.IsNullOrWhiteSpace(q.Topic))
+                        {
+                            <span class="ca-badge ca-badge-muted">@L.Topic(q.Topic)</span>
+                        }
+                        <span><span data-i18n="cab.lastWrong">@L["cab.lastWrong"]</span>: @L.Stamp(m.LastWrongAt)</span>
+                    </div>
+                    @if (correct != null)
+                    {
+                        <div class="ca-answer ok">
+                            <b><span data-i18n="cab.correctAnswer">@L["cab.correctAnswer"]</span>:</b>
+                            <span>@L.Pick(correct.OptionUZ, correct.OptionRU, correct.OptionUZK)</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    }
+</div>

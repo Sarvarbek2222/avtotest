@@ -1,0 +1,13 @@
+﻿@* Til lug'ati + i18n.js — <head> ichida, sahifa skriptlaridan oldin ulanadi *@
+@* Brauzer tabidagi ikonka — barcha sahifalarda (test sahifalari ham) bir xil logotip *@
+<link rel="icon" type="image/png" href="~/images/favicon.png" asp-append-version="true" />
+<link rel="apple-touch-icon" href="~/images/favicon.png" />
+<script src="/Lang/Texts?v=@Texts.Version"></script>
+<script src="~/js/i18n.js" asp-append-version="true"></script>
+
+@* Test sahifalarida (ularning o'zi o'zgartirilmagan) — natijani kabinetga yozib olish *@
+@if (User.Identity?.IsAuthenticated == true && TestTypes.Detect(Context.Request) is { } tracked)
+{
+    <script>window.TEST_TRACKER = { type: @Json.Serialize(tracked.Type), ref: @Json.Serialize(tracked.Ref) };</script>
+    <script src="~/js/test-tracker.js" asp-append-version="true"></script>
+}

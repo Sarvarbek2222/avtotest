@@ -1,0 +1,591 @@
+﻿@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "dash.pageTitle";
+    ViewData["Title"] = L["dash.pageTitle"];
+}
+
+
+
+<style>
+    :root {
+        --bg: #07080d;
+        --surface: #0d0f18;
+        --surface2: #131624;
+        --border: rgba(255,255,255,0.07);
+        --red: #ff2d4a;
+        --red-dim: rgba(255,45,74,0.10);
+        --text: #e8eaf0;
+        --muted: #5a6080;
+        --c1: #ff2d4a;
+        --c2: #29b6f6;
+        --c3: #00e676;
+        --c4: #ffa726;
+        --c5: #ce93d8;
+        --c6: #80cbc4;
+    }
+
+    *, *::before, *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: 'DM Sans', sans-serif;
+    }
+
+    /* ── PAGE ── */
+    .st-page {
+        max-width: 1300px;
+        margin: 0 auto;
+        padding: 40px 32px 100px;
+    }
+
+    /* ── HEADER ── */
+    .st-header {
+        margin-bottom: 48px;
+    }
+
+    .st-eyebrow {
+        font-family: 'Syne', sans-serif;
+        font-size: 0.63rem;
+        font-weight: 700;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        color: var(--red);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+        .st-eyebrow::before {
+            content: '';
+            width: 24px;
+            height: 2px;
+            background: var(--red);
+            border-radius: 2px;
+        }
+
+    .st-title {
+        font-family: 'Syne', sans-serif;
+        font-size: clamp(2rem, 4vw, 3rem);
+        font-weight: 800;
+        line-height: 1;
+        color: #fff;
+        letter-spacing: -0.02em;
+    }
+
+        .st-title span {
+            color: var(--red);
+        }
+
+    /* ── HERO CARD ── */
+    .st-hero {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 48px 52px;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 32px;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .st-hero::before {
+            content: '';
+            position: absolute;
+            right: -60px;
+            top: -60px;
+            width: 280px;
+            height: 280px;
+            background: radial-gradient(circle, rgba(255,45,74,0.12) 0%, transparent 65%);
+            pointer-events: none;
+        }
+
+        .st-hero::after {
+            content: 'TOTAL';
+            position: absolute;
+            right: 40px;
+            bottom: -10px;
+            font-family: 'Syne', sans-serif;
+            font-size: 7rem;
+            font-weight: 800;
+            color: rgba(255,255,255,0.025);
+            pointer-events: none;
+            letter-spacing: -0.04em;
+        }
+
+    .st-hero-left {
+    }
+
+    .st-hero-label {
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 12px;
+    }
+
+    .st-hero-num {
+        font-family: 'Syne', sans-serif;
+        font-size: clamp(4rem, 8vw, 7rem);
+        font-weight: 800;
+        line-height: 1;
+        color: #fff;
+    }
+
+        .st-hero-num span {
+            color: var(--red);
+        }
+
+    .st-hero-sub {
+        font-size: 0.85rem;
+        color: var(--muted);
+        font-weight: 300;
+        margin-top: 10px;
+    }
+
+    .st-hero-right {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        min-width: 200px;
+    }
+
+    .st-hero-bar-item {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .st-bar-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .st-bar-name {
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+    }
+
+    .st-bar-val {
+        font-family: 'Syne', sans-serif;
+        font-size: 0.75rem;
+        font-weight: 800;
+        color: #fff;
+    }
+
+    .st-bar-track {
+        height: 4px;
+        background: rgba(255,255,255,0.06);
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .st-bar-fill {
+        height: 100%;
+        border-radius: 4px;
+        transition: width 1s ease;
+    }
+
+    /* ── GRID ── */
+    .st-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+    }
+
+    /* ── STAT CARD ── */
+    .st-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 32px 28px;
+        position: relative;
+        overflow: hidden;
+        transition: background 0.25s, transform 0.25s, border-color 0.25s;
+        cursor: default;
+    }
+
+        .st-card:hover {
+            background: var(--surface2);
+            transform: translateY(-4px);
+        }
+
+        .st-card::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.35s ease;
+        }
+
+        .st-card:hover::before {
+            transform: scaleX(1);
+        }
+
+    .st-card-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .st-card-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+    }
+
+    .st-card-tag {
+        font-size: 0.6rem;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        padding: 3px 10px;
+        border-radius: 2px;
+        border: 1px solid;
+    }
+
+    .st-card-num {
+        font-family: 'Syne', sans-serif;
+        font-size: 3rem;
+        font-weight: 800;
+        line-height: 1;
+        margin-bottom: 8px;
+    }
+
+    .st-card-label {
+        font-size: 0.78rem;
+        color: var(--muted);
+        font-weight: 300;
+        letter-spacing: 0.04em;
+    }
+
+    /* color variants */
+    .st-card[data-color="1"]::before {
+        background: var(--c1);
+    }
+
+    .st-card[data-color="1"] .st-card-num {
+        color: var(--c1);
+    }
+
+    .st-card[data-color="1"] .st-card-icon {
+        background: rgba(255,45,74,0.1);
+        border: 1px solid rgba(255,45,74,0.15);
+    }
+
+    .st-card[data-color="1"] .st-card-tag {
+        color: var(--c1);
+        background: rgba(255,45,74,0.1);
+        border-color: rgba(255,45,74,0.2);
+    }
+
+    .st-card[data-color="2"]::before {
+        background: var(--c2);
+    }
+
+    .st-card[data-color="2"] .st-card-num {
+        color: var(--c2);
+    }
+
+    .st-card[data-color="2"] .st-card-icon {
+        background: rgba(41,182,246,0.1);
+        border: 1px solid rgba(41,182,246,0.15);
+    }
+
+    .st-card[data-color="2"] .st-card-tag {
+        color: var(--c2);
+        background: rgba(41,182,246,0.1);
+        border-color: rgba(41,182,246,0.2);
+    }
+
+    .st-card[data-color="3"]::before {
+        background: var(--c3);
+    }
+
+    .st-card[data-color="3"] .st-card-num {
+        color: var(--c3);
+    }
+
+    .st-card[data-color="3"] .st-card-icon {
+        background: rgba(0,230,118,0.1);
+        border: 1px solid rgba(0,230,118,0.15);
+    }
+
+    .st-card[data-color="3"] .st-card-tag {
+        color: var(--c3);
+        background: rgba(0,230,118,0.1);
+        border-color: rgba(0,230,118,0.2);
+    }
+
+    .st-card[data-color="4"]::before {
+        background: var(--c4);
+    }
+
+    .st-card[data-color="4"] .st-card-num {
+        color: var(--c4);
+    }
+
+    .st-card[data-color="4"] .st-card-icon {
+        background: rgba(255,167,38,0.1);
+        border: 1px solid rgba(255,167,38,0.15);
+    }
+
+    .st-card[data-color="4"] .st-card-tag {
+        color: var(--c4);
+        background: rgba(255,167,38,0.1);
+        border-color: rgba(255,167,38,0.2);
+    }
+
+    .st-card[data-color="5"]::before {
+        background: var(--c5);
+    }
+
+    .st-card[data-color="5"] .st-card-num {
+        color: var(--c5);
+    }
+
+    .st-card[data-color="5"] .st-card-icon {
+        background: rgba(206,147,216,0.1);
+        border: 1px solid rgba(206,147,216,0.15);
+    }
+
+    .st-card[data-color="5"] .st-card-tag {
+        color: var(--c5);
+        background: rgba(206,147,216,0.1);
+        border-color: rgba(206,147,216,0.2);
+    }
+
+    .st-card[data-color="6"]::before {
+        background: var(--c6);
+    }
+
+    .st-card[data-color="6"] .st-card-num {
+        color: var(--c6);
+    }
+
+    .st-card[data-color="6"] .st-card-icon {
+        background: rgba(128,203,196,0.1);
+        border: 1px solid rgba(128,203,196,0.15);
+    }
+
+    .st-card[data-color="6"] .st-card-tag {
+        color: var(--c6);
+        background: rgba(128,203,196,0.1);
+        border-color: rgba(128,203,196,0.2);
+    }
+
+    /* count-up */
+    .count-num {
+        display: inline-block;
+    }
+
+    /* ── RESPONSIVE ── */
+    @@media (max-width: 900px) {
+        .st-page {
+            padding: 24px 16px 60px;
+        }
+
+        .st-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .st-hero {
+            flex-direction: column;
+            padding: 36px 28px;
+        }
+
+        .st-hero-right {
+            width: 100%;
+            min-width: unset;
+        }
+    }
+
+    @@media (max-width: 560px) {
+        .st-grid {
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .st-card {
+            padding: 22px 16px;
+        }
+
+        .st-card-num {
+            font-size: 2.2rem;
+        }
+    }
+</style>
+
+<div class="st-page">
+
+    <!-- HEADER -->
+    <div class="st-header">
+        <div class="st-eyebrow" data-i18n="admin.panel">@L["admin.panel"]</div>
+        <h1 class="st-title" data-i18n-html="dash.title">@L.Html("dash.title")</h1>
+    </div>
+
+    <!-- HERO -->
+    <div class="st-hero">
+        <div class="st-hero-left">
+            <div class="st-hero-label" data-i18n="dash.total">@L["dash.total"]</div>
+            <div class="st-hero-num"><span class="count-num" data-target="@ViewBag.TotalQuestions">0</span></div>
+            <div class="st-hero-sub" data-i18n="dash.allTypes">@L["dash.allTypes"]</div>
+        </div>
+        <div class="st-hero-right">
+            @{
+                var total = (int)(ViewBag.TotalQuestions ?? 1);
+                var bars = new[] {
+            ((key: "dash.bar", n: "40"),  (int)(ViewBag.Test40  ?? 0), "#ff2d4a"),
+            ((key: "dash.bar", n: "60"),  (int)(ViewBag.Test60  ?? 0), "#29b6f6"),
+            ((key: "dash.bar", n: "80"),  (int)(ViewBag.Test80  ?? 0), "#00e676"),
+            ((key: "dash.bar", n: "100"), (int)(ViewBag.Test100 ?? 0), "#ffa726"),
+            ((key: "dash.bar", n: "160"), (int)(ViewBag.Test160 ?? 0), "#ce93d8"),
+            ((key: "dash.real", n: ""),   (int)(ViewBag.RealExam?? 0), "#80cbc4"),
+            };
+            }
+            @foreach (var (name, val, color) in bars)
+            {
+                var pct = total > 0 ? (int)((double)val / total * 100) : 0;
+                <div class="st-hero-bar-item">
+                    <div class="st-bar-top">
+                        <span class="st-bar-name" data-i18n="@name.key" data-i18n-args='{"n":"@name.n"}'>@L.F(name.key, ("n", name.n))</span>
+                        <span class="st-bar-val">@val</span>
+                    </div>
+                    <div class="st-bar-track">
+                        <div class="st-bar-fill" style="width:@pct%; background:@color;"></div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- CARDS GRID -->
+    <div class="st-grid">
+
+        <div class="st-card" data-color="1">
+            <div class="st-card-top">
+                <div class="st-card-icon">⚡</div>
+                <span class="st-card-tag" data-i18n="dash.tagFast">@L["dash.tagFast"]</span>
+            </div>
+            <div class="st-card-num"><span class="count-num" data-target="@ViewBag.Test40">0</span></div>
+            <div class="st-card-label" data-i18n="dash.card" data-i18n-args='{"n":40}'>@L.F("dash.card", ("n", 40))</div>
+        </div>
+
+        <div class="st-card" data-color="2">
+            <div class="st-card-top">
+                <div class="st-card-icon">📘</div>
+                <span class="st-card-tag" data-i18n="dash.tagMid">@L["dash.tagMid"]</span>
+            </div>
+            <div class="st-card-num"><span class="count-num" data-target="@ViewBag.Test60">0</span></div>
+            <div class="st-card-label" data-i18n="dash.card" data-i18n-args='{"n":60}'>@L.F("dash.card", ("n", 60))</div>
+        </div>
+
+        <div class="st-card" data-color="3">
+            <div class="st-card-top">
+                <div class="st-card-icon">📗</div>
+                <span class="st-card-tag" data-i18n="dash.tagExt">@L["dash.tagExt"]</span>
+            </div>
+            <div class="st-card-num"><span class="count-num" data-target="@ViewBag.Test80">0</span></div>
+            <div class="st-card-label" data-i18n="dash.card" data-i18n-args='{"n":80}'>@L.F("dash.card", ("n", 80))</div>
+        </div>
+
+        <div class="st-card" data-color="4">
+            <div class="st-card-top">
+                <div class="st-card-icon">📙</div>
+                <span class="st-card-tag" data-i18n="dash.tagFull">@L["dash.tagFull"]</span>
+            </div>
+            <div class="st-card-num"><span class="count-num" data-target="@ViewBag.Test100">0</span></div>
+            <div class="st-card-label" data-i18n="dash.card" data-i18n-args='{"n":100}'>@L.F("dash.card", ("n", 100))</div>
+        </div>
+
+        <div class="st-card" data-color="5">
+            <div class="st-card-top">
+                <div class="st-card-icon">📒</div>
+                <span class="st-card-tag" data-i18n="dash.tagSpecial">@L["dash.tagSpecial"]</span>
+            </div>
+            <div class="st-card-num"><span class="count-num" data-target="@ViewBag.Test160">0</span></div>
+            <div class="st-card-label" data-i18n="dash.card" data-i18n-args='{"n":160}'>@L.F("dash.card", ("n", 160))</div>
+        </div>
+
+        <div class="st-card" data-color="6">
+            <div class="st-card-top">
+                <div class="st-card-icon">🎯</div>
+                <span class="st-card-tag" data-i18n="dash.tagReal">@L["dash.tagReal"]</span>
+            </div>
+            <div class="st-card-num"><span class="count-num" data-target="@ViewBag.RealExam">0</span></div>
+            <div class="st-card-label" data-i18n="dash.real">@L["dash.real"]</div>
+        </div>
+
+
+        <div class="st-card" data-color="2">
+            <div class="st-card-top">
+                <div class="st-card-icon">🇷🇺</div>
+                <span class="st-card-tag">@L["lang.ru"]</span>
+            </div>
+            <div class="st-card-num"><span class="count-num" data-target="@ViewBag.WithRu">0</span></div>
+            <div class="st-card-label" data-i18n="dash.withRu">@L["dash.withRu"]</div>
+        </div>
+
+        <div class="st-card" data-color="3">
+            <div class="st-card-top">
+                <div class="st-card-icon">🇺🇿</div>
+                <span class="st-card-tag">@L["lang.uzk"]</span>
+            </div>
+            <div class="st-card-num"><span class="count-num" data-target="@ViewBag.WithUzk">0</span></div>
+            <div class="st-card-label" data-i18n="dash.withUzk">@L["dash.withUzk"]</div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // Count-up animation
+    function countUp(el) {
+        const target = parseInt(el.dataset.target) || 0;
+        const duration = 1200;
+        const step = target / (duration / 16);
+        let current = 0;
+        const timer = setInterval(() => {
+            current += step;
+            if (current >= target) {
+                el.textContent = target;
+                clearInterval(timer);
+                return;
+            }
+            el.textContent = Math.floor(current);
+        }, 16);
+    }
+
+    const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                e.target.querySelectorAll('.count-num').forEach(countUp);
+                obs.unobserve(e.target);
+            }
+        });
+    }, { threshold: 0.3 });
+
+    document.querySelectorAll('.st-hero, .st-card').forEach(el => obs.observe(el));
+</script>

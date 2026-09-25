@@ -1,0 +1,23 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+
+public class TestController : Controller
+{
+    private readonly AppDbContext _context;
+    private readonly QuestionBank _bank;
+        public TestController(AppDbContext context, QuestionBank bank) { _context = context; _bank = bank; }
+
+    public IActionResult Index() => View();
+
+    [HttpGet]
+    public async Task<IActionResult> GetQuestions()
+    {
+        // Barcha savollarni Options bilan birga olish
+        // Savollar xotiradagi keshdan (bazaga murojaat yo'q), tasodifiy 20 tasi
+            var randomQuestions = (await _bank.RandomAsync(20))
+           .Select(QuestionJson.From)
+            .ToList();
+
+        return Json(randomQuestions);
+    }
+}

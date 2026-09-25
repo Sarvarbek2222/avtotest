@@ -1,0 +1,173 @@
+﻿@model string[]
+@{
+    ViewData["TitleKey"] = "topics.pageTitle";
+    ViewData["Title"] = L["topics.pageTitle"];
+    var counts = ViewBag.Counts as Dictionary<string, int> ?? new Dictionary<string, int>();
+}
+
+<style>
+    .tp-wrap {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 24px 16px 80px;
+    }
+
+    .tp-head {
+        margin-bottom: 36px;
+    }
+
+    .tp-eyebrow {
+        font-size: 0.66rem;
+        font-weight: 700;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        color: #ff2d4a;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+
+        .tp-eyebrow::before {
+            content: '';
+            width: 26px;
+            height: 2px;
+            background: #ff2d4a;
+        }
+
+    .tp-title {
+        font-size: clamp(1.7rem, 4vw, 3rem);
+        font-weight: 900;
+        color: #fff;
+        line-height: 1;
+    }
+
+        .tp-title span {
+            color: #ff2d4a;
+        }
+
+    .tp-sub {
+        margin-top: 10px;
+        color: #8a90a6;
+        font-size: 0.9rem;
+    }
+
+    .tp-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+    }
+
+    .tp-card {
+        background: #0e0e11;
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 14px;
+        min-height: 150px;
+        padding: 22px 18px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        text-decoration: none;
+        color: #f3f4f8;
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.22s, border-color 0.22s, background 0.22s;
+    }
+
+        .tp-card::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: #ff2d4a;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.35s ease;
+        }
+
+        .tp-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255,45,74,0.4);
+            background: #15151b;
+            color: #fff;
+        }
+
+            .tp-card:hover::before {
+                transform: scaleX(1);
+            }
+
+    .tp-card-name {
+        font-size: 0.97rem;
+        font-weight: 600;
+        line-height: 1.4;
+    }
+
+    .tp-card-count {
+        margin-top: 14px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        color: #ff2d4a;
+        background: rgba(255,45,74,0.12);
+        border: 1px solid rgba(255,45,74,0.25);
+        border-radius: 20px;
+        padding: 4px 14px;
+    }
+
+        .tp-card-count.empty {
+            color: #6c7185;
+            background: rgba(255,255,255,0.04);
+            border-color: rgba(255,255,255,0.08);
+        }
+
+    @@media (max-width: 1024px) {
+        .tp-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .tp-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .tp-card {
+            min-height: 130px;
+            padding: 18px 14px;
+        }
+
+        .tp-card-name {
+            font-size: 0.85rem;
+        }
+    }
+
+    @@media (max-width: 420px) {
+        .tp-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="tp-wrap">
+    <div class="tp-head">
+        <div class="tp-eyebrow" data-i18n="topics.eyebrow">@L["topics.eyebrow"]</div>
+        <h1 class="tp-title" data-i18n-html="topics.title">@L.Html("topics.title")</h1>
+        <div class="tp-sub" data-i18n="topics.sub">@L["topics.sub"]</div>
+    </div>
+
+    <div class="tp-grid">
+        @foreach (var t in Model)
+        {
+            var c = counts.TryGetValue(t, out var n) ? n : 0;
+            <a class="tp-card" asp-controller="Topic" asp-action="Test" asp-route-topic="@t">
+                <div class="tp-card-name" data-i18n-pick data-uz="@Topics.Display(t, Lang.Uz)" data-ru="@Topics.Display(t, Lang.Ru)" data-uzk="@t">@L.Topic(t)</div>
+                <div class="tp-card-count @(c == 0 ? "empty" : "")" data-i18n="topics.count" data-i18n-args='{"n":@c}'>@L.F("topics.count", ("n", c))</div>
+            </a>
+        }
+    </div>
+</div>

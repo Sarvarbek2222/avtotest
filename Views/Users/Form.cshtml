@@ -1,0 +1,101 @@
+@model UserForm
+@{
+    Layout = "_AdminLayout";
+    var titleKey = Model.IsNew ? "users.createTitle" : "users.editTitle";
+    ViewData["TitleKey"] = titleKey;
+    ViewData["Title"] = L[titleKey];
+
+    string? FieldError(string name) =>
+        ViewData.ModelState.TryGetValue(name, out var e) && e.Errors.Count > 0 ? e.Errors[0].ErrorMessage : null;
+
+    var generalErrors = ViewData.ModelState.TryGetValue("", out var g) ? g.Errors.Select(x => x.ErrorMessage).ToList() : new List<string>();
+}
+
+<partial name="_UsersStyles" />
+
+<div class="us-page">
+    <div class="us-header">
+        <div>
+            <div class="us-eyebrow" data-i18n="admin.panel">@L["admin.panel"]</div>
+            <h1 class="us-title" data-i18n="@titleKey">@L[titleKey]</h1>
+        </div>
+    </div>
+
+    @foreach (var err in generalErrors)
+    {
+        <div class="us-alert err" role="alert">⚠ @err</div>
+    }
+
+    <form asp-action="@(Model.IsNew ? "Create" : "Edit")" method="post" class="us-form" autocomplete="off">
+        <input type="hidden" asp-for="Id" />
+
+        <div class="us-grid-2">
+            <div class="us-field">
+                <label class="us-label" for="Username" data-i18n="users.username">@L["users.username"]</label>
+                <input asp-for="Username" class="us-input @(FieldError("Username") != null ? "invalid" : "")"
+                       required maxlength="64" autocomplete="off" />
+                @if (FieldError("Username") is string ue)
+                {
+                    <span class="us-field-err">@ue</span>
+                }
+                else
+                {
+                    <span class="us-hint" data-i18n="users.usernameHint">@L["users.usernameHint"]</span>
+                }
+            </div>
+
+            <div class="us-field">
+                <label class="us-label" for="FullName" data-i18n="users.fullName">@L["users.fullName"]</label>
+                <input asp-for="FullName" class="us-input" maxlength="128" />
+            </div>
+        </div>
+
+        <div class="us-field">
+            <label class="us-label" for="Role" data-i18n="users.role">@L["users.role"]</label>
+            <select asp-for="Role" class="us-input">
+                @foreach (var r in Roles.All)
+                {
+                    var key = "role." + r;
+                    <option value="@r" data-i18n="@key">@L[key]</option>
+                }
+            </select>
+            <span class="us-hint" data-i18n="users.roleHint">@L["users.roleHint"]</span>
+        </div>
+
+        <div class="us-grid-2">
+            <div class="us-field">
+                <label class="us-label" for="Password" data-i18n="@(Model.IsNew ? "users.password" : "users.newPassword")">@L[Model.IsNew ? "users.password" : "users.newPassword"]</label>
+                <input asp-for="Password" type="password" class="us-input @(FieldError("Password") != null ? "invalid" : "")"
+                       autocomplete="new-password" />
+                @if (FieldError("Password") is string pe)
+                {
+                    <span class="us-field-err">@pe</span>
+                }
+                else
+                {
+                    <span class="us-hint" data-i18n="@(Model.IsNew ? "users.passwordHint" : "users.keepPassword")">@L[Model.IsNew ? "users.passwordHint" : "users.keepPassword"]</span>
+                }
+            </div>
+
+            <div class="us-field">
+                <label class="us-label" for="ConfirmPassword" data-i18n="users.confirmPassword">@L["users.confirmPassword"]</label>
+                <input asp-for="ConfirmPassword" type="password" class="us-input @(FieldError("ConfirmPassword") != null ? "invalid" : "")"
+                       autocomplete="new-password" />
+                @if (FieldError("ConfirmPassword") is string ce)
+                {
+                    <span class="us-field-err">@ce</span>
+                }
+            </div>
+        </div>
+
+        <label class="us-check">
+            <input asp-for="IsActive" type="checkbox" />
+            <span data-i18n="users.isActive">@L["users.isActive"]</span>
+        </label>
+
+        <div class="us-form-actions">
+            <a asp-action="Index" class="us-btn us-btn-ghost" data-i18n="form.back">@L["form.back"]</a>
+            <button type="submit" class="us-btn us-btn-primary" data-i18n="users.save">@L["users.save"]</button>
+        </div>
+    </form>
+</div>

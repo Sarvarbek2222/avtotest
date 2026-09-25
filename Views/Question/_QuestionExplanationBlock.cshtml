@@ -1,0 +1,34 @@
+@model Question
+@* Izoh (3 til, ixtiyoriy). ViewData["P"] — CSS prefiksi. *@
+@{
+    var p = (string)ViewData["P"]!;
+}
+<div class="@(p)-block">
+    <div class="@(p)-block-header">
+        <span class="@(p)-block-num">04</span>
+        <span class="@(p)-block-title" data-i18n="form.explanation">@L["form.explanation"]</span>
+    </div>
+    <div class="@(p)-block-body">
+        <div class="form-grid-3">
+            <div class="field-group">
+                <label class="field-label" for="ExplanationUZ" data-i18n="form.langUz">@L["form.langUz"]</label>
+                <textarea asp-for="ExplanationUZ" class="field-input" rows="4" data-tl-src="explanation"
+                          placeholder="@L["form.phExplanationUz"]"></textarea>
+            </div>
+            <div class="field-group">
+                <label class="field-label" for="ExplanationRU" data-i18n="form.langRu">@L["form.langRu"]</label>
+                <textarea asp-for="ExplanationRU" class="field-input" rows="4"
+                          placeholder="@L["form.phExplanationRu"]"></textarea>
+            </div>
+            <div class="field-group">
+                <label class="field-label" for="ExplanationUZK" data-i18n="form.langUzk">@L["form.langUzk"]</label>
+                <textarea asp-for="ExplanationUZK" class="field-input" rows="4" data-tl-dst="explanation"
+                          placeholder="@L["form.phExplanationUzk"]"></textarea>
+                <button type="button" class="btn-tl" data-tl-btn="explanation"
+                        title="@L["form.translitTitle"]" data-i18n-title="form.translitTitle">
+                    ⇄ <span data-i18n="form.translit">@L["form.translit"]</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

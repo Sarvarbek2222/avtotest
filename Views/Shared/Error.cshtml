@@ -1,0 +1,15 @@
+@model ErrorViewModel
+@{
+    ViewData["TitleKey"] = "err.pageTitle";
+    ViewData["Title"] = L["err.pageTitle"];
+}
+
+<h1 class="text-danger" data-i18n="err.pageTitle">@L["err.pageTitle"]</h1>
+<h2 class="text-danger" data-i18n="err.generic">@L["err.generic"]</h2>
+
+@if (Model.ShowRequestId)
+{
+    <p>
+        <strong>Request ID:</strong> <code>@Model.RequestId</code>
+    </p>
+}

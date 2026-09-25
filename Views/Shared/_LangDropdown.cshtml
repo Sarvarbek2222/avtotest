@@ -1,0 +1,32 @@
+@* Til tanlash (ochiladigan menyu). Tanlov i18n.js orqali darhol qo'llanadi va cookie'da saqlanadi;
+   JS o'chiq bo'lsa /Lang/Set havolasi ishlaydi. *@
+@{
+    var returnUrl = Context.Request.Path + Context.Request.QueryString;
+    var langs = new[]
+    {
+        (Code: Lang.Uz, Short: "UZ", Full: "lang.uz.full"),
+        (Code: Lang.Uzk, Short: "ЎЗ", Full: "lang.uzk.full"),
+        (Code: Lang.Ru, Short: "RU", Full: "lang.ru.full"),
+    };
+}
+<div class="ui-dd ui-lang">
+    <button type="button" class="ui-dd-btn" data-dd aria-haspopup="menu" aria-expanded="false"
+            title="@L["lang.choose"]" data-i18n-title="lang.choose">
+        @Icons.Globe
+        <span class="ui-lang-name" data-i18n="lang.current">@L["lang.current"]</span>
+        @Icons.Chevron
+    </button>
+    <div class="ui-dd-menu" role="menu" aria-label="@L["lang.choose"]">
+        @foreach (var l in langs)
+        {
+            <a class="ui-dd-item @(L.Lang == l.Code ? "active" : "")" role="menuitemradio"
+               aria-checked="@(L.Lang == l.Code ? "true" : "false")"
+               data-set-lang="@l.Code"
+               href="/Lang/Set?lang=@l.Code&returnUrl=@Uri.EscapeDataString(returnUrl)">
+                <span class="ui-lang-code">@l.Short</span>
+                <span data-i18n="@l.Full">@L[l.Full]</span>
+                @Icons.Check
+            </a>
+        }
+    </div>
+</div>

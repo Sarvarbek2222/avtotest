@@ -1,0 +1,57 @@
+@model CabinetModel
+@{
+    ViewData["TitleKey"] = "cab.results";
+    ViewData["Title"] = L["cab.results"];
+    ViewData["ActiveMistakes"] = Model.Stats.ActiveMistakes;
+    var types = Model.Stats.ByType.Select(t => t.Type).ToList();
+}
+
+<div class="ca-page-head">
+    <div>
+        <div class="ca-eyebrow" data-i18n="nav.myCabinet">@L["nav.myCabinet"]</div>
+        <h1 class="ca-h1" data-i18n="cab.results">@L["cab.results"]</h1>
+    </div>
+    <a class="ca-btn ca-btn-primary" asp-controller="Home" asp-action="Index">@Icons.Play <span data-i18n="cab.startTest">@L["cab.startTest"]</span></a>
+</div>
+
+<partial name="Cabinet/_ByType" model="Model.Stats" />
+
+<div class="ca-card ca-section">
+    <div class="ca-chips" role="tablist">
+        <a class="ca-chip @(Model.FilterType == null ? "active" : "")" asp-action="Results" data-i18n="cab.filterAll">@L["cab.filterAll"]</a>
+        @foreach (var t in types)
+        {
+            <a class="ca-chip @(Model.FilterType == t ? "active" : "")" asp-action="Results" asp-route-type="@t">@L["testType." + t]</a>
+        }
+    </div>
+
+    @if (Model.PageAttempts.Count == 0)
+    {
+        <div class="ca-empty">
+            <div class="ca-empty-icon">@Icons.List</div>
+            <h3 data-i18n="cab.empty">@L["cab.empty"]</h3>
+            <p data-i18n="cab.emptyText">@L["cab.emptyText"]</p>
+        </div>
+    }
+    else
+    {
+        <partial name="Cabinet/_AttemptsTable" model="new AttemptsTable(Model, Model.PageAttempts, false)" />
+
+        @if (Model.TotalPages > 1)
+        {
+            <div class="ca-pager">
+                <span class="ca-muted ca-small">@Model.Page / @Model.TotalPages</span>
+                <div class="ca-actions">
+                    @if (Model.Page > 1)
+                    {
+                        <a class="ca-btn ca-btn-ghost ca-btn-sm" asp-action="Results" asp-route-type="@Model.FilterType" asp-route-page="@(Model.Page - 1)">@Icons.ArrowLeft <span data-i18n="qs.prev">@L["qs.prev"]</span></a>
+                    }
+                    @if (Model.Page < Model.TotalPages)
+                    {
+                        <a class="ca-btn ca-btn-ghost ca-btn-sm" asp-action="Results" asp-route-type="@Model.FilterType" asp-route-page="@(Model.Page + 1)"><span data-i18n="qs.next">@L["qs.next"]</span> @Icons.ArrowRight</a>
+                    }
+                </div>
+            </div>
+        }
+    }
+</div>

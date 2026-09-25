@@ -1,0 +1,73 @@
+﻿@model AttemptDetail
+@* Bitta urinish: har bir savol, foydalanuvchi javobi va to'g'ri javob *@
+@{
+    var a = Model.Attempt;
+}
+<div class="ca-card" style="margin-bottom:20px;">
+    <div class="ca-hero">
+        <div class="ca-ring" style="--p:@Math.Round(a.Percent); --c:@Score.Color(a.Percent);">
+            <div>
+                <div class="ca-ring-value">@a.Correct<small style="font-size:.9rem;">/@a.Total</small></div>
+                <div class="ca-ring-label">@Math.Round(a.Percent)%</div>
+            </div>
+        </div>
+        <div class="ca-hero-body">
+            <h2 class="ca-hero-title">@L.TestName(a.TestType, a.TestRef)</h2>
+            <p class="ca-hero-note">@L.Stamp(a.FinishedAt) · @L.Duration((int)Math.Max(1, (a.FinishedAt - a.StartedAt).TotalMinutes))</p>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
+                @if (a.Passed)
+                {
+                    <span class="ca-badge ca-badge-ok" data-i18n="cab.passed">@L["cab.passed"]</span>
+                }
+                else
+                {
+                    <span class="ca-badge ca-badge-bad" data-i18n="cab.failed">@L["cab.failed"]</span>
+                }
+                <span class="ca-badge ca-badge-bad">@L.F("test.wrong", ("n", a.Wrong))</span>
+                <span class="ca-badge ca-badge-muted">@L.F("test.skipped", ("n", a.Skipped))</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="ca-card">
+    @foreach (var ans in a.Answers.OrderBy(x => x.IsCorrect).ThenBy(x => x.Id))
+    {
+        if (!Model.Questions.TryGetValue(ans.QuestionId, out var q)) { continue; }
+        var correct = q.Options.FirstOrDefault(o => o.IsCorrect);
+        var chosen = ans.SelectedOptionId is int sel ? q.Options.FirstOrDefault(o => o.Id == sel) : null;
+        <div class="ca-mistake">
+            @if (!string.IsNullOrEmpty(q.ImageUrl))
+            {
+                <img class="ca-mistake-img" src="/uploads/@(q.ImageUrl)?w=480" decoding="async" alt="@L["test.imageAlt"]" loading="lazy" />
+            }
+            else
+            {
+                <div class="ca-mistake-img" style="display:grid;place-items:center;color:@(ans.IsCorrect ? "var(--ca-ok)" : "var(--ca-bad)");">
+                    @(ans.IsCorrect ? Icons.Ok : Icons.Alert)
+                </div>
+            }
+            <div style="min-width:0;">
+                <p class="ca-mistake-q">@L.Pick(q.QuestionUZ, q.QuestionRU, q.QuestionUZK)</p>
+                @if (!string.IsNullOrWhiteSpace(q.Topic))
+                {
+                    <div class="ca-mistake-meta"><span class="ca-badge ca-badge-muted">@L.Topic(q.Topic)</span></div>
+                }
+                @if (!ans.IsCorrect)
+                {
+                    <div class="ca-answer bad">
+                        <b><span data-i18n="cab.yourAnswer">@L["cab.yourAnswer"]</span>:</b>
+                        <span>@(chosen != null ? L.Pick(chosen.OptionUZ, chosen.OptionRU, chosen.OptionUZK) : L["cab.noAnswer"])</span>
+                    </div>
+                }
+                @if (correct != null)
+                {
+                    <div class="ca-answer ok">
+                        <b><span data-i18n="cab.correctAnswer">@L["cab.correctAnswer"]</span>:</b>
+                        <span>@L.Pick(correct.OptionUZ, correct.OptionRU, correct.OptionUZK)</span>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>

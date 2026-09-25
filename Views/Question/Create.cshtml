@@ -1,0 +1,667 @@
+﻿@model Question
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "form.createPageTitle";
+    ViewData["Title"] = L["form.createPageTitle"];
+    ViewData["P"] = "cr";
+}
+
+@* <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"> *@
+
+<style>
+    :root {
+        --bg: #07080d;
+        --surface: #0d0f18;
+        --surface2: #131624;
+        --surface3: #181c2e;
+        --border: rgba(255,255,255,0.07);
+        --border2: rgba(255,255,255,0.12);
+        --red: #ff2d4a;
+        --red-dim: rgba(255,45,74,0.10);
+        --text: #e8eaf0;
+        --muted: #5a6080;
+        --success: #00e676;
+        --info: #29b6f6;
+    }
+
+    *, *::before, *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: 'DM Sans', sans-serif;
+    }
+
+    /* ── PAGE ── */
+    .cr-page {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 40px 32px 100px;
+    }
+
+    /* ── HEADER ── */
+    .cr-header {
+        margin-bottom: 44px;
+    }
+
+    .cr-eyebrow {
+        font-family: 'Syne', sans-serif;
+        font-size: 0.63rem;
+        font-weight: 700;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        color: var(--red);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+        .cr-eyebrow::before {
+            content: '';
+            width: 24px;
+            height: 2px;
+            background: var(--red);
+            border-radius: 2px;
+        }
+
+    .cr-title {
+        font-family: 'Syne', sans-serif;
+        font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+        font-weight: 800;
+        line-height: 1;
+        color: #fff;
+        letter-spacing: -0.02em;
+    }
+
+        .cr-title span {
+            color: var(--red);
+        }
+
+    /* ── SECTION BLOCK ── */
+    .cr-block {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        margin-bottom: 24px;
+        overflow: hidden;
+    }
+
+    .cr-block-header {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 18px 28px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .cr-block-num {
+        font-family: 'Syne', sans-serif;
+        font-size: 0.65rem;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        color: var(--red);
+        background: var(--red-dim);
+        border: 1px solid rgba(255,45,74,0.2);
+        padding: 3px 10px;
+        border-radius: 2px;
+    }
+
+    .cr-block-title {
+        font-family: 'Syne', sans-serif;
+        font-size: 0.82rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #fff;
+    }
+
+    .cr-block-body {
+        padding: 28px;
+    }
+
+    /* ── FORM GRID ── */
+    .form-grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+
+    /* ── FIELD ── */
+    .field-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .field-label {
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--muted);
+    }
+
+    .field-input {
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 3px;
+        color: var(--text);
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.9rem;
+        font-weight: 300;
+        padding: 12px 16px;
+        outline: none;
+        width: 100%;
+        transition: border-color 0.25s, box-shadow 0.25s;
+    }
+
+        .field-input::placeholder {
+            color: var(--muted);
+            font-size: 0.85rem;
+        }
+
+        .field-input:focus {
+            border-color: var(--red);
+            box-shadow: 0 0 0 3px rgba(255,45,74,0.1);
+        }
+
+    /* ── UPLOAD ── */
+    .upload-zone {
+        border: 1.5px dashed rgba(255,45,74,0.35);
+        border-radius: 6px;
+        padding: 44px 28px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+        background: var(--surface2);
+        position: relative;
+    }
+
+        .upload-zone:hover,
+        .upload-zone.drag-over {
+            border-color: var(--red);
+            background: var(--red-dim);
+            box-shadow: 0 0 24px rgba(255,45,74,0.12);
+        }
+
+    .upload-icon-wrap {
+        width: 56px;
+        height: 56px;
+        background: var(--red-dim);
+        border: 1px solid rgba(255,45,74,0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 16px;
+    }
+
+        .upload-icon-wrap svg {
+            width: 24px;
+            height: 24px;
+            color: var(--red);
+        }
+
+    .upload-title {
+        font-family: 'Syne', sans-serif;
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 6px;
+    }
+
+    .upload-hint {
+        font-size: 0.75rem;
+        color: var(--muted);
+    }
+
+    .preview-wrap {
+        position: relative;
+        display: inline-block;
+        max-width: 320px;
+        width: 100%;
+    }
+
+        .preview-wrap img {
+            width: 100%;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: block;
+        }
+
+    .preview-remove {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 32px;
+        height: 32px;
+        background: rgba(255,45,74,0.9);
+        border: none;
+        border-radius: 50%;
+        color: #fff;
+        font-size: 1rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.25s, background 0.2s;
+    }
+
+        .preview-remove:hover {
+            transform: rotate(90deg) scale(1.15);
+            background: var(--red);
+        }
+
+    /* ── OPTION ROW ── */
+    .option-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .option-item {
+        display: grid;
+        grid-template-columns: auto 1fr 1fr 1fr auto auto;
+        gap: 10px;
+        align-items: center;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 14px 18px;
+        transition: border-color 0.25s, background 0.25s;
+        animation: slideIn 0.25s ease;
+    }
+
+        .option-item:hover {
+            border-color: var(--border2);
+            background: var(--surface3);
+        }
+
+    @@keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .option-badge {
+        font-family: 'Syne', sans-serif;
+        font-size: 0.7rem;
+        font-weight: 800;
+        color: var(--muted);
+        background: rgba(255,255,255,0.05);
+        border: 1px solid var(--border);
+        border-radius: 2px;
+        padding: 4px 10px;
+        white-space: nowrap;
+        min-width: 36px;
+        text-align: center;
+    }
+
+    /* correct radio */
+    .correct-wrap {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        white-space: nowrap;
+        cursor: pointer;
+    }
+
+        .correct-wrap input[type="radio"] {
+            display: none;
+        }
+
+    .correct-dot {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: 2px solid var(--muted);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: border-color 0.2s;
+        flex-shrink: 0;
+    }
+
+        .correct-dot::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+    .correct-wrap input[type="radio"]:checked ~ .correct-dot {
+        border-color: var(--success);
+    }
+
+        .correct-wrap input[type="radio"]:checked ~ .correct-dot::after {
+            opacity: 1;
+        }
+
+    .correct-label {
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: var(--muted);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        transition: color 0.2s;
+    }
+
+    .correct-wrap:has(input:checked) .correct-label {
+        color: var(--success);
+    }
+
+    .option-item.is-correct {
+        border-color: rgba(0,230,118,0.25);
+        background: rgba(0,230,118,0.04);
+    }
+
+    /* delete btn */
+    .btn-opt-del {
+        width: 30px;
+        height: 30px;
+        background: transparent;
+        border: 1px solid rgba(255,45,74,0.2);
+        border-radius: 3px;
+        color: var(--red);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        flex-shrink: 0;
+    }
+
+        .btn-opt-del:hover {
+            background: var(--red-dim);
+            border-color: var(--red);
+            transform: scale(1.1);
+        }
+
+        .btn-opt-del svg {
+            width: 14px;
+            height: 14px;
+        }
+
+    /* ── ADD OPTION BTN ── */
+    .btn-add-option {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        padding: 13px;
+        background: transparent;
+        border: 1.5px dashed rgba(255,45,74,0.3);
+        border-radius: 4px;
+        color: var(--red);
+        font-family: 'Syne', sans-serif;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: all 0.25s;
+        margin-top: 14px;
+    }
+
+        .btn-add-option:hover {
+            background: var(--red-dim);
+            border-color: var(--red);
+            box-shadow: 0 0 18px rgba(255,45,74,0.12);
+        }
+
+        .btn-add-option svg {
+            width: 16px;
+            height: 16px;
+        }
+
+    /* ── SUBMIT ── */
+    .cr-submit-wrap {
+        display: flex;
+        gap: 14px;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-top: 32px;
+    }
+
+    .btn-submit {
+        flex: 1;
+        min-width: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        background: var(--red);
+        color: #fff;
+        font-family: 'Syne', sans-serif;
+        font-weight: 700;
+        font-size: 0.82rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        padding: 16px 32px;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        transition: box-shadow 0.3s, transform 0.2s;
+    }
+
+        .btn-submit::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(255,255,255,0.1);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .btn-submit:hover::before {
+            transform: translateX(0);
+        }
+
+        .btn-submit:hover {
+            box-shadow: 0 0 32px rgba(255,45,74,0.5);
+            transform: translateY(-2px);
+        }
+
+        .btn-submit svg {
+            width: 18px;
+            height: 18px;
+        }
+
+    .btn-back {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--muted);
+        font-family: 'Syne', sans-serif;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        text-decoration: none;
+        padding: 16px 24px;
+        border: 1px solid var(--border);
+        border-radius: 3px;
+        transition: all 0.25s;
+    }
+
+        .btn-back:hover {
+            border-color: var(--border2);
+            color: var(--text);
+        }
+
+        .btn-back svg {
+            width: 16px;
+            height: 16px;
+        }
+
+    /* ── RESPONSIVE ── */
+    @@media (max-width: 768px) {
+        .cr-page {
+            padding: 24px 16px 80px;
+        }
+
+        .form-grid-3 {
+            grid-template-columns: 1fr;
+        }
+
+        .option-item {
+            grid-template-columns: auto 1fr auto;
+            grid-template-rows: auto auto auto;
+        }
+
+            .option-item .field-input:nth-child(3),
+            .option-item .field-input:nth-child(4) {
+                grid-column: 1 / -1;
+            }
+    }
+</style>
+
+<div class="cr-page">
+
+    <!-- HEADER -->
+    <div class="cr-header">
+        <div class="cr-eyebrow" data-i18n="admin.panel">@L["admin.panel"]</div>
+        <h1 class="cr-title" data-i18n-html="form.createTitle">@L.Html("form.createTitle")</h1>
+    </div>
+
+    <form asp-action="Create" method="post" enctype="multipart/form-data">
+
+        <!-- 01 SAVOL MATNI (3 til) -->
+        <partial name="_QuestionTextBlock" model="Model" view-data="ViewData" />
+
+        <!-- 02 RASM -->
+        <div class="cr-block">
+            <div class="cr-block-header">
+                <span class="cr-block-num">02</span>
+                <span class="cr-block-title" data-i18n="form.imageOptional">@L["form.imageOptional"]</span>
+            </div>
+            <div class="cr-block-body">
+                <input asp-for="ImageFile" type="file" id="imageInput" hidden accept="image/*" />
+
+                <div id="uploadZone" class="upload-zone">
+                    <div class="upload-icon-wrap">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                            <polyline points="16 16 12 12 8 16" />
+                            <line x1="12" y1="12" x2="12" y2="21" />
+                            <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" />
+                        </svg>
+                    </div>
+                    <div class="upload-title" data-i18n="form.upload">@L["form.upload"]</div>
+                    <div class="upload-hint" data-i18n="form.uploadHint">@L["form.uploadHint"]</div>
+                </div>
+
+                <div id="previewWrap" class="preview-wrap" style="display:none; margin-top:16px;">
+                    <img id="previewImg" src="" alt="preview" />
+                    <button type="button" id="removeImg" class="preview-remove" title="@L["form.removeImage"]" data-i18n-title="form.removeImage">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14">
+                            <line x1="18" y1="6" x2="6" y2="18" />
+                            <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 03 VARIANTLAR -->
+        <div class="cr-block">
+            <div class="cr-block-header">
+                <span class="cr-block-num">03</span>
+                <span class="cr-block-title" data-i18n="form.options">@L["form.options"]</span>
+            </div>
+            <div class="cr-block-body">
+                <div class="option-list" id="optionList"></div>
+
+                <button type="button" class="btn-add-option" id="addOptionBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="12" y1="5" x2="12" y2="19" />
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                    <span data-i18n="form.addOption">@L["form.addOption"]</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 04 IZOH -->
+        <partial name="_QuestionExplanationBlock" model="Model" view-data="ViewData" />
+
+        <!-- SUBMIT -->
+        <div class="cr-submit-wrap">
+            <a asp-action="Index" class="btn-back">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="15 18 9 12 15 6" />
+                </svg>
+                <span data-i18n="form.back">@L["form.back"]</span>
+            </a>
+            <button type="submit" class="btn-submit">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="20 6 9 17 4 12" />
+                </svg>
+                <span data-i18n="form.save">@L["form.save"]</span>
+            </button>
+        </div>
+
+    </form>
+</div>
+
+<script>
+    // ── IMAGE UPLOAD ──
+    const uploadZone  = document.getElementById("uploadZone");
+    const imageInput  = document.getElementById("imageInput");
+    const previewWrap = document.getElementById("previewWrap");
+    const previewImg  = document.getElementById("previewImg");
+    const removeImg   = document.getElementById("removeImg");
+
+    uploadZone.addEventListener("click", () => imageInput.click());
+
+    imageInput.addEventListener("change", function () {
+        const file = this.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = e => {
+            previewImg.src = e.target.result;
+            uploadZone.style.display = "none";
+            previewWrap.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+    });
+
+    removeImg.addEventListener("click", () => {
+        imageInput.value = "";
+        previewImg.src = "";
+        previewWrap.style.display = "none";
+        uploadZone.style.display = "block";
+    });
+
+    uploadZone.addEventListener("dragover", e => {
+        e.preventDefault();
+        uploadZone.classList.add("drag-over");
+    });
+    uploadZone.addEventListener("dragleave", () => uploadZone.classList.remove("drag-over"));
+    uploadZone.addEventListener("drop", e => {
+        e.preventDefault();
+        uploadZone.classList.remove("drag-over");
+        imageInput.files = e.dataTransfer.files;
+        imageInput.dispatchEvent(new Event("change"));
+    });
+</script>
+
+<!-- Variantlar va kirill transliteratsiyasi -->
+<partial name="_QuestionFormAssets" model="Model" />

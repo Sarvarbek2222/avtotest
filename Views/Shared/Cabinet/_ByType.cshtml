@@ -1,0 +1,43 @@
+@model UserStats
+@* Qaysi testdan necha marta ishlagani *@
+<div class="ca-card">
+    <div class="ca-card-head">
+        <h3 class="ca-card-title" data-i18n="cab.byType">@L["cab.byType"]</h3>
+    </div>
+    @if (Model.ByType.Count == 0)
+    {
+        <p class="ca-muted" data-i18n="cab.noActivity">@L["cab.noActivity"]</p>
+    }
+    else
+    {
+        <div class="ca-table-wrap">
+            <table class="ca-table ca-table-cards">
+                <thead>
+                    <tr>
+                        <th data-i18n="cab.colTest">@L["cab.colTest"]</th>
+                        <th class="num" data-i18n="cab.colAttempts">@L["cab.colAttempts"]</th>
+                        <th class="num" data-i18n="cab.colAvg">@L["cab.colAvg"]</th>
+                        <th class="num" data-i18n="cab.colBest">@L["cab.colBest"]</th>
+                        <th class="num" data-i18n="cab.colPassed">@L["cab.colPassed"]</th>
+                        <th data-i18n="cab.colLast">@L["cab.colLast"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var t in Model.ByType)
+                    {
+                        <tr>
+                            <td data-label="@L["cab.colTest"]"><span class="ca-strong">@L["testType." + t.Type]</span></td>
+                            <td data-label="@L["cab.colAttempts"]" class="num">@t.Attempts</td>
+                            <td data-label="@L["cab.colAvg"]" class="num">
+                                <span style="color:@Score.Color(t.AvgPercent);font-weight:700;">@Math.Round(t.AvgPercent)%</span>
+                            </td>
+                            <td data-label="@L["cab.colBest"]" class="num">@Math.Round(t.BestPercent)%</td>
+                            <td data-label="@L["cab.colPassed"]" class="num">@t.Passed / @t.Attempts</td>
+                            <td data-label="@L["cab.colLast"]" class="nowrap ca-muted">@L.Stamp(t.LastAt)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

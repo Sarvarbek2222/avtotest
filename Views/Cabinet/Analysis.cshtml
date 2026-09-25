@@ -1,0 +1,15 @@
+@model CabinetModel
+@{
+    ViewData["TitleKey"] = "cab.analysis";
+    ViewData["Title"] = L["cab.analysis"];
+    ViewData["ActiveMistakes"] = Model.Stats.ActiveMistakes;
+}
+
+<div class="ca-page-head">
+    <div>
+        <div class="ca-eyebrow" data-i18n="nav.myCabinet">@L["nav.myCabinet"]</div>
+        <h1 class="ca-h1" data-i18n="cab.analysis">@L["cab.analysis"]</h1>
+    </div>
+</div>
+
+<partial name="Cabinet/_AnalysisBody" model="Model" />

@@ -1,0 +1,105 @@
+@model Question
+@* Formaning umumiy uslubi, boshlang'ich variantlar va question-form.js *@
+@{
+    var options = Model.Options.Select(o => new
+    {
+        uz = o.OptionUZ,
+        ru = o.OptionRU,
+        uzk = o.OptionUZK,
+        correct = o.IsCorrect
+    });
+}
+<style>
+    .qf-errors {
+        background: rgba(255,45,74,0.10);
+        border: 1px solid rgba(255,45,74,0.45);
+        color: #ff8a9b;
+        border-radius: 4px;
+        padding: 14px 18px;
+        margin-bottom: 20px;
+        font-size: 0.9rem;
+        line-height: 1.7;
+    }
+
+    .qf-req { color: #ff2d4a; }
+
+    .qf-opt {
+        text-transform: none;
+        letter-spacing: 0;
+        font-weight: 400;
+        opacity: 0.7;
+    }
+
+        .qf-opt::before { content: "("; }
+        .qf-opt::after { content: ")"; }
+
+    .qf-hint {
+        margin: 14px 0 0;
+        font-size: 0.78rem;
+        color: #8a90b0;
+        line-height: 1.6;
+    }
+
+    .qf-note { color: #00e676; }
+
+    textarea.field-input {
+        resize: vertical;
+        min-height: 70px;
+        font-family: inherit;
+    }
+
+    .btn-tl {
+        align-self: flex-start;
+        background: transparent;
+        color: #29b6f6;
+        border: 1px dashed rgba(41,182,246,0.5);
+        border-radius: 3px;
+        padding: 5px 10px;
+        font-size: 0.74rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        white-space: nowrap;
+    }
+
+        .btn-tl:hover {
+            background: rgba(41,182,246,0.12);
+            border-style: solid;
+        }
+
+    .btn-tl-all { margin-left: auto; }
+
+    .btn-tl-sm {
+        padding: 4px 8px;
+        font-size: 0.9rem;
+        line-height: 1;
+    }
+
+    .tl-field {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        min-width: 0;
+    }
+
+        .tl-field .field-input { flex: 1; min-width: 0; }
+
+    .field-input.tl-auto { border-color: rgba(41,182,246,0.45); }
+
+    .tl-flash { animation: tlFlash 0.8s ease; }
+
+    @@keyframes tlFlash {
+        from { box-shadow: 0 0 0 3px rgba(41,182,246,0.45); }
+        to { box-shadow: 0 0 0 0 rgba(41,182,246,0); }
+    }
+
+    @@media (max-width: 768px) {
+        .option-item .tl-field { grid-column: 1 / -1; }
+        .btn-tl-all { margin-left: 0; margin-top: 8px; }
+    }
+</style>
+
+<script>
+    window.QF = { options: @Json.Serialize(options) };
+</script>
+<script src="~/js/question-form.js" asp-append-version="true"></script>

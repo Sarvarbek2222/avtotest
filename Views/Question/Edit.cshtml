@@ -1,0 +1,830 @@
+﻿@model Question
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "form.editPageTitle";
+    ViewData["Title"] = L["form.editPageTitle"];
+    ViewData["P"] = "ed";
+}
+
+
+<style>
+    :root {
+        --bg: #07080d;
+        --surface: #0d0f18;
+        --surface2: #131624;
+        --surface3: #181c2e;
+        --border: rgba(255,255,255,0.07);
+        --border2: rgba(255,255,255,0.12);
+        --red: #ff2d4a;
+        --red-dim: rgba(255,45,74,0.10);
+        --text: #e8eaf0;
+        --muted: #5a6080;
+        --success: #00e676;
+        --info: #29b6f6;
+        --warn: #ffa726;
+    }
+
+    *, *::before, *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: 'DM Sans', sans-serif;
+    }
+
+    .ed-page {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 40px 32px 100px;
+    }
+
+    /* ── HEADER ── */
+    .ed-header {
+        margin-bottom: 44px;
+    }
+
+    .ed-eyebrow {
+        font-family: 'Syne', sans-serif;
+        font-size: 0.63rem;
+        font-weight: 700;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        color: var(--warn);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+        .ed-eyebrow::before {
+            content: '';
+            width: 24px;
+            height: 2px;
+            background: var(--warn);
+            border-radius: 2px;
+        }
+
+    .ed-title {
+        font-family: 'Syne', sans-serif;
+        font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+        font-weight: 800;
+        line-height: 1;
+        color: #fff;
+        letter-spacing: -0.02em;
+    }
+
+        .ed-title span {
+            color: var(--warn);
+        }
+
+    .ed-id-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 12px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--muted);
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 2px;
+        padding: 5px 14px;
+    }
+
+        .ed-id-badge span {
+            color: var(--warn);
+        }
+
+    /* ── BLOCK ── */
+    .ed-block {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        margin-bottom: 24px;
+        overflow: hidden;
+    }
+
+    .ed-block-header {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 18px 28px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .ed-block-num {
+        font-family: 'Syne', sans-serif;
+        font-size: 0.65rem;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        color: var(--warn);
+        background: rgba(255,167,38,0.1);
+        border: 1px solid rgba(255,167,38,0.2);
+        padding: 3px 10px;
+        border-radius: 2px;
+    }
+
+    .ed-block-title {
+        font-family: 'Syne', sans-serif;
+        font-size: 0.82rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #fff;
+    }
+
+    .ed-block-body {
+        padding: 28px;
+    }
+
+    /* ── FORM GRID ── */
+    .form-grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+
+    /* ── FIELD ── */
+    .field-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .field-label {
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--muted);
+    }
+
+    .field-input {
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 3px;
+        color: var(--text);
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.9rem;
+        font-weight: 300;
+        padding: 12px 16px;
+        outline: none;
+        width: 100%;
+        transition: border-color 0.25s, box-shadow 0.25s;
+    }
+
+        .field-input::placeholder {
+            color: var(--muted);
+            font-size: 0.85rem;
+        }
+
+        .field-input:focus {
+            border-color: var(--warn);
+            box-shadow: 0 0 0 3px rgba(255,167,38,0.1);
+        }
+
+    /* ── IMAGE SECTION ── */
+    .img-current {
+        display: flex;
+        align-items: flex-start;
+        gap: 20px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+    }
+
+    .img-preview-wrap {
+        position: relative;
+        width: 200px;
+        flex-shrink: 0;
+    }
+
+        .img-preview-wrap img {
+            width: 100%;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: block;
+        }
+
+    .img-remove-btn {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 30px;
+        height: 30px;
+        background: rgba(255,45,74,0.9);
+        border: none;
+        border-radius: 50%;
+        color: #fff;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.25s, background 0.2s;
+    }
+
+        .img-remove-btn:hover {
+            transform: rotate(90deg) scale(1.15);
+            background: var(--red);
+        }
+
+        .img-remove-btn svg {
+            width: 12px;
+            height: 12px;
+        }
+
+    .img-current-info {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        justify-content: center;
+    }
+
+    .img-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--success);
+        background: rgba(0,230,118,0.08);
+        border: 1px solid rgba(0,230,118,0.18);
+        padding: 5px 12px;
+        border-radius: 2px;
+    }
+
+        .img-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--success);
+            border-radius: 50%;
+        }
+
+    .img-hint {
+        font-size: 0.78rem;
+        color: var(--muted);
+        font-weight: 300;
+    }
+
+    .img-divider {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 18px 0;
+    }
+
+        .img-divider::before, .img-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .img-divider span {
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+    /* Upload zone */
+    .upload-zone {
+        border: 1.5px dashed rgba(255,167,38,0.3);
+        border-radius: 6px;
+        padding: 32px 28px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+        background: var(--surface2);
+    }
+
+        .upload-zone:hover, .upload-zone.drag-over {
+            border-color: var(--warn);
+            background: rgba(255,167,38,0.06);
+            box-shadow: 0 0 20px rgba(255,167,38,0.1);
+        }
+
+    .upload-icon-wrap {
+        width: 48px;
+        height: 48px;
+        background: rgba(255,167,38,0.1);
+        border: 1px solid rgba(255,167,38,0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 12px;
+    }
+
+        .upload-icon-wrap svg {
+            width: 20px;
+            height: 20px;
+            color: var(--warn);
+        }
+
+    .upload-title {
+        font-family: 'Syne', sans-serif;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 4px;
+    }
+
+    .upload-hint-text {
+        font-size: 0.72rem;
+        color: var(--muted);
+    }
+
+    .new-preview-wrap {
+        position: relative;
+        display: inline-block;
+        max-width: 280px;
+        width: 100%;
+        margin-top: 14px;
+    }
+
+        .new-preview-wrap img {
+            width: 100%;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: block;
+        }
+
+    .new-preview-remove {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 28px;
+        height: 28px;
+        background: rgba(255,45,74,0.9);
+        border: none;
+        border-radius: 50%;
+        color: #fff;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.25s;
+    }
+
+        .new-preview-remove:hover {
+            transform: rotate(90deg) scale(1.1);
+        }
+
+        .new-preview-remove svg {
+            width: 12px;
+            height: 12px;
+        }
+
+    /* ── OPTION ROW ── */
+    .option-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .option-item {
+        display: grid;
+        grid-template-columns: auto 1fr 1fr 1fr auto auto;
+        gap: 10px;
+        align-items: center;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 14px 18px;
+        transition: border-color 0.25s, background 0.25s;
+        animation: slideIn 0.25s ease;
+    }
+
+        .option-item:hover {
+            border-color: var(--border2);
+            background: var(--surface3);
+        }
+
+        .option-item.is-correct {
+            border-color: rgba(0,230,118,0.25);
+            background: rgba(0,230,118,0.04);
+        }
+
+    @@keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(8px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .option-badge {
+        font-family: 'Syne', sans-serif;
+        font-size: 0.7rem;
+        font-weight: 800;
+        color: var(--muted);
+        background: rgba(255,255,255,0.05);
+        border: 1px solid var(--border);
+        border-radius: 2px;
+        padding: 4px 10px;
+        text-align: center;
+        min-width: 36px;
+    }
+
+    /* correct radio */
+    .correct-wrap {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+        .correct-wrap input[type="radio"] {
+            display: none;
+        }
+
+    .correct-dot {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: 2px solid var(--muted);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: border-color 0.2s;
+        flex-shrink: 0;
+    }
+
+        .correct-dot::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+    .correct-wrap input[type="radio"]:checked ~ .correct-dot {
+        border-color: var(--success);
+    }
+
+        .correct-wrap input[type="radio"]:checked ~ .correct-dot::after {
+            opacity: 1;
+        }
+
+    .correct-label {
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: var(--muted);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        transition: color 0.2s;
+    }
+
+    .correct-wrap:has(input:checked) .correct-label {
+        color: var(--success);
+    }
+
+    .btn-opt-del {
+        width: 30px;
+        height: 30px;
+        background: transparent;
+        border: 1px solid rgba(255,45,74,0.2);
+        border-radius: 3px;
+        color: var(--red);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        flex-shrink: 0;
+    }
+
+        .btn-opt-del:hover {
+            background: var(--red-dim);
+            border-color: var(--red);
+            transform: scale(1.1);
+        }
+
+        .btn-opt-del svg {
+            width: 14px;
+            height: 14px;
+        }
+
+    /* ── ADD OPTION ── */
+    .btn-add-option {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        padding: 13px;
+        background: transparent;
+        border: 1.5px dashed rgba(255,167,38,0.3);
+        border-radius: 4px;
+        color: var(--warn);
+        font-family: 'Syne', sans-serif;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: all 0.25s;
+        margin-top: 14px;
+    }
+
+        .btn-add-option:hover {
+            background: rgba(255,167,38,0.06);
+            border-color: var(--warn);
+            box-shadow: 0 0 16px rgba(255,167,38,0.1);
+        }
+
+        .btn-add-option svg {
+            width: 16px;
+            height: 16px;
+        }
+
+    /* ── SUBMIT ── */
+    .ed-submit-wrap {
+        display: flex;
+        gap: 14px;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-top: 32px;
+    }
+
+    .btn-submit {
+        flex: 1;
+        min-width: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        background: var(--warn);
+        color: #000;
+        font-family: 'Syne', sans-serif;
+        font-weight: 800;
+        font-size: 0.82rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        padding: 16px 32px;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        transition: box-shadow 0.3s, transform 0.2s;
+    }
+
+        .btn-submit::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(255,255,255,0.15);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .btn-submit:hover::before {
+            transform: translateX(0);
+        }
+
+        .btn-submit:hover {
+            box-shadow: 0 0 32px rgba(255,167,38,0.45);
+            transform: translateY(-2px);
+        }
+
+        .btn-submit svg {
+            width: 18px;
+            height: 18px;
+        }
+
+    .btn-back {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--muted);
+        font-family: 'Syne', sans-serif;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        text-decoration: none;
+        padding: 16px 24px;
+        border: 1px solid var(--border);
+        border-radius: 3px;
+        transition: all 0.25s;
+    }
+
+        .btn-back:hover {
+            border-color: var(--border2);
+            color: var(--text);
+        }
+
+        .btn-back svg {
+            width: 16px;
+            height: 16px;
+        }
+
+    /* ── RESPONSIVE ── */
+    @@media (max-width: 768px) {
+        .ed-page {
+            padding: 24px 16px 80px;
+        }
+
+        .form-grid-3 {
+            grid-template-columns: 1fr;
+        }
+
+        .option-item {
+            grid-template-columns: auto 1fr auto;
+            grid-template-rows: auto auto auto;
+            gap: 8px;
+        }
+
+            .option-item .field-input {
+                grid-column: 1 / -1;
+            }
+
+        .img-current {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<div class="ed-page">
+
+    <!-- HEADER -->
+    <div class="ed-header">
+        <div class="ed-eyebrow" data-i18n="form.editEyebrow">@L["form.editEyebrow"]</div>
+        <h1 class="ed-title" data-i18n-html="form.editTitle">@L.Html("form.editTitle")</h1>
+        <div class="ed-id-badge"><span data-i18n="form.questionId">@L["form.questionId"]</span> <span>#@Model.Id</span></div>
+    </div>
+
+    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="Id" />
+
+        <!-- 01 SAVOL MATNI (3 til) -->
+        <partial name="_QuestionTextBlock" model="Model" view-data="ViewData" />
+
+        <!-- 02 RASM -->
+        <div class="ed-block">
+            <div class="ed-block-header">
+                <span class="ed-block-num">02</span>
+                <span class="ed-block-title" data-i18n="form.image">@L["form.image"]</span>
+            </div>
+            <div class="ed-block-body">
+
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <input type="hidden" name="RemoveImage" id="RemoveImage" value="false" />
+                    <div class="img-current" id="currentImageBlock">
+                        <div class="img-preview-wrap">
+                            <img src="~/uploads/@(Model.ImageUrl)?w=480" alt="@L["test.imageAlt"]" />
+                            <button type="button" id="removeImageBtn" class="img-remove-btn" title="@L["form.removeImage"]" data-i18n-title="form.removeImage">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                    <line x1="18" y1="6" x2="6" y2="18" />
+                                    <line x1="6" y1="6" x2="18" y2="18" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="img-current-info">
+                            <span class="img-badge" data-i18n="form.currentImage">@L["form.currentImage"]</span>
+                            <span class="img-hint" data-i18n-html="form.currentImageHint">@L.Html("form.currentImageHint")</span>
+                        </div>
+                    </div>
+                    <div class="img-divider"><span data-i18n="form.orNew">@L["form.orNew"]</span></div>
+                }
+
+                <input asp-for="ImageFile" type="file" id="imageInput" hidden accept="image/*" />
+
+                <div id="uploadZone" class="upload-zone">
+                    <div class="upload-icon-wrap">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                            <polyline points="16 16 12 12 8 16" />
+                            <line x1="12" y1="12" x2="12" y2="21" />
+                            <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" />
+                        </svg>
+                    </div>
+                    <div class="upload-title" data-i18n="form.uploadNew">@L["form.uploadNew"]</div>
+                    <div class="upload-hint-text" data-i18n="form.uploadHint">@L["form.uploadHint"]</div>
+                </div>
+
+                <div id="newPreviewWrap" class="new-preview-wrap" style="display:none;">
+                    <img id="newPreviewImg" src="" alt="preview" />
+                    <button type="button" id="removeNewImg" class="new-preview-remove" title="@L["form.removeImage"]" data-i18n-title="form.removeImage">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <line x1="18" y1="6" x2="6" y2="18" />
+                            <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- 03 VARIANTLAR -->
+        <div class="ed-block">
+            <div class="ed-block-header">
+                <span class="ed-block-num">03</span>
+                <span class="ed-block-title" data-i18n="form.options">@L["form.options"]</span>
+            </div>
+            <div class="ed-block-body">
+                <div class="option-list" id="optionList"></div>
+
+                <button type="button" class="btn-add-option" id="addOptionBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="12" y1="5" x2="12" y2="19" />
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                    <span data-i18n="form.addOption">@L["form.addOption"]</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 04 IZOH -->
+        <partial name="_QuestionExplanationBlock" model="Model" view-data="ViewData" />
+
+        <!-- SUBMIT -->
+        <div class="ed-submit-wrap">
+            <a asp-action="Index" class="btn-back">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="15 18 9 12 15 6" />
+                </svg>
+                <span data-i18n="form.back">@L["form.back"]</span>
+            </a>
+            <button type="submit" class="btn-submit">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v14a2 2 0 0 1-2 2z" />
+                    <polyline points="17 21 17 13 7 13 7 21" />
+                    <polyline points="7 3 7 8 15 8" />
+                </svg>
+                <span data-i18n="form.saveChanges">@L["form.saveChanges"]</span>
+            </button>
+        </div>
+
+    </form>
+</div>
+
+<script>
+    // ── EXISTING IMAGE REMOVE ──
+    const removeImageBtn = document.getElementById("removeImageBtn");
+    if (removeImageBtn) {
+        removeImageBtn.addEventListener("click", () => {
+            document.getElementById("currentImageBlock").style.display = "none";
+            document.getElementById("RemoveImage").value = "true";
+        });
+    }
+
+    // ── NEW IMAGE UPLOAD ──
+    const uploadZone     = document.getElementById("uploadZone");
+    const imageInput     = document.getElementById("imageInput");
+    const newPreviewWrap = document.getElementById("newPreviewWrap");
+    const newPreviewImg  = document.getElementById("newPreviewImg");
+    const removeNewImg   = document.getElementById("removeNewImg");
+
+    uploadZone.addEventListener("click", () => imageInput.click());
+
+    imageInput.addEventListener("change", function () {
+        const file = this.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = e => {
+            newPreviewImg.src = e.target.result;
+            uploadZone.style.display = "none";
+            newPreviewWrap.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+    });
+
+    removeNewImg.addEventListener("click", () => {
+        imageInput.value = "";
+        newPreviewImg.src = "";
+        newPreviewWrap.style.display = "none";
+        uploadZone.style.display = "block";
+    });
+
+    uploadZone.addEventListener("dragover", e => { e.preventDefault(); uploadZone.classList.add("drag-over"); });
+    uploadZone.addEventListener("dragleave", () => uploadZone.classList.remove("drag-over"));
+    uploadZone.addEventListener("drop", e => {
+        e.preventDefault();
+        uploadZone.classList.remove("drag-over");
+        imageInput.files = e.dataTransfer.files;
+        imageInput.dispatchEvent(new Event("change"));
+    });
+</script>
+
+<!-- Variantlar va kirill transliteratsiyasi -->
+<partial name="_QuestionFormAssets" model="Model" />

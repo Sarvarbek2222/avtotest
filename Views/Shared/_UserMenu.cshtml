@@ -1,0 +1,59 @@
+@* Foydalanuvchi avatari va menyusi (sayt, kabinet va admin paneli uchun umumiy) *@
+@if (User.Identity?.IsAuthenticated == true)
+{
+    var name = User.Identity.Name ?? "";
+    var fullName = User.FindFirst(System.Security.Claims.ClaimTypes.GivenName)?.Value;
+    var display = string.IsNullOrWhiteSpace(fullName) ? name : fullName;
+    var initials = string.Concat(display.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(p => char.ToUpperInvariant(p[0])));
+    if (initials.Length == 0) { initials = "?"; }
+    var isAdmin = User.IsInRole(Roles.SuperAdmin);
+    var roleKey = "role." + (isAdmin ? Roles.SuperAdmin : Roles.User);
+
+    <div class="ui-dd ui-user">
+        <button type="button" class="ui-dd-btn ui-user-btn" data-dd aria-haspopup="menu" aria-expanded="false" aria-label="@display">
+            <span class="ui-avatar">@initials</span>
+            <span class="ui-user-meta">
+                <span class="ui-user-name">@display</span>
+                <span class="ui-user-role" data-i18n="@roleKey">@L[roleKey]</span>
+            </span>
+            @Icons.Chevron
+        </button>
+        <div class="ui-dd-menu" role="menu">
+            <div class="ui-user-head">
+                <span class="ui-avatar ui-avatar-lg">@initials</span>
+                <div style="min-width:0;">
+                    <div class="ui-user-head-name">@display</div>
+                    <div class="ui-user-head-sub">@@@name · <span data-i18n="@roleKey">@L[roleKey]</span></div>
+                </div>
+            </div>
+            <div class="ui-dd-sep"></div>
+            @if (isAdmin)
+            {
+                <a class="ui-dd-item" role="menuitem" asp-controller="Question" asp-action="Index1">
+                    @Icons.Shield <span data-i18n="nav.admin">@L["nav.admin"]</span>
+                </a>
+                <a class="ui-dd-item" role="menuitem" asp-controller="Analytics" asp-action="Index">
+                    @Icons.TrendUp <span data-i18n="admin.analytics">@L["admin.analytics"]</span>
+                </a>
+            }
+            else
+            {
+                <a class="ui-dd-item" role="menuitem" asp-controller="Cabinet" asp-action="Index">
+                    @Icons.Grid <span data-i18n="nav.myCabinet">@L["nav.myCabinet"]</span>
+                </a>
+                <a class="ui-dd-item" role="menuitem" asp-controller="Cabinet" asp-action="Mistakes">
+                    @Icons.Alert <span data-i18n="cab.mistakes">@L["cab.mistakes"]</span>
+                </a>
+                <a class="ui-dd-item" role="menuitem" asp-controller="Home" asp-action="Index">
+                    @Icons.Play <span data-i18n="cab.startTest">@L["cab.startTest"]</span>
+                </a>
+            }
+            <div class="ui-dd-sep"></div>
+            <form asp-controller="Auth" asp-action="Logout" method="post">
+                <button type="submit" class="ui-dd-item danger" role="menuitem">
+                    @Icons.Logout <span data-i18n="nav.logout">@L["nav.logout"]</span>
+                </button>
+            </form>
+        </div>
+    </div>
+}

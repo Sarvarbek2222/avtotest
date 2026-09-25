@@ -1,0 +1,98 @@
+﻿@* Test sahifalarining yuqori paneli: logo · joriy test nomi + jonli progress · til menyusi · profil.
+   Test mantiqiga tegmaydi — progressni sahifaning `questions` / `answers` o'zgaruvchilaridan faqat o'qiydi. *@
+@{
+    var tracked = TestTypes.Detect(Context.Request);
+
+    // Test nomi uch tilda — til almashtirilganda sahifa qayta yuklanmaydi (data-i18n-pick)
+    string NameIn(string lang)
+    {
+        if (tracked is not { } t) return Texts.Get(lang, "test.pageTitle");
+        var name = Texts.Get(lang, "testType." + t.Type);
+        if (string.IsNullOrWhiteSpace(t.Ref)) return name;
+        return t.Type switch
+        {
+            TestTypes.Bilet => $"{name} №{t.Ref}",
+            TestTypes.Topic => $"{name}: {Topics.Display(t.Ref, lang)}",
+            _ => name,
+        };
+    }
+
+    var testName = NameIn(L.Lang);
+    var backUrl = User.IsInRole(Roles.SuperAdmin) ? "/Question/Index1" : "/Cabinet";
+}
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
+<link rel="stylesheet" href="~/css/app.css" asp-append-version="true" />
+
+<header class="ui-header ui-testbar">
+    <div class="ui-header-inner">
+        <a class="ui-brand" href="@backUrl" aria-label="AVTOPRAVA_SAM">
+            <img src="~/images/logo-96.png" alt="" />
+            <span>AVTOPRAVA_SAM</span>
+        </a>
+
+        <div class="ui-testbar-center">
+            <span class="ui-testbar-live" aria-hidden="true"></span>
+            <span class="ui-testbar-name" title="@testName" data-i18n-pick
+                  data-uz="@NameIn(Lang.Uz)" data-ru="@NameIn(Lang.Ru)" data-uzk="@NameIn(Lang.Uzk)">@testName</span>
+            <span class="ui-testbar-count" id="thCount" hidden aria-live="polite">
+                <b id="thAnswered">0</b><span class="ui-testbar-sep">/</span><span id="thTotal">0</span>
+            </span>
+        </div>
+
+        <div class="ui-header-actions">
+            <partial name="_LangDropdown" />
+            <partial name="_UserMenu" />
+        </div>
+    </div>
+    <div class="ui-testbar-progress" aria-hidden="true"><i id="thBar"></i></div>
+</header>
+
+<script src="~/js/ui.js" asp-append-version="true"></script>
+<script>
+    // Jonli progress: nechta savolga javob berilgani (test sahifasining o'z o'zgaruvchilaridan o'qiladi)
+    (function () {
+        var count = document.getElementById("thCount");
+        var answered = document.getElementById("thAnswered");
+        var total = document.getElementById("thTotal");
+        var bar = document.getElementById("thBar");
+        var last = "";
+        function tick() {
+            var q = null, a = null;
+            try { q = typeof questions !== "undefined" ? questions : null; } catch (e) { /* hali e'lon qilinmagan */ }
+            try { a = typeof answers !== "undefined" ? answers : null; } catch (e) { /* hali e'lon qilinmagan */ }
+            if (!q || !q.length || !a) return;
+            var n = q.filter(function (x) { return a[x.id] !== undefined; }).length;
+            var key = n + "/" + q.length;
+            if (key === last) return;
+            last = key;
+            answered.textContent = n;
+            total.textContent = q.length;
+            count.hidden = false;
+            bar.style.width = (100 * n / q.length) + "%";
+        }
+        setInterval(tick, 300);
+
+        // Keyingi 2 ta savol rasmini oldindan yuklab qo'yamiz — savolga o'tganda rasm darhol chiqadi
+        var preloaded = {};
+        function preload() {
+            var q = null, idx = 0;
+            try { q = typeof questions !== "undefined" ? questions : null; } catch (e) { /* ... */ }
+            try { idx = typeof currentIndex !== "undefined" ? currentIndex : 0; } catch (e) { /* ... */ }
+            if (!q || !q.length) return;
+            for (var i = idx; i <= idx + 2 && i < q.length; i++) {
+                var url = q[i] && q[i].imageUrl ? "/uploads/" + q[i].imageUrl : null;
+                if (url && !preloaded[url]) { preloaded[url] = true; new Image().src = url; }
+            }
+        }
+        setInterval(preload, 700);
+
+        // Brauzer tabi: "Real imtihon — AVTOPRAVA_SAM"
+        var nameEl = document.querySelector(".ui-testbar-name");
+        function setTitle() { document.title = nameEl.textContent + " — AVTOPRAVA_SAM"; }
+        setTitle();
+        document.addEventListener("DOMContentLoaded", setTitle); // i18n.js sarlavhani yangilagandan keyin
+        document.addEventListener("i18n:change", setTitle);
+    })();
+</script>

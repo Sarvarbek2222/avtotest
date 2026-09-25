@@ -1,0 +1,71 @@
+@model CabinetModel
+@* Kabinet bosh sahifasi mazmuni (foydalanuvchi kabineti va admin → o'quvchi sahifasi uchun umumiy) *@
+@{
+    var s = Model.Stats;
+}
+@if (s.AllAttemptsCount == 0)
+{
+    <div class="ca-card ca-empty">
+        <div class="ca-empty-icon">@Icons.Play</div>
+        <h3 data-i18n="cab.empty">@L["cab.empty"]</h3>
+        <p data-i18n="cab.emptyText">@L["cab.emptyText"]</p>
+        @if (!Model.IsAdminView)
+        {
+            <a class="ca-btn ca-btn-primary" asp-controller="Home" asp-action="Index">@Icons.Play <span data-i18n="cab.startTest">@L["cab.startTest"]</span></a>
+        }
+    </div>
+}
+else
+{
+    <div class="ca-grid ca-grid-main">
+        <div class="ca-stack">
+            <partial name="Cabinet/_Readiness" model="s" />
+            <partial name="Cabinet/_ProgressChart" model="s.Daily" />
+            <div class="ca-card">
+                <div class="ca-card-head">
+                    <h3 class="ca-card-title" data-i18n="cab.recent">@L["cab.recent"]</h3>
+                    @if (!Model.IsAdminView)
+                    {
+                        <a class="ca-link" asp-controller="Cabinet" asp-action="Results" data-i18n="cab.viewAll">@L["cab.viewAll"]</a>
+                    }
+                </div>
+                <partial name="Cabinet/_AttemptsTable" model="new AttemptsTable(Model, s.Attempts.Take(5).ToList(), true)" />
+            </div>
+        </div>
+
+        <div class="ca-stack">
+            <partial name="Cabinet/_Kpis" model="s" />
+
+            <div class="ca-card">
+                <div class="ca-card-head">
+                    <h3 class="ca-card-title" data-i18n="cab.mistakesTitle">@L["cab.mistakesTitle"]</h3>
+                    <span class="ca-badge @(s.ActiveMistakes > 0 ? "ca-badge-warn" : "ca-badge-ok")">@s.ActiveMistakes</span>
+                </div>
+                <p class="ca-muted ca-small" style="margin:0 0 14px;">@L.F("cab.mistakesResolved", ("n", s.ResolvedMistakes))</p>
+                @if (!Model.IsAdminView && s.ActiveMistakes > 0)
+                {
+                    <a class="ca-btn ca-btn-primary ca-btn-block" asp-controller="Cabinet" asp-action="Practice">
+                        @Icons.Repeat <span data-i18n="cab.fixMistakes">@L["cab.fixMistakes"]</span>
+                    </a>
+                }
+            </div>
+
+            <partial name="Cabinet/_WeakTopics" model="Model" />
+
+            <div class="ca-card">
+                <div class="ca-card-head">
+                    <h3 class="ca-card-title" data-i18n="cab.insights">@L["cab.insights"]</h3>
+                    @if (!Model.IsAdminView)
+                    {
+                        <a class="ca-link" asp-controller="Cabinet" asp-action="Analysis" data-i18n="cab.analysis">@L["cab.analysis"]</a>
+                    }
+                </div>
+                <partial name="Cabinet/_Insights" model="s.Insights.Take(4).ToList()" />
+            </div>
+        </div>
+    </div>
+
+    <div class="ca-section">
+        <partial name="Cabinet/_ByType" model="s" />
+    </div>
+}

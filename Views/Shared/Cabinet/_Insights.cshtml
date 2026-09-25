@@ -1,0 +1,14 @@
+@model List<Insight>
+@* Tavsiyalar ro'yxati (ichki tahlil dvigateli) *@
+<ul class="ca-insights">
+    @foreach (var i in Model)
+    {
+        var cls = i.Level switch { InsightLevel.Good => "good", InsightLevel.Warn => "warn", _ => "info" };
+        <li class="ca-insight @cls">
+            <span class="ca-insight-dot">
+                @(i.Level switch { InsightLevel.Good => Icons.Ok, InsightLevel.Warn => Icons.Warn, _ => Icons.Info })
+            </span>
+            <span class="ca-insight-text">@L.InsightText(i)</span>
+        </li>
+    }
+</ul>

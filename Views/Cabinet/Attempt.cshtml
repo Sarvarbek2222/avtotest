@@ -1,0 +1,17 @@
+@model AttemptDetail
+@{
+    ViewData["TitleKey"] = "cab.attemptTitle";
+    ViewData["Title"] = L["cab.attemptTitle"];
+}
+
+<div class="ca-page-head">
+    <div>
+        <a class="ca-link" asp-action="Results" style="display:inline-flex;align-items:center;gap:6px;">
+            <span style="width:16px;height:16px;display:inline-flex;">@Icons.ArrowLeft</span>
+            <span data-i18n="cab.backToResults">@L["cab.backToResults"]</span>
+        </a>
+        <h1 class="ca-h1" style="margin-top:8px;" data-i18n="cab.attemptTitle">@L["cab.attemptTitle"]</h1>
+    </div>
+</div>
+
+<partial name="Cabinet/_AttemptDetail" model="Model" />

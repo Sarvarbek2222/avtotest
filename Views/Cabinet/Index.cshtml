@@ -1,0 +1,25 @@
+@model CabinetModel
+@{
+    ViewData["TitleKey"] = "cab.overview";
+    ViewData["Title"] = L["cab.overview"];
+    ViewData["ActiveMistakes"] = Model.Stats.ActiveMistakes;
+    var u = Model.Stats.User;
+    var name = string.IsNullOrWhiteSpace(u.FullName) ? u.Username : u.FullName.Split(' ', StringSplitOptions.RemoveEmptyEntries)[0];
+}
+
+<div class="ca-page-head">
+    <div>
+        <div class="ca-eyebrow" data-i18n="nav.myCabinet">@L["nav.myCabinet"]</div>
+        <h1 class="ca-h1">@L.F("cab.hello", ("name", name))</h1>
+        <p class="ca-sub" data-i18n="cab.helloSub">@L["cab.helloSub"]</p>
+    </div>
+    <div class="ca-actions">
+        @if (Model.Stats.ActiveMistakes > 0)
+        {
+            <a class="ca-btn ca-btn-ghost" asp-action="Practice">@Icons.Repeat <span data-i18n="cab.fixMistakes">@L["cab.fixMistakes"]</span></a>
+        }
+        <a class="ca-btn ca-btn-primary" asp-controller="Home" asp-action="Index">@Icons.Play <span data-i18n="cab.startTest">@L["cab.startTest"]</span></a>
+    </div>
+</div>
+
+<partial name="Cabinet/_Overview" model="Model" />

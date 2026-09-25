@@ -1,0 +1,53 @@
+
+
+/* Navbar dark blue */
+.custom-nav {
+    background-color: #0b3d91 !important;
+}
+
+/* Navbar linklar button ko‘rinishida: yashil, o‘tkir, qora border, shadow */
+.nav-btn {
+    padding: 10px 22px;
+    margin: 0 5px;
+    color: #28a745;
+    background-color: transparent;
+    border: 2px solid black;
+    /*border-radius: 4px;*/
+    box-shadow: 2px 2px 6px rgba(0,0,0,0.4);
+    font-weight: 500;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+    /* Hover effekt */
+    .nav-btn:hover {
+        background-color: #28a745;
+        color: white;
+        box-shadow: 4px 4px 10px rgba(0,0,0,0.5);
+        transform: translateY(-2px);
+    }
+
+/* Til tugmalari */
+.top-lang {
+    background-color: #0b3d91;
+}
+
+.lang-btn {
+    padding: 6px 14px;
+    margin: 0 5px;
+    color: #28a745;
+    background-color: transparent;
+    border: 2px solid black;
+    border-radius: 4px;
+    box-shadow: 2px 2px 6px rgba(0,0,0,0.4);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+    .lang-btn:hover {
+        background-color: #28a745;
+        color: white;
+        box-shadow: 4px 4px 10px rgba(0,0,0,0.5);
+        transform: translateY(-2px);
+    }

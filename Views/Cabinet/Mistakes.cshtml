@@ -1,0 +1,19 @@
+@model CabinetModel
+@{
+    ViewData["TitleKey"] = "cab.mistakes";
+    ViewData["Title"] = L["cab.mistakes"];
+    ViewData["ActiveMistakes"] = Model.Stats.ActiveMistakes;
+}
+
+<div class="ca-page-head">
+    <div>
+        <div class="ca-eyebrow" data-i18n="nav.myCabinet">@L["nav.myCabinet"]</div>
+        <h1 class="ca-h1" data-i18n="cab.mistakes">@L["cab.mistakes"]</h1>
+    </div>
+    @if (Model.Stats.ActiveMistakes > 0)
+    {
+        <a class="ca-btn ca-btn-primary" asp-action="Practice">@Icons.Repeat <span data-i18n="cab.fixMistakes">@L["cab.fixMistakes"]</span></a>
+    }
+</div>
+
+<partial name="Cabinet/_MistakesList" model="Model" />

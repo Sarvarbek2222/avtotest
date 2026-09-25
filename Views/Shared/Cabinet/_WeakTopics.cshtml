@@ -1,0 +1,30 @@
+@model CabinetModel
+@* Ko'proq ishlash kerak bo'lgan mavzular (+ mashq qilish havolasi — faqat foydalanuvchiga) *@
+<div class="ca-card">
+    <div class="ca-card-head">
+        <h3 class="ca-card-title" data-i18n="cab.weakTopics">@L["cab.weakTopics"]</h3>
+    </div>
+    @if (Model.Stats.WeakTopics.Count == 0)
+    {
+        <p class="ca-muted" data-i18n="cab.noWeakTopics">@L["cab.noWeakTopics"]</p>
+    }
+    else
+    {
+        foreach (var t in Model.Stats.WeakTopics)
+        {
+            var pct = Math.Round(t.Accuracy * 100);
+            <div class="ca-topic">
+                <div style="min-width:0;">
+                    <div class="ca-topic-name">@L.Topic(t.Topic)</div>
+                    <div class="ca-topic-meta">@t.Correct / @t.Answered · <b style="color:@Score.Color(pct);">@pct%</b></div>
+                </div>
+                @if (!Model.IsAdminView)
+                {
+                    <a class="ca-btn ca-btn-ghost ca-btn-sm" asp-controller="Topic" asp-action="Test" asp-route-topic="@t.Topic"
+                       data-i18n="cab.practiceTopic">@L["cab.practiceTopic"]</a>
+                }
+                <div class="ca-bar @Score.BarClass(pct)"><i data-w="@pct"></i></div>
+            </div>
+        }
+    }
+</div>

@@ -1,0 +1,76 @@
+@model CabinetModel
+@{
+    Layout = "_AdminLayout";
+    var u = Model.Stats.User;
+    var display = u.FullName ?? u.Username;
+    ViewData["TitleKey"] = "an.colStudent";
+    ViewData["Title"] = display;
+    var types = Model.Stats.ByType.Select(t => t.Type).ToList();
+}
+
+<div class="ca-body-embed">
+    <div class="ca-page-head">
+        <div style="min-width:0;">
+            <a class="ca-link" asp-action="Index" style="display:inline-flex;align-items:center;gap:6px;">
+                <span style="width:16px;height:16px;display:inline-flex;">@Icons.ArrowLeft</span>
+                <span data-i18n="an.backToList">@L["an.backToList"]</span>
+            </a>
+            <div style="display:flex;align-items:center;gap:14px;margin-top:10px;">
+                <span class="ui-avatar ui-avatar-lg">@string.Concat(display.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(x => char.ToUpperInvariant(x[0])))</span>
+                <div style="min-width:0;">
+                    <h1 class="ca-h1">@display</h1>
+                    <p class="ca-sub" style="margin-top:2px;">@@@u.Username · <span data-i18n="users.lastLogin">@L["users.lastLogin"]</span>: @(u.LastLoginAt is DateTime ll ? L.Stamp(ll) : "—")</p>
+                </div>
+            </div>
+        </div>
+        <a class="ca-btn ca-btn-ghost" asp-controller="Users" asp-action="Edit" asp-route-id="@u.Id">@Icons.User <span data-i18n="qs.edit">@L["qs.edit"]</span></a>
+    </div>
+
+    <div class="ca-alert ca-alert-info" data-i18n="an.studentNote">@L["an.studentNote"]</div>
+
+    <partial name="Cabinet/_Overview" model="Model" />
+
+    <h2 class="ca-h1 ca-section" style="font-size:1.3rem;margin-bottom:14px;" data-i18n="cab.analysis">@L["cab.analysis"]</h2>
+    <partial name="Cabinet/_AnalysisBody" model="Model" />
+
+    <h2 class="ca-h1 ca-section" style="font-size:1.3rem;margin-bottom:14px;" data-i18n="cab.mistakes">@L["cab.mistakes"]</h2>
+    <partial name="Cabinet/_MistakesList" model="Model" />
+
+    <h2 class="ca-h1 ca-section" style="font-size:1.3rem;margin-bottom:14px;" id="results" data-i18n="cab.results">@L["cab.results"]</h2>
+    <div class="ca-card">
+        <div class="ca-chips">
+            <a class="ca-chip @(Model.FilterType == null ? "active" : "")" asp-action="Student" asp-route-id="@u.Id" asp-fragment="results" data-i18n="cab.filterAll">@L["cab.filterAll"]</a>
+            @foreach (var t in types)
+            {
+                <a class="ca-chip @(Model.FilterType == t ? "active" : "")" asp-action="Student" asp-route-id="@u.Id" asp-route-type="@t" asp-fragment="results">@L["testType." + t]</a>
+            }
+        </div>
+        @if (Model.PageAttempts.Count == 0)
+        {
+            <p class="ca-muted" data-i18n="cab.noActivity">@L["cab.noActivity"]</p>
+        }
+        else
+        {
+            <partial name="Cabinet/_AttemptsTable" model="new AttemptsTable(Model, Model.PageAttempts, false)" />
+            @if (Model.TotalPages > 1)
+            {
+                <div class="ca-pager">
+                    <span class="ca-muted ca-small">@Model.Page / @Model.TotalPages</span>
+                    <div class="ca-actions">
+                        @if (Model.Page > 1)
+                        {
+                            <a class="ca-btn ca-btn-ghost ca-btn-sm" asp-action="Student" asp-route-id="@u.Id" asp-route-type="@Model.FilterType" asp-route-page="@(Model.Page - 1)" asp-fragment="results">@Icons.ArrowLeft</a>
+                        }
+                        @if (Model.Page < Model.TotalPages)
+                        {
+                            <a class="ca-btn ca-btn-ghost ca-btn-sm" asp-action="Student" asp-route-id="@u.Id" asp-route-type="@Model.FilterType" asp-route-page="@(Model.Page + 1)" asp-fragment="results">@Icons.ArrowRight</a>
+                        }
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@Html.AntiForgeryToken()
+<script>document.documentElement.setAttribute("data-lang-reload", "");</script>

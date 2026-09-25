@@ -1,0 +1,129 @@
+@model CabinetModel
+@* Tahlil: AI tahlili, tavsiyalar, tayyorlik tarkibi, barcha mavzular bo'yicha natijalar *@
+@{
+    var s = Model.Stats;
+    var aiUrl = Model.IsAdminView ? $"/Analytics/Ai/{s.User.Id}" : "/Cabinet/Ai";
+}
+<div class="ca-grid ca-grid-2">
+    <div class="ca-stack">
+        <div class="ca-card ca-ai" id="aiCard">
+            <div class="ca-card-head">
+                <div>
+                    <h3 class="ca-card-title" style="display:flex;align-items:center;gap:8px;">
+                        <span style="width:20px;height:20px;display:inline-flex;color:#a78bfa;">@Icons.Sparkles</span>
+                        <span data-i18n="cab.aiTitle">@L["cab.aiTitle"]</span>
+                    </h3>
+                    <p class="ca-card-sub" data-i18n="cab.aiHint">@L["cab.aiHint"]</p>
+                </div>
+                @if (Model.AiEnabled && s.TotalAnswered > 0)
+                {
+                    <button type="button" class="ca-btn ca-btn-primary ca-btn-sm" id="aiBtn" data-url="@aiUrl">
+                        @Icons.Sparkles <span data-i18n="cab.aiButton">@L["cab.aiButton"]</span>
+                    </button>
+                }
+            </div>
+            @if (!Model.AiEnabled)
+            {
+                <p class="ca-muted ca-small" style="margin:0 0 12px;" data-i18n="cab.aiDisabled">@L["cab.aiDisabled"]</p>
+            }
+            <div class="ca-ai-loading"><span class="ca-spinner"></span><span data-i18n="cab.aiLoading">@L["cab.aiLoading"]</span></div>
+            <div class="ca-ai-text" id="aiText" hidden></div>
+            <p class="ca-small" id="aiError" style="color:#f87171;margin:0;" hidden data-i18n="cab.aiError">@L["cab.aiError"]</p>
+
+            <div style="margin-top:14px;">
+                <partial name="Cabinet/_Insights" model="s.Insights" />
+            </div>
+        </div>
+    </div>
+
+    <div class="ca-stack">
+        <div class="ca-card">
+            <div class="ca-card-head">
+                <h3 class="ca-card-title" data-i18n="cab.readinessBreakdown">@L["cab.readinessBreakdown"]</h3>
+                <div class="ca-ring sm" style="--p:@s.ReadinessScore; --c:@Score.Color(s.ReadinessScore);">
+                    <div class="ca-ring-value">@s.ReadinessScore</div>
+                </div>
+            </div>
+            <div class="ca-factor">
+                <div class="ca-factor-top">
+                    <span><span data-i18n="cab.factorAccuracy">@L["cab.factorAccuracy"]</span> · 50%</span>
+                    <b>@Score.Pct(s.RecentAccuracy)% <span class="ca-muted ca-small">/ @L.F("cab.factorTarget", ("n", 90))</span></b>
+                </div>
+                <div class="ca-bar @Score.BarClass(s.AccuracyScore)"><i data-w="@s.AccuracyScore"></i></div>
+            </div>
+            <div class="ca-factor">
+                <div class="ca-factor-top">
+                    <span><span data-i18n="cab.factorExams">@L["cab.factorExams"]</span> · 30%</span>
+                    <b>@s.ExamScore%</b>
+                </div>
+                <div class="ca-bar @Score.BarClass(s.ExamScore)"><i data-w="@s.ExamScore"></i></div>
+            </div>
+            <div class="ca-factor">
+                <div class="ca-factor-top">
+                    <span><span data-i18n="cab.factorCoverage">@L["cab.factorCoverage"]</span> · 20%</span>
+                    <b>@s.DistinctCorrect / @s.BankSize <span class="ca-muted ca-small">/ @L.F("cab.factorTarget", ("n", 70))</span></b>
+                </div>
+                <div class="ca-bar info"><i data-w="@s.CoverageScore"></i></div>
+            </div>
+        </div>
+
+        <div class="ca-card">
+            <div class="ca-card-head">
+                <h3 class="ca-card-title" data-i18n="cab.topicsTitle">@L["cab.topicsTitle"]</h3>
+            </div>
+            @foreach (var t in s.Topics.OrderBy(t => t.Answered == 0).ThenBy(t => t.Accuracy))
+            {
+                var pct = Math.Round(t.Accuracy * 100);
+                <div class="ca-topic">
+                    <div style="min-width:0;">
+                        <div class="ca-topic-name">@L.Topic(t.Topic)</div>
+                        <div class="ca-topic-meta">
+                            @if (t.Answered == 0)
+                            {
+                                <span data-i18n="cab.notPracticed">@L["cab.notPracticed"]</span>
+                            }
+                            else
+                            {
+                                <span>@t.Correct / @t.Answered</span>
+                            }
+                        </div>
+                    </div>
+                    <b style="color:@(t.Answered == 0 ? "var(--ca-faint)" : Score.Color(pct));">@(t.Answered == 0 ? "—" : pct + "%")</b>
+                    <div class="ca-bar @Score.BarClass(pct)"><i data-w="@(t.Answered == 0 ? 0 : pct)"></i></div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        var btn = document.getElementById("aiBtn");
+        if (!btn) return;
+        var card = document.getElementById("aiCard");
+        var out = document.getElementById("aiText");
+        var err = document.getElementById("aiError");
+        btn.addEventListener("click", function () {
+            var token = document.querySelector('input[name="__RequestVerificationToken"]');
+            btn.disabled = true;
+            card.classList.add("loading");
+            out.hidden = true; err.hidden = true;
+            fetch(btn.getAttribute("data-url"), {
+                method: "POST",
+                credentials: "same-origin",
+                headers: { "RequestVerificationToken": token ? token.value : "", "Accept": "application/json" }
+            }).then(function (r) {
+                if (!r.ok) throw new Error(r.status);
+                return r.json();
+            }).then(function (d) {
+                out.textContent = d.text;
+                out.hidden = false;
+            }).catch(function () {
+                err.hidden = false;
+            }).finally(function () {
+                card.classList.remove("loading");
+                btn.disabled = false;
+            });
+        });
+    })();
+</script>

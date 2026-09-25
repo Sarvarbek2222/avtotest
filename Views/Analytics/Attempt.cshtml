@@ -1,0 +1,21 @@
+@model AttemptDetail
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "cab.attemptTitle";
+    ViewData["Title"] = L["cab.attemptTitle"];
+}
+
+<div class="ca-body-embed">
+    <div class="ca-page-head">
+        <div>
+            <a class="ca-link" asp-action="Student" asp-route-id="@Model.User.Id" asp-fragment="results" style="display:inline-flex;align-items:center;gap:6px;">
+                <span style="width:16px;height:16px;display:inline-flex;">@Icons.ArrowLeft</span>
+                <span>@(Model.User.FullName ?? Model.User.Username)</span>
+            </a>
+            <h1 class="ca-h1" style="margin-top:8px;" data-i18n="cab.attemptTitle">@L["cab.attemptTitle"]</h1>
+        </div>
+    </div>
+
+    <partial name="Cabinet/_AttemptDetail" model="Model" />
+</div>
+<script>document.documentElement.setAttribute("data-lang-reload", "");</script>

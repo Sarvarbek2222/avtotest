@@ -1,0 +1,110 @@
+﻿@{
+    ViewData["TitleKey"] = "bilet.pageTitle";
+    ViewData["Title"] = L["bilet.pageTitle"];
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4 text-center" data-i18n="bilet.list">@L["bilet.list"]</h2>
+
+    <div class="row g-3" id="biletContainer">
+        <!-- Biletlar JS orqali yuklanadi -->
+    </div>
+</div>
+
+<style>
+    /* Bilet kartalari */
+    .bilet-card {
+        background-color: #000; /* qora */
+        color: #fff; /* oq matn */
+        padding: 20px;
+        text-align: center;
+        font-weight: bold;
+        font-size: 18px;
+        cursor: pointer;
+        transition: transform 0.3s, background-color 0.3s, color 0.3s;
+        border-radius: 8px;
+        user-select: none;
+        border: 2px solid #fff; /* oq chegara */
+    }
+
+        .bilet-card:hover {
+            transform: translateY(-5px) scale(1.05);
+            background-color: #fff; /* hover oq fon */
+            color: #000; /* hover qora matn */
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+    /* Har bir qatorda 8 ta bilet desktopda */
+    @@media (min-width: 1200px) {
+        .bilet-col
+
+    {
+        flex: 0 0 12.5%;
+        max-width: 12.5%;
+    }
+
+    }
+
+    /* Large screens: 6 ta bilet */
+    @@media (min-width: 992px) and (max-width: 1199px) {
+        .bilet-col
+
+    {
+        flex: 0 0 16.6667%;
+        max-width: 16.6667%;
+    }
+
+    }
+
+    /* Medium screens: 4 ta bilet */
+    @@media (min-width: 768px) and (max-width: 991px) {
+        .bilet-col
+
+    {
+        flex: 0 0 25%;
+        max-width: 25%;
+    }
+
+    }
+
+    /* Small screens: 2 ta bilet */
+    @@media (max-width: 767px) {
+        .bilet-col
+
+    {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", async () => {
+        const container = document.getElementById("biletContainer");
+
+        // Biletlar sonini API orqali olish
+        const res = await fetch('/Bilet/GetAllBilets');
+        const data = await res.json();
+        const totalBilets = data.totalBilets;
+
+        for(let i=1; i<=totalBilets; i++){
+            const col = document.createElement("div");
+            col.className = "col bilet-col";
+
+            const card = document.createElement("div");
+            card.className = "bilet-card";
+            card.setAttribute("data-i18n", "bilet.item");
+            card.setAttribute("data-i18n-args", JSON.stringify({ n: i }));
+            card.innerText = I18n.t("bilet.item", { n: i });
+
+            card.onclick = ()=>{
+                // TestPage sahifasiga yo'naltirish
+                window.location.href = `/Bilet/TestPage?biletNumber=${i}`;
+            };
+
+            col.appendChild(card);
+            container.appendChild(col);
+        }
+    });
+</script>

@@ -1,0 +1,58 @@
+@model UserStats
+@* Asosiy ko'rsatkichlar *@
+<div class="ca-grid ca-grid-kpi">
+    <div class="ca-card ca-card-hover">
+        <div class="ca-kpi">
+            <div class="ca-kpi-icon info">@Icons.TrendUp</div>
+            <div>
+                <div class="ca-kpi-label" data-i18n="cab.avgResult">@L["cab.avgResult"]</div>
+                <div class="ca-kpi-value">@Math.Round(Model.AveragePercent)<small>%</small></div>
+            </div>
+        </div>
+    </div>
+    <div class="ca-card ca-card-hover">
+        <div class="ca-kpi">
+            <div class="ca-kpi-icon brand">@Icons.List</div>
+            <div>
+                <div class="ca-kpi-label" data-i18n="cab.testsTaken">@L["cab.testsTaken"]</div>
+                <div class="ca-kpi-value">@Model.TotalAttempts</div>
+            </div>
+        </div>
+    </div>
+    <div class="ca-card ca-card-hover">
+        <div class="ca-kpi">
+            <div class="ca-kpi-icon ok">@Icons.Ok</div>
+            <div>
+                <div class="ca-kpi-label" data-i18n="cab.answered">@L["cab.answered"]</div>
+                <div class="ca-kpi-value">@Model.TotalAnswered <small>@Score.Pct(Model.Accuracy)%</small></div>
+            </div>
+        </div>
+    </div>
+    <div class="ca-card ca-card-hover">
+        <div class="ca-kpi">
+            <div class="ca-kpi-icon warn">@Icons.Alert</div>
+            <div>
+                <div class="ca-kpi-label" data-i18n="cab.activeMistakes">@L["cab.activeMistakes"]</div>
+                <div class="ca-kpi-value">@Model.ActiveMistakes</div>
+            </div>
+        </div>
+    </div>
+    <div class="ca-card ca-card-hover">
+        <div class="ca-kpi">
+            <div class="ca-kpi-icon info">@Icons.Clock</div>
+            <div>
+                <div class="ca-kpi-label" data-i18n="cab.studyTime">@L["cab.studyTime"]</div>
+                <div class="ca-kpi-value" style="font-size:1.3rem;">@L.Duration(Model.StudyMinutes)</div>
+            </div>
+        </div>
+    </div>
+    <div class="ca-card ca-card-hover">
+        <div class="ca-kpi">
+            <div class="ca-kpi-icon brand">@Icons.Flame</div>
+            <div>
+                <div class="ca-kpi-label" data-i18n="cab.streak">@L["cab.streak"]</div>
+                <div class="ca-kpi-value">@Model.StreakDays</div>
+            </div>
+        </div>
+    </div>
+</div>

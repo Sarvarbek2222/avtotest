@@ -1,0 +1,72 @@
+@model Question
+@* Savol matni (3 til) + mavzu. ViewData["P"] — CSS prefiksi: "cr" (Create) yoki "ed" (Edit). *@
+@{
+    var p = (string)ViewData["P"]!;
+}
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="qf-errors" role="alert">
+        @foreach (var err in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <div>⚠ @err.ErrorMessage</div>
+        }
+    </div>
+}
+
+<div class="@(p)-block">
+    <div class="@(p)-block-header">
+        <span class="@(p)-block-num">01</span>
+        <span class="@(p)-block-title" data-i18n="form.questionText">@L["form.questionText"]</span>
+        <button type="button" class="btn-tl btn-tl-all" id="translitAllBtn"
+                title="@L["form.translitAll"]" data-i18n-title="form.translitAll">
+            ⇄ <span data-i18n="form.translitAll">@L["form.translitAll"]</span>
+        </button>
+    </div>
+    <div class="@(p)-block-body">
+        <div class="form-grid-3">
+            <div class="field-group">
+                <label class="field-label" for="QuestionUZ">
+                    <span data-i18n="form.langUz">@L["form.langUz"]</span> <span class="qf-req">*</span>
+                </label>
+                <textarea asp-for="QuestionUZ" class="field-input" rows="3" data-tl-src="question"
+                          placeholder="@L["form.phQuestionUz"]"></textarea>
+            </div>
+            <div class="field-group">
+                <label class="field-label" for="QuestionRU">
+                    <span data-i18n="form.langRu">@L["form.langRu"]</span>
+                    <span class="qf-opt" data-i18n="form.optional">@L["form.optional"]</span>
+                </label>
+                <textarea asp-for="QuestionRU" class="field-input" rows="3"
+                          placeholder="@L["form.phQuestionRu"]"></textarea>
+            </div>
+            <div class="field-group">
+                <label class="field-label" for="QuestionUZK">
+                    <span data-i18n="form.langUzk">@L["form.langUzk"]</span>
+                    <span class="qf-opt" data-i18n="form.optional">@L["form.optional"]</span>
+                </label>
+                <textarea asp-for="QuestionUZK" class="field-input" rows="3" data-tl-dst="question"
+                          placeholder="@L["form.phQuestionUzk"]"></textarea>
+                <button type="button" class="btn-tl" data-tl-btn="question"
+                        title="@L["form.translitTitle"]" data-i18n-title="form.translitTitle">
+                    ⇄ <span data-i18n="form.translit">@L["form.translit"]</span>
+                </button>
+            </div>
+        </div>
+
+        <p class="qf-hint" data-i18n="form.translitHint">@L["form.translitHint"]</p>
+        <p class="qf-hint qf-note" id="translitNote" style="display:none;"></p>
+
+        <div class="field-group" style="margin-top:20px;">
+            <label class="field-label" for="Topic" data-i18n="form.topic">@L["form.topic"]</label>
+            <select asp-for="Topic" class="field-input">
+                <option value="" data-i18n="form.chooseTopic">@L["form.chooseTopic"]</option>
+                @foreach (var t in Topics.All)
+                {
+                    <option value="@t" data-i18n-pick
+                            data-uz="@Topics.Display(t, Lang.Uz)" data-ru="@Topics.Display(t, Lang.Ru)" data-uzk="@t">@L.Topic(t)</option>
+                }
+            </select>
+        </div>
+    </div>
+</div>

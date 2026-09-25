@@ -1,0 +1,447 @@
+﻿@{
+    Layout = null;
+    ViewData["TitleKey"] = "login.pageTitle";
+    ViewData["Title"] = L["login.pageTitle"];
+    var hasError = ViewBag.Error != null;
+}
+<!DOCTYPE html>
+<html lang="@L.HtmlLang" data-lang="@L.Lang" data-title-key="login.pageTitle" data-title-suffix=" — AVTOPRAVA_SAM">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <title>@ViewData["Title"] — AVTOPRAVA_SAM</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" />
+    <link rel="stylesheet" href="~/css/app.css" asp-append-version="true" />
+    <partial name="_I18nScripts" />
+    <style>
+        .lg-body {
+            margin: 0;
+            min-height: 100vh;
+            min-height: 100dvh;
+            background: var(--ca-bg);
+            color: var(--ca-text);
+            font-family: var(--ca-font);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+            .lg-body *, .lg-body *::before, .lg-body *::after { box-sizing: border-box; }
+
+        .lg-shell {
+            display: grid;
+            grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr);
+            min-height: 100vh;
+            min-height: 100dvh;
+        }
+
+        /* ───── Chap: brend paneli ───── */
+        .lg-brand {
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 40px;
+            padding: clamp(28px, 5vw, 64px);
+            background: radial-gradient(120% 90% at 0% 0%, #1a0c12 0%, #0b0c11 55%, #07080c 100%);
+            border-right: 1px solid var(--ca-border);
+            isolation: isolate;
+        }
+
+        .lg-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(70px);
+            opacity: .55;
+            z-index: -1;
+            animation: lg-float 16s ease-in-out infinite alternate;
+        }
+
+        .lg-blob.b1 { width: 420px; height: 420px; background: #ff2d4a; top: -140px; left: -120px; opacity: .35; }
+        .lg-blob.b2 { width: 360px; height: 360px; background: #ff7a45; bottom: -160px; right: -80px; opacity: .22; animation-duration: 20s; }
+        .lg-blob.b3 { width: 260px; height: 260px; background: #38bdf8; top: 45%; left: 55%; opacity: .12; animation-duration: 24s; }
+
+        @@keyframes lg-float {
+            from { transform: translate(0, 0) scale(1); }
+            to { transform: translate(40px, 30px) scale(1.12); }
+        }
+
+        /* Yo'l chiziqlari */
+        .lg-road {
+            position: absolute;
+            inset: auto -10% -12% -10%;
+            height: 55%;
+            z-index: -1;
+            background:
+                linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px) 0 0 / 100% 56px,
+                linear-gradient(90deg, transparent calc(50% - 3px), rgba(255,255,255,.22) calc(50% - 3px), rgba(255,255,255,.22) calc(50% + 3px), transparent calc(50% + 3px)) 0 0 / 100% 84px;
+            -webkit-mask: linear-gradient(to top, #000 10%, transparent 90%);
+            mask: linear-gradient(to top, #000 10%, transparent 90%);
+            transform: perspective(420px) rotateX(58deg);
+            transform-origin: bottom;
+            animation: lg-drive 2.4s linear infinite;
+        }
+
+        @@keyframes lg-drive { to { background-position: 0 56px, 0 84px; } }
+
+        .lg-logo { display: inline-flex; align-items: center; gap: 12px; color: #fff; text-decoration: none; }
+        .lg-logo img { width: 46px; height: 46px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 3px rgba(255,255,255,.06); }
+        .lg-logo b { font-size: 1.05rem; letter-spacing: .08em; }
+
+        .lg-title {
+            margin: 0 0 18px;
+            font-size: clamp(1.9rem, 3.6vw, 3.1rem);
+            line-height: 1.08;
+            font-weight: 900;
+            letter-spacing: -.02em;
+            color: #fff;
+        }
+
+            .lg-title br + * { color: var(--ca-brand); }
+
+        .lg-lead { margin: 0; max-width: 46ch; color: #aeb2c3; font-size: clamp(.95rem, 1.2vw, 1.05rem); line-height: 1.7; }
+
+        .lg-features { list-style: none; margin: 28px 0 0; padding: 0; display: grid; gap: 12px; max-width: 460px; }
+
+        .lg-feature {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 16px;
+            border-radius: 16px;
+            background: rgba(255,255,255,.035);
+            border: 1px solid rgba(255,255,255,.07);
+            backdrop-filter: blur(6px);
+            font-weight: 600;
+            font-size: .95rem;
+            transition: transform .25s var(--ca-ease), border-color .25s, background .25s;
+        }
+
+            .lg-feature:hover { transform: translateX(6px); border-color: rgba(255,45,74,.4); background: rgba(255,45,74,.06); }
+
+        .lg-feature-icon { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; flex-shrink: 0; background: var(--ca-brand-soft); color: var(--ca-brand); }
+        .lg-feature-icon svg { width: 20px; height: 20px; }
+
+        .lg-copy { color: var(--ca-faint); font-size: .8rem; }
+
+        /* ───── O'ng: forma paneli ───── */
+        .lg-panel {
+            display: flex;
+            flex-direction: column;
+            padding: clamp(16px, 3vw, 32px) clamp(16px, 5vw, 64px);
+            background: radial-gradient(90% 60% at 100% 0%, rgba(255,45,74,.06), transparent 60%), var(--ca-bg);
+        }
+
+        .lg-top { display: flex; align-items: center; justify-content: flex-end; gap: 12px; min-height: 44px; }
+        .lg-top .lg-logo { display: none; margin-right: auto; }
+
+        .lg-center { flex: 1; display: flex; align-items: center; justify-content: center; padding: clamp(24px, 5vh, 56px) 0; }
+
+        .lg-card {
+            width: 100%;
+            max-width: 440px;
+            padding: clamp(24px, 4vw, 40px);
+            border-radius: 24px;
+            background: linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.015));
+            border: 1px solid var(--ca-border);
+            box-shadow: 0 30px 80px rgba(0,0,0,.45), 0 1px 0 rgba(255,255,255,.05) inset;
+            animation: lg-in .6s var(--ca-ease) both;
+        }
+
+        @@keyframes lg-in { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+
+        .lg-lock { width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; margin-bottom: 20px; color: #fff; background: linear-gradient(135deg, var(--ca-brand), var(--ca-brand-2)); box-shadow: 0 12px 28px rgba(255,45,74,.35); }
+        .lg-lock svg { width: 24px; height: 24px; }
+
+        .lg-h2 { margin: 0 0 6px; font-size: clamp(1.5rem, 2.4vw, 1.9rem); font-weight: 800; color: #fff; letter-spacing: -.01em; }
+        .lg-sub { margin: 0 0 26px; color: var(--ca-muted); font-size: .95rem; line-height: 1.55; }
+
+        .lg-alert {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            padding: 12px 14px;
+            margin-bottom: 18px;
+            border-radius: 14px;
+            background: var(--ca-bad-soft);
+            border: 1px solid rgba(239,68,68,.35);
+            color: #fca5a5;
+            font-size: .9rem;
+            animation: lg-shake .45s ease;
+        }
+
+            .lg-alert svg { width: 18px; height: 18px; flex-shrink: 0; margin-top: 1px; }
+
+        @@keyframes lg-shake {
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+
+        .lg-field { margin-bottom: 18px; }
+        .lg-label { display: block; margin-bottom: 8px; font-size: .82rem; font-weight: 600; color: #c7cad6; }
+
+        .lg-input-wrap { position: relative; }
+
+        .lg-input-wrap > svg { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); width: 19px; height: 19px; color: var(--ca-faint); pointer-events: none; transition: color .2s; }
+
+        .lg-input {
+            width: 100%;
+            height: 54px;
+            padding: 0 52px 0 48px;
+            border-radius: 14px;
+            border: 1px solid var(--ca-border);
+            background: rgba(255,255,255,.03);
+            color: #fff;
+            font: 500 1rem var(--ca-font);
+            outline: none;
+            transition: border-color .2s, box-shadow .2s, background .2s;
+        }
+
+            .lg-input::placeholder { color: #5f6478; }
+            .lg-input:hover { border-color: var(--ca-border-strong); }
+            .lg-input:focus { border-color: rgba(255,45,74,.7); background: rgba(255,255,255,.05); box-shadow: 0 0 0 4px rgba(255,45,74,.14); }
+            .lg-input:focus + svg, .lg-input-wrap:focus-within > svg { color: var(--ca-brand); }
+            .lg-input.invalid { border-color: rgba(239,68,68,.6); }
+
+        .lg-eye {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            border: 0;
+            background: transparent;
+            color: var(--ca-muted);
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+            transition: background .2s, color .2s;
+        }
+
+            .lg-eye:hover { background: rgba(255,255,255,.06); color: #fff; }
+            .lg-eye:focus-visible { outline: 2px solid var(--ca-info); }
+            .lg-eye svg { width: 19px; height: 19px; }
+
+        .lg-caps { display: none; align-items: center; gap: 6px; margin-top: 8px; font-size: .8rem; color: var(--ca-warn); }
+        .lg-caps.show { display: flex; }
+        .lg-caps svg { width: 15px; height: 15px; }
+
+        .lg-submit {
+            position: relative;
+            width: 100%;
+            height: 54px;
+            margin-top: 6px;
+            border: 0;
+            border-radius: 14px;
+            color: #fff;
+            font: 700 1rem var(--ca-font);
+            letter-spacing: .01em;
+            cursor: pointer;
+            background: linear-gradient(135deg, var(--ca-brand), var(--ca-brand-2));
+            box-shadow: 0 14px 30px rgba(255,45,74,.32);
+            transition: transform .15s var(--ca-ease), box-shadow .2s, filter .2s;
+            overflow: hidden;
+        }
+
+            .lg-submit::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,.28) 50%, transparent 70%);
+                transform: translateX(-100%);
+                transition: transform .7s var(--ca-ease);
+            }
+
+            .lg-submit:hover { transform: translateY(-2px); box-shadow: 0 18px 40px rgba(255,45,74,.45); }
+            .lg-submit:hover::after { transform: translateX(100%); }
+            .lg-submit:active { transform: translateY(0); }
+            .lg-submit:focus-visible { outline: 3px solid rgba(56,189,248,.8); outline-offset: 3px; }
+
+            .lg-submit .lg-spin { display: none; }
+            .lg-submit.loading { pointer-events: none; filter: saturate(.8); }
+            .lg-submit.loading .lg-spin { display: inline-block; }
+            .lg-submit.loading .lg-submit-text { opacity: .85; }
+
+        .lg-submit-inner { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 10px; }
+
+        .lg-help { display: flex; gap: 10px; align-items: flex-start; margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--ca-border); color: var(--ca-muted); font-size: .85rem; line-height: 1.5; }
+        .lg-help svg { width: 18px; height: 18px; flex-shrink: 0; margin-top: 1px; color: var(--ca-info); }
+
+        .lg-foot { text-align: center; color: var(--ca-faint); font-size: .78rem; padding-top: 8px; }
+
+        /* ───── Moslashuvchanlik ───── */
+        @@media (max-width: 960px) {
+            .lg-shell { grid-template-columns: minmax(0, 1fr); }
+            .lg-brand { display: none; }
+            .lg-top .lg-logo { display: inline-flex; }
+            .lg-panel { min-height: 100vh; min-height: 100dvh; }
+        }
+
+        @@media (max-height: 700px) and (min-width: 961px) {
+            .lg-features { display: none; }
+        }
+
+        @@media (max-width: 420px) {
+            .lg-card { padding: 22px 18px; border-radius: 20px; }
+            .lg-top .lg-logo b { display: none; }
+        }
+
+        @@media (prefers-reduced-motion: reduce) {
+            .lg-blob, .lg-road, .lg-card, .lg-alert { animation: none !important; }
+        }
+    </style>
+</head>
+<body class="lg-body">
+    <div class="lg-shell">
+        <section class="lg-brand" aria-hidden="false">
+            <span class="lg-blob b1"></span><span class="lg-blob b2"></span><span class="lg-blob b3"></span>
+            <div class="lg-road"></div>
+
+            <a class="lg-logo" href="/">
+                <img src="~/images/logo-96.png" alt="" />
+                <b>AVTOPRAVA_SAM</b>
+            </a>
+
+            <div>
+                <h1 class="lg-title" data-i18n-html="login.brandTitle">@L.Html("login.brandTitle")</h1>
+                <p class="lg-lead" data-i18n="login.brandText">@L["login.brandText"]</p>
+                <ul class="lg-features">
+                    <li class="lg-feature"><span class="lg-feature-icon">@Icons.Book</span><span data-i18n="login.feature1">@L["login.feature1"]</span></li>
+                    <li class="lg-feature"><span class="lg-feature-icon">@Icons.Sparkles</span><span data-i18n="login.feature2">@L["login.feature2"]</span></li>
+                    <li class="lg-feature"><span class="lg-feature-icon">@Icons.Trophy</span><span data-i18n="login.feature3">@L["login.feature3"]</span></li>
+                </ul>
+            </div>
+
+            <div class="lg-copy">© 2026 AVTOPRAVA_SAM · <span data-i18n="footer.rights">@L["footer.rights"]</span></div>
+        </section>
+
+        <main class="lg-panel">
+            <div class="lg-top">
+                <a class="lg-logo" href="/">
+                    <img src="~/images/logo-96.png" alt="" />
+                    <b>AVTOPRAVA_SAM</b>
+                </a>
+                <partial name="_LangDropdown" />
+            </div>
+
+            <div class="lg-center">
+                <div class="lg-card">
+                    <div class="lg-lock">@Icons.Lock</div>
+                    <h2 class="lg-h2" data-i18n="login.welcome">@L["login.welcome"]</h2>
+                    <p class="lg-sub" data-i18n="login.subtitle">@L["login.subtitle"]</p>
+
+                    @if (hasError)
+                    {
+                        <div class="lg-alert" role="alert">
+                            @Icons.Alert
+                            <span data-i18n="@ViewBag.ErrorKey">@ViewBag.Error</span>
+                        </div>
+                    }
+
+                    <form asp-controller="Auth" asp-action="Login" method="post" id="loginForm" novalidate>
+                        <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+
+                        <div class="lg-field">
+                            <label class="lg-label" for="username" data-i18n="login.username">@L["login.username"]</label>
+                            <div class="lg-input-wrap">
+                                <input id="username" name="username" value="@ViewBag.Username" class="lg-input @(hasError ? "invalid" : "")"
+                                       required autocomplete="username" autocapitalize="none" spellcheck="false" autofocus
+                                       placeholder="@L["login.usernamePh"]" data-i18n-placeholder="login.usernamePh" />
+                                @Icons.User
+                            </div>
+                        </div>
+
+                        <div class="lg-field">
+                            <label class="lg-label" for="password" data-i18n="login.password">@L["login.password"]</label>
+                            <div class="lg-input-wrap">
+                                <input id="password" name="password" type="password" class="lg-input @(hasError ? "invalid" : "")"
+                                       required autocomplete="current-password"
+                                       placeholder="@L["login.passwordPh"]" data-i18n-placeholder="login.passwordPh" />
+                                @Icons.Lock
+                                <button type="button" class="lg-eye" id="togglePwd" aria-pressed="false"
+                                        aria-label="@L["login.showPassword"]" title="@L["login.showPassword"]">
+                                    <span class="eye-on">@Icons.Eye</span>
+                                    <span class="eye-off" hidden>@Icons.EyeOff</span>
+                                </button>
+                            </div>
+                            <div class="lg-caps" id="capsWarn" role="status">@Icons.Warn <span data-i18n="login.capsLock">@L["login.capsLock"]</span></div>
+                        </div>
+
+                        <button type="submit" class="lg-submit" id="submitBtn">
+                            <span class="lg-submit-inner">
+                                <span class="ca-spinner lg-spin" style="border-top-color:#fff;"></span>
+                                <span class="lg-submit-text" data-i18n="login.submit">@L["login.submit"]</span>
+                                <span style="width:18px;height:18px;display:inline-flex;">@Icons.ArrowRight</span>
+                            </span>
+                        </button>
+                    </form>
+
+                    <div class="lg-help">
+                        @Icons.Info
+                        <span data-i18n="login.help">@L["login.help"]</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg-foot">© 2026 AVTOPRAVA_SAM</div>
+        </main>
+    </div>
+
+    <script src="~/js/ui.js" asp-append-version="true"></script>
+    <script>
+        (function () {
+            var pwd = document.getElementById("password");
+            var btn = document.getElementById("togglePwd");
+            var caps = document.getElementById("capsWarn");
+            var form = document.getElementById("loginForm");
+            var submit = document.getElementById("submitBtn");
+
+            function label() {
+                var shown = pwd.type === "text";
+                var key = shown ? "login.hidePassword" : "login.showPassword";
+                var text = window.I18n ? I18n.t(key) : "";
+                btn.setAttribute("aria-label", text);
+                btn.setAttribute("title", text);
+                btn.setAttribute("aria-pressed", shown ? "true" : "false");
+                btn.querySelector(".eye-on").hidden = shown;
+                btn.querySelector(".eye-off").hidden = !shown;
+            }
+
+            btn.addEventListener("click", function () {
+                pwd.type = pwd.type === "password" ? "text" : "password";
+                label();
+                pwd.focus();
+            });
+            document.addEventListener("i18n:change", label);
+
+            function checkCaps(e) {
+                if (e.getModifierState) caps.classList.toggle("show", e.getModifierState("CapsLock"));
+            }
+            pwd.addEventListener("keydown", checkCaps);
+            pwd.addEventListener("keyup", checkCaps);
+            pwd.addEventListener("blur", function () { caps.classList.remove("show"); });
+
+            form.addEventListener("submit", function (e) {
+                var user = document.getElementById("username");
+                var ok = true;
+                [user, pwd].forEach(function (el) {
+                    var empty = !el.value.trim();
+                    el.classList.toggle("invalid", empty);
+                    if (empty && ok) { el.focus(); ok = false; }
+                });
+                if (!ok) { e.preventDefault(); return; }
+                submit.classList.add("loading");
+                submit.querySelector(".lg-submit-text").textContent = window.I18n ? I18n.t("login.signingIn") : "...";
+            });
+
+            // Xato bo'lsa — parol maydoniga fokus
+            if (document.querySelector(".lg-alert") && document.getElementById("username").value) pwd.focus();
+        })();
+    </script>
+</body>
+</html>
