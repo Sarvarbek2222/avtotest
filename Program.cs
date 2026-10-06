@@ -37,6 +37,7 @@ builder.Services.AddAntiforgery(o => o.HeaderName = "RequestVerificationToken");
 // ⚡ Tezlik: savol rasmlari WebP ga siqiladi (asl fayllar o'zgarmaydi), HTML/JSON/CSS/JS siqib yuboriladi
 builder.Services.AddSingleton<ImageOptimizer>();
 builder.Services.AddSingleton<QuestionBank>();
+builder.Services.AddSingleton<QuestionSearch>(); // kabinet → "Savol qidirish"
 builder.Services.AddHostedService<ImageWarmupService>();
 builder.Services.AddResponseCompression(o =>
 {

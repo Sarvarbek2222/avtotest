@@ -177,6 +177,8 @@ public class QuestionController : Controller
             ModelState.AddModelError("", _t["err.optionUzRequired"]);
         if (!question.Options.Any(o => o.IsCorrect))
             ModelState.AddModelError("", _t["err.correctRequired"]);
+        if (question.ImageFile != null && !IsAllowedImage(question.ImageFile))
+            ModelState.AddModelError("", _t["err.imageType"]);
 
         if (!ModelState.IsValid) return false;
 
@@ -193,16 +195,53 @@ public class QuestionController : Controller
     private static string? Clean(string? value) =>
         string.IsNullOrWhiteSpace(value) ? null : value.Trim();
 
+    private static readonly HashSet<string> ImageExtensions =
+        new(StringComparer.OrdinalIgnoreCase) { ".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp" };
+
+    private static bool IsAllowedImage(IFormFile file) =>
+        file.Length > 0 && ImageExtensions.Contains(Path.GetExtension(file.FileName));
+
+    /// <summary>
+    /// Rasmni uploads papkasiga noyob nom bilan saqlaydi (masalan "photo_1_3f9c2a7b.jpg").
+    /// Bir xil nomli fayl yuklansa ham boshqa savolning rasmi ustidan yozilmaydi.
+    /// </summary>
     private async Task<string> SaveImageAsync(IFormFile file)
     {
-        var fileName = Path.GetFileName(file.FileName); // faqat nom
-        var filePath = Path.Combine(_env.WebRootPath, "uploads", fileName);
+        var dir = Path.Combine(_env.WebRootPath, "uploads");
+        Directory.CreateDirectory(dir);
 
-        using var stream = new FileStream(filePath, FileMode.Create);
+        var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+        var baseName = new string(Path.GetFileNameWithoutExtension(file.FileName)
+            .Select(ch => char.IsAsciiLetterOrDigit(ch) || ch is '-' or '_' ? ch : '_')
+            .ToArray()).Trim('_');
+        if (baseName.Length == 0) baseName = "img";
+        if (baseName.Length > 60) baseName = baseName[..60];
+
+        string fileName, filePath;
+        do
+        {
+            fileName = $"{baseName}_{Guid.NewGuid().ToString("N")[..8]}{ext}";
+            filePath = Path.Combine(dir, fileName);
+        } while (System.IO.File.Exists(filePath));
+
+        // CreateNew — mavjud fayl hech qachon qayta yozilmaydi
+        using var stream = new FileStream(filePath, FileMode.CreateNew);
         await file.CopyToAsync(stream);
 
-        // Faqat nomni saqlaymiz
+        // Bazada faqat nom saqlanadi
         return fileName;
+    }
+
+    /// <summary>Rasmni o'chiradi — faqat boshqa hech bir savol uni ishlatmasa.</summary>
+    private async Task DeleteImageIfUnusedAsync(string? imageUrl, int exceptQuestionId)
+    {
+        if (string.IsNullOrWhiteSpace(imageUrl)) return;
+        if (await _context.Questions.AnyAsync(q => q.Id != exceptQuestionId && q.ImageUrl == imageUrl)) return;
+
+        // Bazada faqat fayl nomi saqlanadi; papka nomidan tashqariga chiqishning oldini olamiz
+        var path = Path.Combine(_env.WebRootPath, "uploads", Path.GetFileName(imageUrl));
+        if (System.IO.File.Exists(path))
+            System.IO.File.Delete(path);
     }
 
     [HttpPost]
@@ -224,16 +263,12 @@ public class QuestionController : Controller
         var question = await _context.Questions.FindAsync(id);
         if (question != null)
         {
-            // Agar rasm mavjud bo‘lsa, faylni o‘chirish mumkin
-            if (!string.IsNullOrEmpty(question.ImageUrl))
-            {
-                var path = Path.Combine(_env.WebRootPath, question.ImageUrl.TrimStart('/'));
-                if (System.IO.File.Exists(path))
-                    System.IO.File.Delete(path);
-            }
-
+            var image = question.ImageUrl;
             _context.Questions.Remove(question);
             await _context.SaveChangesAsync();
+
+            // Savol bazadan o'chgandan keyin — rasm boshqa savolda ishlatilmasa, fayl ham o'chadi
+            await DeleteImageIfUnusedAsync(image, question.Id);
         }
         return RedirectToAction(nameof(Index));
     }

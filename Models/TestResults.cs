@@ -79,8 +79,9 @@ public static class TestTypes
     public const string Bilet = "bilet";        // /Bilet/TestPage
     public const string Topic = "topic";        // /Topic/Test
     public const string Mistakes = "mistakes";  // /Cabinet/Practice — xatolar ustida ishlash
+    public const string Search = "search";      // /Cabinet/Search — qidirib topilgan savolni alohida ishlash
 
-    public static readonly string[] All = { Real, Q20, Q40, Q80, Q100, Q200, Marathon, Bilet, Topic, Mistakes };
+    public static readonly string[] All = { Real, Q20, Q40, Q80, Q100, Q200, Marathon, Bilet, Topic, Mistakes, Search };
 
     /// <summary>Imtihonga o'xshash testlar (20 savol, o'tish balli 90%) — tayyorlikni baholashda ishlatiladi.</summary>
     public static readonly string[] ExamLike = { Real, Q20, Bilet };
@@ -107,7 +108,7 @@ public static class TestTypes
             "testall" => (Marathon, null),
             "bilet/testpage" => (Bilet, request.Query["biletNumber"].ToString()),
             "topic/test" => (Topic, request.Query["topic"].ToString()),
-            "cabinet/practice" => (Mistakes, null),
+            "cabinet/practice" => request.Query.ContainsKey("ids") ? (Search, null) : (Mistakes, null),
             _ => null,
         };
     }

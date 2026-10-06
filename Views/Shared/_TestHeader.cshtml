@@ -19,6 +19,7 @@
 
     var testName = NameIn(L.Lang);
     var backUrl = User.IsInRole(Roles.SuperAdmin) ? "/Question/Index1" : "/Cabinet";
+    var returnUrl = ViewData["BackUrl"] as string; // masalan, "Savol qidirish"ga qaytish
 }
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -27,6 +28,13 @@
 
 <header class="ui-header ui-testbar">
     <div class="ui-header-inner">
+        @if (returnUrl != null)
+        {
+            <a class="ui-testbar-back" href="@returnUrl" title="@L["sq.back"]" data-i18n-title="sq.back">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="m11 18-6-6 6-6"/></svg>
+                <span data-i18n="sq.backShort">@L["sq.backShort"]</span>
+            </a>
+        }
         <a class="ui-brand" href="@backUrl" aria-label="AVTOPRAVA_SAM">
             <img src="~/images/logo-96.png" alt="" />
             <span>AVTOPRAVA_SAM</span>

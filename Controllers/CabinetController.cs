@@ -17,13 +17,17 @@ public class CabinetController : Controller
     private readonly StatsService _stats;
     private readonly ResultsService _results;
     private readonly AiAnalysisService _ai;
+    private readonly QuestionSearch _search;
+    private readonly QuestionBank _bank;
 
-    public CabinetController(AppDbContext db, StatsService stats, ResultsService results, AiAnalysisService ai)
+    public CabinetController(AppDbContext db, StatsService stats, ResultsService results, AiAnalysisService ai, QuestionSearch search, QuestionBank bank)
     {
+        _bank = bank;
         _db = db;
         _stats = stats;
         _results = results;
         _ai = ai;
+        _search = search;
     }
 
     private int UserId => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
@@ -62,12 +66,81 @@ public class CabinetController : Controller
         return View(await BuildAsync(UserId));
     }
 
-    /// <summary>Xatolarni qayta ishlash — test sahifalari bilan bir xil ko'rinish.</summary>
-    public async Task<IActionResult> Practice()
+    /// <summary>
+    /// Xatolarni qayta ishlash — test sahifalari bilan bir xil ko'rinish.
+    /// ids berilsa — "Savol qidirish"dan tanlangan savol(lar)ni xuddi shu ko'rinishda alohida ishlash.
+    /// </summary>
+    public async Task<IActionResult> Practice(string? ids, string? q)
     {
+        // "ids=" bo'sh bo'lsa ham qidiruv rejimi (model binding bo'sh qiymatni null qiladi)
+        if (Request.Query.ContainsKey("ids"))
+        {
+            var list = ParseIds(ids);
+            if (list.Count == 0) return RedirectToAction(nameof(Search), new { q });
+            ViewBag.Ids = string.Join(",", list);
+            ViewBag.BackUrl = Url.Action(nameof(Search), new { q = string.IsNullOrWhiteSpace(q) ? null : q.Trim() });
+            return View();
+        }
+
         bool any = await _db.UserMistakes.AnyAsync(m => m.UserId == UserId && m.ResolvedAt == null);
         if (!any) return RedirectToAction(nameof(Mistakes));
         return View();
+    }
+
+    /// <summary>Qidiruvdan tanlangan savollar — berilgan tartibda (ko'pi bilan QuestionSearch.MaxResults ta).</summary>
+    [HttpGet]
+    public async Task<IActionResult> GetQuestionsByIds(string? ids)
+    {
+        var list = ParseIds(ids);
+        var byId = (await _bank.AllAsync()).ToDictionary(x => x.Id);
+        return Json(list.Where(byId.ContainsKey).Select(id => QuestionJson.From(byId[id])));
+    }
+
+    private static List<int> ParseIds(string? ids) =>
+        (ids ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Select(s => int.TryParse(s, out var n) ? n : 0)
+            .Where(n => n > 0)
+            .Distinct()
+            .Take(QuestionSearch.MaxResults)
+            .ToList();
+
+    /// <summary>Savolni matni bo'yicha qidirib, shu savolning o'zini alohida ishlash.</summary>
+    public async Task<IActionResult> Search(string? q)
+    {
+        ViewBag.Query = q?.Trim() ?? "";
+        ViewData["ActiveMistakes"] = await _db.UserMistakes.CountAsync(m => m.UserId == UserId && m.ResolvedAt == null);
+        return View();
+    }
+
+    /// <summary>Qidiruv natijalari (sahifa yozilgan sari so'raydi). Javob variantlari ham shu yerda — alohida ishlash uchun.</summary>
+    [HttpGet]
+    public async Task<IActionResult> SearchQuestions(string? q)
+    {
+        q = q?.Trim() ?? "";
+        if (q.Length > 200) q = q[..200];
+
+        var (hits, total) = await _search.SearchAsync(q);
+        var ids = hits.Select(h => h.Question.Id).ToList();
+        var mistakes = (await _db.UserMistakes.AsNoTracking()
+                .Where(m => m.UserId == UserId && m.ResolvedAt == null && ids.Contains(m.QuestionId))
+                .Select(m => m.QuestionId)
+                .ToListAsync())
+            .ToHashSet();
+
+        return Json(new
+        {
+            query = q,
+            total,
+            items = hits.Select(h => new
+            {
+                question = QuestionJson.From(h.Question),
+                topicUZ = Topics.Display(h.Question.Topic, Lang.Uz),
+                topicRU = Topics.Display(h.Question.Topic, Lang.Ru),
+                topicUZK = Topics.Display(h.Question.Topic, Lang.Uzk),
+                inOptions = h.InOptionsOnly,
+                inMistakes = mistakes.Contains(h.Question.Id),
+            }),
+        });
     }
 
     [HttpGet]

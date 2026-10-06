@@ -43,6 +43,9 @@
             </a>
 
             <div class="ca-nav-label" data-i18n="nav.tests">@L["nav.tests"]</div>
+            <a class="ca-nav-link @Active("Search")" asp-controller="Cabinet" asp-action="Search">
+                @Icons.Search <span data-i18n="sq.title">@L["sq.title"]</span>
+            </a>
             <a class="ca-nav-link" asp-controller="Home" asp-action="Index">
                 @Icons.Home <span data-i18n="home.pageTitle">@L["home.pageTitle"]</span>
             </a>
@@ -70,6 +73,12 @@
             </button>
             <div class="ca-topbar-title" data-i18n="@ViewData["TitleKey"]">@ViewData["Title"]</div>
             <div class="ca-topbar-actions">
+                @if (!string.Equals(action, "Search", StringComparison.OrdinalIgnoreCase))
+                {
+                    <a class="ca-topbar-search" asp-controller="Cabinet" asp-action="Search" title="@L["sq.title"]" data-i18n-title="sq.title" aria-label="@L["sq.title"]">
+                        @Icons.Search <span data-i18n="sq.short">@L["sq.short"]</span>
+                    </a>
+                }
                 <partial name="_LangDropdown" />
                 <partial name="_UserMenu" />
             </div>

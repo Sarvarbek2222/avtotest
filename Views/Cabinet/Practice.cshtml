@@ -1,12 +1,18 @@
 ﻿@* Xatolar ustida ishlash: Testsixty/Index.cshtml nusxasi (bir xil ko'rinish). Farqi — savollar /Cabinet/GetMistakeQuestions dan, "Chiqish" → Xatolarim. *@
 @{
     Layout = null;
-    ViewData["TitleKey"] = "testType.mistakes";
-    ViewData["Title"] = L["testType.mistakes"];
+    // ids berilsa — "Savol qidirish"dan ochilgan savol(lar); aks holda xatolar ustida ishlash
+    var searchIds = ViewBag.Ids as string;
+    var isSearch = searchIds != null;
+    var backUrl = ViewBag.BackUrl as string ?? "/Cabinet/Mistakes";
+    var titleKey = isSearch ? "testType.search" : "testType.mistakes";
+    ViewData["TitleKey"] = titleKey;
+    ViewData["Title"] = L[titleKey];
+    if (isSearch) ViewData["BackUrl"] = backUrl;
 }
 
 <!DOCTYPE html>
-<html lang="@L.HtmlLang" data-lang="@L.Lang" data-title-key="testType.mistakes">
+<html lang="@L.HtmlLang" data-lang="@L.Lang" data-title-key="@titleKey">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -347,9 +353,16 @@
 
             .container {
                 max-width: 100%;
+                width: auto; /* margin: 6px bilan 100% kenglik ekrandan chiqib ketmasin */
                 padding: 4px;
                 margin: 6px;
                 box-sizing: border-box;
+            }
+
+            /* Bootstrap .row manfiy chetlari (-12px) gorizontal aylantirish paydo qilmasin */
+            .container-fluid > .row {
+                margin-left: 0;
+                margin-right: 0;
             }
 
             @@media (max-width:768px) {
@@ -379,6 +392,21 @@
                     margin: 20px 8px 0 8px;
                 }
             }
+
+            /* Telefon/planshet: 20 ustunli raqamlar qatori (~777px) ekranga sig'maydi — 10 ustunga o'tadi */
+            @@media (max-width: 860px) {
+                #questionNav {
+                    grid-template-columns: repeat(10, minmax(0, 36px));
+                    max-width: 100%;
+                }
+
+                    #questionNav button {
+                        width: 100%;
+                        height: auto;
+                        aspect-ratio: 1 / 1;
+                        min-width: 0;
+                    }
+            }
     </style>
 </head>
 <body>
@@ -403,7 +431,14 @@
             </div>
 
             <div class="nav-wrapper">
-                <button id="exitBtn" class="exit-btn" type="button" data-i18n="test.exit">@L["test.exit"]</button>
+                @if (isSearch)
+                {
+                    <button id="exitBtn" class="exit-btn" type="button" data-i18n="sq.back">@L["sq.back"]</button>
+                }
+                else
+                {
+                    <button id="exitBtn" class="exit-btn" type="button" data-i18n="test.exit">@L["test.exit"]</button>
+                }
                 <div id="questionNav"></div>
                 <button id="finishBtn" class="finish-btn" type="button" data-i18n="test.finish">@L["test.finish"]</button>
             </div>
@@ -453,7 +488,7 @@
             });
 
             async function loadQuestions() {
-                const res = await fetch('/Cabinet/GetMistakeQuestions');
+                const res = await fetch(@Html.Raw(isSearch ? Json.Serialize("/Cabinet/GetQuestionsByIds?ids=" + searchIds) : Json.Serialize("/Cabinet/GetMistakeQuestions")));
                 originalQuestions = await res.json();
                 // Nechta savol controllerdan kelsa, o'shancha ishlatiladi (qattiq son yo'q)
                 questions = JSON.parse(JSON.stringify(originalQuestions));
@@ -566,7 +601,7 @@
             };
 
             document.getElementById("exitBtn").onclick = () => {
-                window.location.href = "/Cabinet/Mistakes";
+                window.location.href = @Json.Serialize(backUrl);
             };
 
             function createNavigation() {

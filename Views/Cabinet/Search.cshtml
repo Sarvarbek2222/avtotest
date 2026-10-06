@@ -1,0 +1,305 @@
+@{
+    ViewData["TitleKey"] = "sq.title";
+    ViewData["Title"] = L["sq.title"];
+    var query = ViewBag.Query as string ?? "";
+    var examples = new[] { "sq.ex1", "sq.ex2", "sq.ex3", "sq.ex4", "sq.ex5" };
+}
+
+<style>
+    .sq-bar [hidden], .sq-state[hidden], .sq-all[hidden] { display: none !important; }
+    .sq-head-sub { margin: 8px 0 0; color: var(--ca-muted); font-size: .92rem; max-width: 62ch; }
+
+    /* Qidiruv maydoni */
+    .sq-bar { position: sticky; top: 0; z-index: 5; padding: 4px 0 14px; background: linear-gradient(var(--ca-bg) 75%, transparent); }
+    .sq-field { position: relative; display: block; }
+    .sq-field > svg { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; color: var(--ca-faint); pointer-events: none; transition: color .15s; }
+    .sq-input {
+        width: 100%; height: 60px; padding: 0 112px 0 54px; border-radius: 16px;
+        border: 1px solid var(--ca-border-strong); background: var(--ca-surface); color: var(--ca-text);
+        font: 600 1.05rem var(--ca-font); outline: none; box-shadow: var(--ca-shadow); transition: border-color .15s, box-shadow .15s;
+    }
+    .sq-input::placeholder { color: var(--ca-faint); font-weight: 500; }
+    .sq-input:focus { border-color: var(--ca-brand); box-shadow: 0 0 0 4px var(--ca-brand-soft), var(--ca-shadow); }
+    .sq-field:focus-within > svg { color: var(--ca-brand); }
+    .sq-input::-webkit-search-cancel-button { display: none; }
+    .sq-tools { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); display: flex; align-items: center; gap: 8px; }
+    .sq-kbd { font: 700 .72rem var(--ca-font); color: var(--ca-faint); border: 1px solid var(--ca-border-strong); border-radius: 6px; padding: 3px 8px; }
+    .sq-clear {
+        width: 34px; height: 34px; border-radius: 10px; border: 0; background: var(--ca-surface-2); color: var(--ca-muted);
+        display: grid; place-items: center; cursor: pointer; font-size: 1.1rem; line-height: 1;
+    }
+    .sq-clear:hover { color: #fff; background: var(--ca-surface-3); }
+    .sq-spin { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--ca-border-strong); border-top-color: var(--ca-brand); animation: sq-spin .7s linear infinite; }
+    @@keyframes sq-spin { to { transform: rotate(360deg); } }
+
+    .sq-meta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; min-height: 34px; }
+    .sq-count { color: var(--ca-muted); font-size: .86rem; }
+    .sq-count b { color: #fff; }
+    .sq-examples { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .sq-examples span { color: var(--ca-faint); font-size: .8rem; margin-right: 2px; }
+    .sq-chip {
+        padding: 6px 12px; border-radius: 999px; border: 1px solid var(--ca-border); background: transparent;
+        color: var(--ca-muted); font: 600 .8rem var(--ca-font); cursor: pointer; transition: all .15s;
+    }
+    .sq-chip:hover { color: #fff; border-color: var(--ca-brand); background: var(--ca-brand-soft); }
+
+    /* Natijalar */
+    .sq-list { display: grid; gap: 10px; margin-top: 6px; }
+    .sq-item {
+        display: grid; grid-template-columns: 76px minmax(0, 1fr) auto; gap: 16px; align-items: center;
+        padding: 12px 16px 12px 12px; border-radius: var(--ca-radius); border: 1px solid var(--ca-border);
+        background: var(--ca-surface); color: var(--ca-text); text-decoration: none;
+        transition: border-color .15s, transform .15s, box-shadow .15s;
+    }
+    .sq-item:hover, .sq-item:focus-visible { border-color: var(--ca-border-strong); transform: translateY(-1px); box-shadow: var(--ca-shadow); outline: none; color: var(--ca-text); }
+    .sq-item:focus-visible { border-color: var(--ca-brand); }
+    .sq-item:hover .sq-go { transform: translateX(3px); }
+    .sq-thumb { width: 76px; height: 56px; border-radius: 10px; overflow: hidden; background: var(--ca-surface-2); display: grid; place-items: center; color: var(--ca-faint); }
+    .sq-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .sq-thumb svg { width: 22px; height: 22px; }
+    .sq-body { min-width: 0; }
+    .sq-tags { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 5px; }
+    .sq-num { font: 700 .72rem var(--ca-font); color: var(--ca-faint); }
+    .sq-text {
+        margin: 0; font-size: .95rem; line-height: 1.45; color: var(--ca-text);
+        display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .sq-text mark, .sq-opt-hint mark { background: rgba(255,45,74,.22); color: #fff; border-radius: 3px; padding: 0 2px; }
+    .sq-opt-hint { margin: 4px 0 0; font-size: .78rem; color: var(--ca-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .sq-go { display: inline-flex; align-items: center; gap: 6px; color: var(--ca-brand); font-weight: 700; font-size: .82rem; white-space: nowrap; transition: transform .15s; }
+    .sq-go svg { width: 16px; height: 16px; }
+    .sq-state { text-align: center; padding: clamp(28px, 6vw, 56px) 16px; color: var(--ca-muted); }
+    .sq-state h3 { margin: 0 0 6px; color: #fff; font-size: 1.1rem; }
+    .sq-state p { margin: 0 auto; max-width: 48ch; }
+    .sq-state-icon { width: 64px; height: 64px; margin: 0 auto 14px; border-radius: 20px; display: grid; place-items: center; background: var(--ca-brand-soft); color: var(--ca-brand); }
+    .sq-state-icon svg { width: 30px; height: 30px; }
+
+    @@media (max-width: 560px) {
+        .sq-input { height: 54px; font-size: 1rem; padding-right: 60px; }
+        .sq-kbd { display: none; }
+        .sq-item { grid-template-columns: 56px minmax(0, 1fr); gap: 12px; }
+        .sq-thumb { width: 56px; height: 48px; }
+        .sq-go { display: none; }
+        .sq-all { width: 100%; justify-content: center; }
+    }
+</style>
+
+<div class="ca-page-head">
+    <div>
+        <div class="ca-eyebrow" data-i18n="nav.tests">@L["nav.tests"]</div>
+        <h1 class="ca-h1" data-i18n="sq.title">@L["sq.title"]</h1>
+        <p class="sq-head-sub" data-i18n="sq.subtitle">@L["sq.subtitle"]</p>
+    </div>
+</div>
+
+<div class="sq-bar">
+    <label class="sq-field">
+        @Icons.Search
+        <input type="search" id="sqInput" class="sq-input" value="@query" autocomplete="off" spellcheck="false" maxlength="200"
+               placeholder="@L["sq.placeholder"]" data-i18n-placeholder="sq.placeholder" aria-label="@L["sq.title"]" />
+        <span class="sq-tools">
+            <span class="sq-spin" id="sqSpin" hidden></span>
+            <button type="button" class="sq-clear" id="sqClear" hidden title="@L["sq.clear"]" data-i18n-title="sq.clear" aria-label="@L["sq.clear"]">×</button>
+            <span class="sq-kbd" title="@L["sq.kbdHint"]" data-i18n-title="sq.kbdHint">/</span>
+        </span>
+    </label>
+    <div class="sq-meta">
+        <div class="sq-count" id="sqCount" aria-live="polite"></div>
+        <a class="ca-btn ca-btn-ghost ca-btn-sm sq-all" id="sqAll" hidden href="#">
+            @Icons.Play <span data-i18n="sq.solveAll">@L["sq.solveAll"]</span>
+        </a>
+        <div class="sq-examples" id="sqExamples">
+            <span data-i18n="sq.try">@L["sq.try"]</span>
+            @foreach (var key in examples)
+            {
+                <button type="button" class="sq-chip" data-i18n="@key">@L[key]</button>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="sq-list" id="sqList" role="list"></div>
+
+<div class="sq-state" id="sqState">
+    <div class="sq-state-icon">@Icons.Search</div>
+    <h3 data-i18n="sq.startTitle">@L["sq.startTitle"]</h3>
+    <p data-i18n="sq.startText">@L["sq.startText"]</p>
+</div>
+
+@section Scripts {
+<script>
+(function () {
+    "use strict";
+
+    var input = document.getElementById("sqInput"), list = document.getElementById("sqList"),
+        state = document.getElementById("sqState"), count = document.getElementById("sqCount"),
+        spin = document.getElementById("sqSpin"), clear = document.getElementById("sqClear"),
+        examples = document.getElementById("sqExamples"), all = document.getElementById("sqAll");
+
+    var items = [], curTotal = 0, lastQuery = null, timer = null, seq = 0;
+
+    var ICON_IMG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>';
+    var ICON_GO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>';
+
+    function esc(s) {
+        return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+            return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+        });
+    }
+    function qText(q) { return I18n.pick(q.questionUZ, q.questionRU, q.questionUZK); }
+    function oText(o) { return I18n.pick(o.textUZ, o.textRU, o.textUZK); }
+    function topic(it) { return I18n.pick(it.topicUZ, it.topicRU, it.topicUZK); }
+    function tooShort(q) { return q.replace(/['`´‘’ʻʼ\s]/g, "").length < 2 && !/^#?\d+$/.test(q); }
+
+    // Savolni test sahifasi ko'rinishida (to'liq ekran) ochish; "Orqaga" — shu qidiruvga qaytaradi
+    function solveUrl(ids) {
+        return "/Cabinet/Practice?ids=" + ids.join(",") + "&q=" + encodeURIComponent(input.value.trim());
+    }
+
+    // ── Topilgan so'zlarni ajratib ko'rsatish (apostrof farqi e'tiborga olinmaydi; lotin so'z kirill matnda ham) ──
+    function tokens(q) {
+        var base = q.toLowerCase().replace(/['`´‘’ʻʼ]/g, "").split(/[^\p{L}\p{N}]+/u).filter(function (t) { return t.length >= 2; });
+        var res = base.slice();
+        base.forEach(function (t) { var c = I18n.toCyrillic ? I18n.toCyrillic(t).toLowerCase() : t; if (c && res.indexOf(c) < 0) res.push(c); });
+        return res.sort(function (a, b) { return b.length - a.length; });
+    }
+    function highlight(text, toks) {
+        text = String(text == null ? "" : text);
+        if (!toks.length) return esc(text);
+        var parts = toks.map(function (t) {
+            return Array.from(t).map(function (ch) { return ch.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }).join("['`´‘’ʻʼ]?");
+        });
+        var re;
+        try { re = new RegExp(parts.join("|"), "giu"); } catch (e) { return esc(text); }
+        // Asl matnda qidiriladi, har bo'lak alohida xavfsiz qilinadi (HTML belgilari buzilmaydi)
+        var out = "", last = 0, m;
+        while ((m = re.exec(text)) !== null) {
+            if (!m[0]) { re.lastIndex++; continue; }
+            out += esc(text.slice(last, m.index)) + "<mark>" + esc(m[0]) + "</mark>";
+            last = m.index + m[0].length;
+        }
+        return out + esc(text.slice(last));
+    }
+
+    function setUrl(q) {
+        var url = new URL(location.href);
+        if (q) url.searchParams.set("q", q); else url.searchParams.delete("q");
+        history.replaceState(null, "", url);
+    }
+
+    function search(force) {
+        var q = input.value.trim();
+        clear.hidden = !q;
+        if (!force && q === lastQuery) return;
+        lastQuery = q;
+        setUrl(q);
+        if (tooShort(q)) { items = []; render(0); return; }
+        var my = ++seq;
+        spin.hidden = false;
+        fetch("/Cabinet/SearchQuestions?q=" + encodeURIComponent(q), { headers: { Accept: "application/json" }, cache: "no-store" })
+            .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+            .then(function (data) {
+                if (my !== seq) return; // eskirgan javob
+                items = data.items || [];
+                render(data.total || 0);
+            })
+            .catch(function () { if (my === seq) { items = []; render(-1); } })
+            .finally(function () { if (my === seq) spin.hidden = true; });
+    }
+
+    function render(total) {
+        if (typeof total === "number") curTotal = total;
+        var q = input.value.trim();
+        var toks = tokens(q);
+        examples.hidden = !!q;
+        all.hidden = true;
+        list.innerHTML = "";
+
+        if (!q || tooShort(q)) {
+            count.textContent = q ? I18n.t("sq.tooShort") : "";
+            showState("start");
+            return;
+        }
+        if (curTotal === -1) { count.textContent = ""; showState("error"); return; }
+        if (!items.length) { count.textContent = ""; showState("empty"); return; }
+
+        state.hidden = true;
+        count.innerHTML = esc(I18n.t(curTotal > items.length ? "sq.foundMore" : "sq.found", { n: curTotal, shown: items.length }))
+            .replace(/(\d+)/, "<b>$1</b>");
+        if (items.length > 1) {
+            all.hidden = false;
+            all.href = solveUrl(items.map(function (it) { return it.question.id; }));
+        }
+
+        items.forEach(function (it) {
+            var q = it.question;
+            var a = document.createElement("a");
+            a.className = "sq-item";
+            a.href = solveUrl([q.id]);
+            a.setAttribute("role", "listitem");
+            var thumb = q.imageUrl
+                ? '<img loading="lazy" decoding="async" alt="" src="/uploads/' + encodeURIComponent(q.imageUrl) + '?w=160">'
+                : ICON_IMG;
+            var tags = '<span class="sq-num">#' + q.id + "</span>";
+            if (topic(it)) tags += '<span class="ca-badge ca-badge-muted">' + esc(topic(it)) + "</span>";
+            if (it.inMistakes) tags += '<span class="ca-badge ca-badge-bad">' + esc(I18n.t("sq.inMistakes")) + "</span>";
+            var hint = "";
+            if (it.inOptions) {
+                var o = q.options.find(function (o) { return highlight(oText(o), toks).indexOf("<mark>") >= 0; });
+                hint = '<p class="sq-opt-hint">' + esc(I18n.t("sq.inAnswer")) + " " + (o ? highlight(oText(o), toks) : "") + "</p>";
+            }
+            a.innerHTML =
+                '<span class="sq-thumb">' + thumb + "</span>" +
+                '<span class="sq-body"><span class="sq-tags">' + tags + "</span>" +
+                '<p class="sq-text">' + highlight(qText(q), toks) + "</p>" + hint + "</span>" +
+                '<span class="sq-go">' + esc(I18n.t("sq.solve")) + ICON_GO + "</span>";
+            list.appendChild(a);
+        });
+    }
+
+    function showState(kind) {
+        var keys = {
+            start: ["sq.startTitle", "sq.startText"],
+            empty: ["sq.emptyTitle", "sq.emptyText"],
+            error: ["sq.errorTitle", "sq.errorText"],
+        }[kind];
+        state.hidden = false;
+        var h = state.querySelector("h3"), p = state.querySelector("p");
+        h.setAttribute("data-i18n", keys[0]); h.textContent = I18n.t(keys[0]);
+        p.setAttribute("data-i18n", keys[1]); p.textContent = I18n.t(keys[1]);
+    }
+
+    input.addEventListener("input", function () { clearTimeout(timer); timer = setTimeout(search, 220); });
+    input.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+            e.preventDefault(); clearTimeout(timer);
+            // Bitta natija bo'lsa — Enter darhol ochadi
+            if (items.length === 1 && lastQuery === input.value.trim()) location.href = list.firstElementChild.href;
+            else search(true);
+        }
+        if (e.key === "ArrowDown" && list.firstElementChild) { e.preventDefault(); list.firstElementChild.focus(); }
+    });
+    clear.addEventListener("click", function () { input.value = ""; search(true); input.focus(); });
+    examples.querySelectorAll(".sq-chip").forEach(function (c) {
+        c.addEventListener("click", function () { input.value = c.textContent.trim(); search(true); input.focus(); });
+    });
+    list.addEventListener("keydown", function (e) {
+        var el = document.activeElement;
+        if (e.key === "ArrowDown" && el.nextElementSibling) { e.preventDefault(); el.nextElementSibling.focus(); }
+        if (e.key === "ArrowUp") { e.preventDefault(); (el.previousElementSibling || input).focus(); }
+    });
+    document.addEventListener("keydown", function (e) {
+        var tag = document.activeElement ? document.activeElement.tagName : "";
+        if (e.key === "/" && !/INPUT|TEXTAREA|SELECT/.test(tag)) { e.preventDefault(); input.focus(); input.select(); }
+    });
+
+    // Til almashsa — natijalar shu tilda qayta chiziladi
+    document.addEventListener("i18n:change", function () { render(); });
+
+    // Savoldan "Orqaga" bilan qaytilganda (brauzer keshidan) — ro'yxat yangilansin ("Xatolarimda" belgisi)
+    window.addEventListener("pageshow", function (e) { if (e.persisted && input.value.trim()) search(true); });
+
+    if (input.value.trim()) search(true); else { render(0); setTimeout(function () { input.focus(); }, 50); }
+})();
+</script>
+}

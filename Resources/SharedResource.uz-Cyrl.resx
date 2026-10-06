@@ -1563,4 +1563,91 @@
   <data name="users.extend" xml:space="preserve">
     <value>Узайтириш</value>
   </data>
+  <data name="err.imageType" xml:space="preserve">
+    <value>Фақат расм файли юклаш мумкин (JPG, PNG, WEBP, GIF, BMP)</value>
+  </data>
+  <data name="sq.title" xml:space="preserve">
+    <value>Савол қидириш</value>
+  </data>
+  <data name="sq.short" xml:space="preserve">
+    <value>Савол қидириш</value>
+  </data>
+  <data name="sq.subtitle" xml:space="preserve">
+    <value>Савол матнидан бир неча сўз ёзинг — керакли саволни топинг ва уни алоҳида ишлаб кўринг. Лотин, кирилл ёки рус тилида ёзиш мумкин.</value>
+  </data>
+  <data name="sq.placeholder" xml:space="preserve">
+    <value>Савол матнини ёзинг... масалан: чорраҳада ким биринчи ўтади</value>
+  </data>
+  <data name="sq.clear" xml:space="preserve">
+    <value>Тозалаш</value>
+  </data>
+  <data name="sq.kbdHint" xml:space="preserve">
+    <value>Қидирувга ўтиш: / тугмаси</value>
+  </data>
+  <data name="sq.try" xml:space="preserve">
+    <value>Масалан:</value>
+  </data>
+  <data name="sq.ex1" xml:space="preserve">
+    <value>светофор</value>
+  </data>
+  <data name="sq.ex2" xml:space="preserve">
+    <value>қувиб ўтиш</value>
+  </data>
+  <data name="sq.ex3" xml:space="preserve">
+    <value>пиёдалар</value>
+  </data>
+  <data name="sq.ex4" xml:space="preserve">
+    <value>шатакка олиш</value>
+  </data>
+  <data name="sq.ex5" xml:space="preserve">
+    <value>темир йўл</value>
+  </data>
+  <data name="sq.found" xml:space="preserve">
+    <value>{n} та савол топилди</value>
+  </data>
+  <data name="sq.foundMore" xml:space="preserve">
+    <value>{n} та савол топилди — энг мос {shown} таси кўрсатилмоқда. Аниқроқ ёзинг.</value>
+  </data>
+  <data name="sq.tooShort" xml:space="preserve">
+    <value>Камида 2 та ҳарф ёзинг</value>
+  </data>
+  <data name="sq.startTitle" xml:space="preserve">
+    <value>Қайси саволни қидиряпсиз?</value>
+  </data>
+  <data name="sq.startText" xml:space="preserve">
+    <value>Саволдан эсингизда қолган сўзларни ёзинг. Савол рақамини ҳам ёзиш мумкин, масалан: #125</value>
+  </data>
+  <data name="sq.emptyTitle" xml:space="preserve">
+    <value>Ҳеч нарса топилмади</value>
+  </data>
+  <data name="sq.emptyText" xml:space="preserve">
+    <value>Бошқа сўзлар билан ёки қисқароқ ёзиб кўринг.</value>
+  </data>
+  <data name="sq.errorTitle" xml:space="preserve">
+    <value>Қидирувда хатолик</value>
+  </data>
+  <data name="sq.errorText" xml:space="preserve">
+    <value>Интернет алоқасини текшириб, қайтадан уриниб кўринг.</value>
+  </data>
+  <data name="sq.inMistakes" xml:space="preserve">
+    <value>Хатоларимда</value>
+  </data>
+  <data name="sq.inAnswer" xml:space="preserve">
+    <value>Жавобда:</value>
+  </data>
+  <data name="sq.solve" xml:space="preserve">
+    <value>Ишлаш</value>
+  </data>
+  <data name="testType.search" xml:space="preserve">
+    <value>Савол қидириш</value>
+  </data>
+  <data name="sq.back" xml:space="preserve">
+    <value>← Қидирувга қайтиш</value>
+  </data>
+  <data name="sq.backShort" xml:space="preserve">
+    <value>Орқага</value>
+  </data>
+  <data name="sq.solveAll" xml:space="preserve">
+    <value>Ҳаммасини тест қилиб ишлаш</value>
+  </data>
 </root>

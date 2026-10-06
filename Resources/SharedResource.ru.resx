@@ -1563,4 +1563,91 @@
   <data name="users.extend" xml:space="preserve">
     <value>Продлить</value>
   </data>
+  <data name="err.imageType" xml:space="preserve">
+    <value>Можно загрузить только изображение (JPG, PNG, WEBP, GIF, BMP)</value>
+  </data>
+  <data name="sq.title" xml:space="preserve">
+    <value>Поиск вопроса</value>
+  </data>
+  <data name="sq.short" xml:space="preserve">
+    <value>Поиск вопроса</value>
+  </data>
+  <data name="sq.subtitle" xml:space="preserve">
+    <value>Введите несколько слов из вопроса — найдите нужный и решите его отдельно. Можно писать латиницей, кириллицей или по-русски.</value>
+  </data>
+  <data name="sq.placeholder" xml:space="preserve">
+    <value>Введите текст вопроса... например: кто первым проезжает перекрёсток</value>
+  </data>
+  <data name="sq.clear" xml:space="preserve">
+    <value>Очистить</value>
+  </data>
+  <data name="sq.kbdHint" xml:space="preserve">
+    <value>Перейти к поиску: клавиша /</value>
+  </data>
+  <data name="sq.try" xml:space="preserve">
+    <value>Например:</value>
+  </data>
+  <data name="sq.ex1" xml:space="preserve">
+    <value>светофор</value>
+  </data>
+  <data name="sq.ex2" xml:space="preserve">
+    <value>обгон</value>
+  </data>
+  <data name="sq.ex3" xml:space="preserve">
+    <value>пешеход</value>
+  </data>
+  <data name="sq.ex4" xml:space="preserve">
+    <value>буксировка</value>
+  </data>
+  <data name="sq.ex5" xml:space="preserve">
+    <value>железнодорожный переезд</value>
+  </data>
+  <data name="sq.found" xml:space="preserve">
+    <value>Найдено вопросов: {n}</value>
+  </data>
+  <data name="sq.foundMore" xml:space="preserve">
+    <value>Найдено вопросов: {n} — показаны {shown} самых подходящих. Уточните запрос.</value>
+  </data>
+  <data name="sq.tooShort" xml:space="preserve">
+    <value>Введите хотя бы 2 буквы</value>
+  </data>
+  <data name="sq.startTitle" xml:space="preserve">
+    <value>Какой вопрос вы ищете?</value>
+  </data>
+  <data name="sq.startText" xml:space="preserve">
+    <value>Введите слова, которые помните из вопроса. Можно ввести и номер вопроса, например: #125</value>
+  </data>
+  <data name="sq.emptyTitle" xml:space="preserve">
+    <value>Ничего не найдено</value>
+  </data>
+  <data name="sq.emptyText" xml:space="preserve">
+    <value>Попробуйте другие слова или более короткий запрос.</value>
+  </data>
+  <data name="sq.errorTitle" xml:space="preserve">
+    <value>Ошибка поиска</value>
+  </data>
+  <data name="sq.errorText" xml:space="preserve">
+    <value>Проверьте подключение к интернету и попробуйте снова.</value>
+  </data>
+  <data name="sq.inMistakes" xml:space="preserve">
+    <value>В моих ошибках</value>
+  </data>
+  <data name="sq.inAnswer" xml:space="preserve">
+    <value>В ответе:</value>
+  </data>
+  <data name="sq.solve" xml:space="preserve">
+    <value>Решить</value>
+  </data>
+  <data name="testType.search" xml:space="preserve">
+    <value>Поиск вопроса</value>
+  </data>
+  <data name="sq.back" xml:space="preserve">
+    <value>← Назад к поиску</value>
+  </data>
+  <data name="sq.backShort" xml:space="preserve">
+    <value>Назад</value>
+  </data>
+  <data name="sq.solveAll" xml:space="preserve">
+    <value>Решить все как тест</value>
+  </data>
 </root>
