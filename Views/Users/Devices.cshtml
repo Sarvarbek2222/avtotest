@@ -1,0 +1,113 @@
+@model List<DeviceRequest>
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "dev.title";
+    ViewData["Title"] = L["dev.title"];
+    var history = (List<DeviceRequest>)ViewBag.History;
+    var msgKey = TempData["MsgKey"] as string;
+    var errKey = TempData["ErrKey"] as string;
+}
+
+<partial name="_UsersStyles" />
+
+<div class="us-page">
+    <div class="us-header">
+        <div>
+            <div class="us-eyebrow" data-i18n="admin.panel">@L["admin.panel"]</div>
+            <h1 class="us-title" data-i18n="dev.title">@L["dev.title"]</h1>
+            <p class="us-sub" data-i18n="dev.subtitle">@L["dev.subtitle"]</p>
+        </div>
+        <a asp-action="Index" class="us-btn us-btn-ghost" data-i18n="admin.users">@L["admin.users"]</a>
+    </div>
+
+    @if (msgKey != null)
+    {
+        <div class="us-alert ok" role="status" data-i18n="@msgKey">@L[msgKey]</div>
+    }
+    @if (errKey != null)
+    {
+        <div class="us-alert err" role="alert" data-i18n="@errKey">@L[errKey]</div>
+    }
+
+    <h2 class="us-h2">
+        <span data-i18n="dev.pending">@L["dev.pending"]</span>
+        <span class="us-count-badge @(Model.Count == 0 ? "zero" : "")">@Model.Count</span>
+    </h2>
+
+    @if (Model.Count == 0)
+    {
+        <div class="us-card"><div class="us-empty" data-i18n="dev.none">@L["dev.none"]</div></div>
+    }
+    else
+    {
+        <div class="us-req-list">
+            @foreach (var r in Model)
+            {
+                <div class="us-req">
+                    <div class="us-req-user">
+                        <div class="us-req-avatar">@((r.User?.Username ?? "?").Substring(0, 1).ToUpperInvariant())</div>
+                        <div>
+                            <div class="us-login">@r.User?.Username</div>
+                            <div class="us-muted">@(r.User?.FullName ?? "—")</div>
+                        </div>
+                    </div>
+                    <div class="us-req-devices">
+                        <div>
+                            <div class="us-label" data-i18n="dev.oldDevice">@L["dev.oldDevice"]</div>
+                            <div class="us-device">@(r.User?.DeviceInfo ?? "—")</div>
+                        </div>
+                        <div class="us-req-arrow" aria-hidden="true">→</div>
+                        <div>
+                            <div class="us-label" data-i18n="dev.newDevice">@L["dev.newDevice"]</div>
+                            <div class="us-device new">@r.DeviceInfo</div>
+                            <div class="us-muted">@(r.IpAddress ?? "") · @L.Stamp(r.CreatedAt)</div>
+                        </div>
+                    </div>
+                    <div class="us-req-actions">
+                        <form asp-action="RejectDevice" asp-route-id="@r.Id" method="post">
+                            <button type="submit" class="us-btn us-btn-ghost us-btn-sm" data-i18n="dev.reject">@L["dev.reject"]</button>
+                        </form>
+                        <form asp-action="ApproveDevice" asp-route-id="@r.Id" method="post">
+                            <button type="submit" class="us-btn us-btn-primary us-btn-sm" data-i18n="dev.approve">@L["dev.approve"]</button>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+        <p class="us-hint" style="margin-top:10px;" data-i18n="dev.approveHint">@L["dev.approveHint"]</p>
+    }
+
+    @if (history.Count > 0)
+    {
+        <h2 class="us-h2" data-i18n="dev.history">@L["dev.history"]</h2>
+        <div class="us-card">
+            <div style="overflow-x:auto;">
+                <table class="us-table">
+                    <thead>
+                        <tr>
+                            <th data-i18n="users.username">@L["users.username"]</th>
+                            <th data-i18n="dev.newDevice">@L["dev.newDevice"]</th>
+                            <th data-i18n="users.status">@L["users.status"]</th>
+                            <th class="hide-sm" data-i18n="dev.requested">@L["dev.requested"]</th>
+                            <th class="hide-sm" data-i18n="dev.resolved">@L["dev.resolved"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var r in history)
+                        {
+                            var ok = r.Status == DeviceRequestStatus.Approved;
+                            var key = ok ? "dev.stApproved" : "dev.stRejected";
+                            <tr>
+                                <td><span class="us-login">@r.User?.Username</span></td>
+                                <td><span class="us-device">@r.DeviceInfo</span></td>
+                                <td><span class="us-pill @(ok ? "on" : "exp")" data-i18n="@key">@L[key]</span></td>
+                                <td class="hide-sm us-muted">@L.Stamp(r.CreatedAt)</td>
+                                <td class="hide-sm us-muted">@(r.ResolvedAt is DateTime ra ? L.Stamp(ra) : "—")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

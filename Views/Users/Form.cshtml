@@ -21,6 +21,11 @@
         </div>
     </div>
 
+    @if (TempData["MsgKey"] is string msgKey)
+    {
+        <div class="us-alert ok" role="status" data-i18n="@msgKey">@L[msgKey]</div>
+    }
+
     @foreach (var err in generalErrors)
     {
         <div class="us-alert err" role="alert">⚠ @err</div>
@@ -93,9 +98,181 @@
             <span data-i18n="users.isActive">@L["users.isActive"]</span>
         </label>
 
+        @* ⏳ Kirish muddati: 1 kundan 12 oygacha yoki cheksiz. Super admin uchun qo'llanmaydi. *@
+        <fieldset class="us-section" id="accessSection">
+            <legend class="us-label" data-i18n="users.access">@L["users.access"]</legend>
+
+            @if (!Model.IsNew)
+            {
+                var now = DateTime.UtcNow;
+                <div class="us-current">
+                    <span data-i18n="users.currentAccess">@L["users.currentAccess"]</span>:
+                    @if (Model.CurrentExpiresAt == null)
+                    {
+                        <b class="us-pill inf">∞ <span data-i18n="users.unlimited">@L["users.unlimited"]</span></b>
+                    }
+                    else if (Model.CurrentExpiresAt <= now)
+                    {
+                        <b class="us-pill exp" data-i18n="users.expired">@L["users.expired"]</b>
+                        <span class="us-muted">@L.Stamp(Model.CurrentExpiresAt.Value)</span>
+                    }
+                    else
+                    {
+                        var left = (int)Math.Ceiling((Model.CurrentExpiresAt.Value - now).TotalDays);
+                        <b>@L.Stamp(Model.CurrentExpiresAt.Value)</b>
+                        <span class="us-left @(left <= 7 ? "warn" : "")" data-i18n="users.daysLeft" data-i18n-args='{"n":@left}'>@L.F("users.daysLeft", ("n", left))</span>
+                    }
+                </div>
+            }
+
+            <input type="hidden" asp-for="AccessMode" id="accessMode" />
+            <div class="us-seg" role="group">
+                @if (!Model.IsNew)
+                {
+                    <button type="button" class="us-seg-btn" data-mode="keep" data-i18n="users.accessKeep">@L["users.accessKeep"]</button>
+                }
+                <button type="button" class="us-seg-btn" data-mode="set" data-i18n="users.accessSet">@L["users.accessSet"]</button>
+                <button type="button" class="us-seg-btn inf" data-mode="unlimited">∞ <span data-i18n="users.unlimited">@L["users.unlimited"]</span></button>
+            </div>
+
+            <div class="us-set" id="accessSet">
+                <div class="us-chips">
+                    @foreach (var (n, unit) in new[] { (1, "d"), (3, "d"), (7, "d"), (15, "d"), (1, "m"), (2, "m"), (3, "m"), (6, "m"), (12, "m") })
+                    {
+                        var key = unit == "d" ? "users.nDays" : "users.nMonths";
+                        <button type="button" class="us-chip" data-amount="@n" data-unit="@unit"
+                                data-i18n="@key" data-i18n-args='{"n":@n}'>@L.F(key, ("n", n))</button>
+                    }
+                </div>
+                <div class="us-amount">
+                    <input asp-for="AccessAmount" type="number" min="1" max="365" step="1" id="accessAmount"
+                           class="us-input @(FieldError("AccessAmount") != null ? "invalid" : "")" inputmode="numeric" />
+                    <select asp-for="AccessUnit" id="accessUnit" class="us-input">
+                        <option value="d" data-i18n="users.unitDays">@L["users.unitDays"]</option>
+                        <option value="m" data-i18n="users.unitMonths">@L["users.unitMonths"]</option>
+                    </select>
+                    <span class="us-until" id="accessUntil"></span>
+                </div>
+                @if (FieldError("AccessAmount") is string ae)
+                {
+                    <span class="us-field-err">@ae</span>
+                }
+                else
+                {
+                    <span class="us-hint" data-i18n="users.accessHint">@L["users.accessHint"]</span>
+                }
+            </div>
+            <p class="us-hint" id="accessUnlimitedHint" data-i18n="users.unlimitedHint">@L["users.unlimitedHint"]</p>
+        </fieldset>
+        <p class="us-hint us-admin-note" id="adminNote" data-i18n="users.adminNoLimits">@L["users.adminNoLimits"]</p>
+
+        @if (!Model.IsNew)
+        {
+            @* 📱 Bitta qurilma: bog'langan qurilma va uni bo'shatish *@
+            <fieldset class="us-section" id="deviceSection">
+                <legend class="us-label" data-i18n="users.device">@L["users.device"]</legend>
+                <div class="us-device-row">
+                    <div>
+                        @if (Model.HasDevice)
+                        {
+                            <div class="us-device">@Model.DeviceInfo</div>
+                            @if (Model.DeviceBoundAt is DateTime db)
+                            {
+                                <div class="us-muted"><span data-i18n="users.boundAt">@L["users.boundAt"]</span>: @L.Stamp(db)</div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="us-muted" data-i18n="users.noDeviceLong">@L["users.noDeviceLong"]</div>
+                        }
+                        @if (Model.PendingRequests > 0)
+                        {
+                            <a asp-action="Devices" class="us-pill pend" data-i18n="users.pendingDevice">@L["users.pendingDevice"]</a>
+                        }
+                    </div>
+                    @if (Model.HasDevice)
+                    {
+                        <button type="submit" form="resetDeviceForm" class="us-btn us-btn-ghost us-btn-sm"
+                                onclick="return confirm(I18n.t('users.resetDeviceConfirm'))" data-i18n="users.resetDevice">@L["users.resetDevice"]</button>
+                    }
+                </div>
+                <p class="us-hint" data-i18n="users.deviceHint">@L["users.deviceHint"]</p>
+            </fieldset>
+        }
+
         <div class="us-form-actions">
             <a asp-action="Index" class="us-btn us-btn-ghost" data-i18n="form.back">@L["form.back"]</a>
             <button type="submit" class="us-btn us-btn-primary" data-i18n="users.save">@L["users.save"]</button>
         </div>
     </form>
+
+    @if (!Model.IsNew)
+    {
+        <form asp-action="ResetDevice" asp-route-id="@Model.Id" method="post" id="resetDeviceForm" hidden></form>
+    }
 </div>
+
+<script>
+    (function () {
+        var mode = document.getElementById("accessMode");
+        var setBox = document.getElementById("accessSet");
+        var unlimitedHint = document.getElementById("accessUnlimitedHint");
+        var amount = document.getElementById("accessAmount");
+        var unit = document.getElementById("accessUnit");
+        var until = document.getElementById("accessUntil");
+        var role = document.getElementById("Role");
+        var segs = document.querySelectorAll(".us-seg-btn");
+        var chips = document.querySelectorAll(".us-chip");
+
+        function pad(n) { return (n < 10 ? "0" : "") + n; }
+
+        function refresh() {
+            var m = mode.value || "unlimited";
+            segs.forEach(function (b) { b.classList.toggle("on", b.dataset.mode === m); });
+            setBox.hidden = m !== "set";
+            unlimitedHint.hidden = m !== "unlimited";
+
+            var n = parseInt(amount.value, 10), u = unit.value;
+            amount.max = u === "m" ? 12 : 365;
+            chips.forEach(function (c) { c.classList.toggle("on", +c.dataset.amount === n && c.dataset.unit === u); });
+
+            var ok = n >= 1 && n <= +amount.max;
+            amount.classList.toggle("invalid", m === "set" && !ok);
+            if (m === "set" && ok) {
+                var d = new Date();
+                if (u === "m") d.setMonth(d.getMonth() + n); else d.setDate(d.getDate() + n);
+                var s = pad(d.getDate()) + "." + pad(d.getMonth() + 1) + "." + d.getFullYear() + " " + pad(d.getHours()) + ":" + pad(d.getMinutes());
+                until.setAttribute("data-i18n-args", JSON.stringify({ date: s }));
+                until.setAttribute("data-i18n", "users.until");
+                until.textContent = I18n.t("users.until", { date: s });
+            } else {
+                until.removeAttribute("data-i18n");
+                until.textContent = "";
+            }
+        }
+
+        // Super admin uchun muddat va qurilma cheklovi yo'q — bo'limlar yashiriladi
+        function refreshRole() {
+            var admin = role.value === "superadmin";
+            document.getElementById("accessSection").hidden = admin;
+            document.getElementById("adminNote").hidden = !admin;
+            var dev = document.getElementById("deviceSection");
+            if (dev) dev.hidden = admin;
+        }
+
+        segs.forEach(function (b) { b.addEventListener("click", function () { mode.value = b.dataset.mode; refresh(); }); });
+        chips.forEach(function (c) {
+            c.addEventListener("click", function () {
+                mode.value = "set"; amount.value = c.dataset.amount; unit.value = c.dataset.unit; refresh();
+            });
+        });
+        amount.addEventListener("input", refresh);
+        unit.addEventListener("change", function () {
+            if (unit.value === "m" && +amount.value > 12) amount.value = 12;
+            refresh();
+        });
+        role.addEventListener("change", refreshRole);
+        refresh();
+        refreshRole();
+    })();
+</script>

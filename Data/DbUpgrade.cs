@@ -1,4 +1,4 @@
-﻿using System.Data;
+using System.Data;
 using System.Data.Common;
 using Microsoft.EntityFrameworkCore;
 using propro.Localization;
@@ -27,6 +27,7 @@ public static class DbUpgrade
         try
         {
             await EnsureUsersTableAsync(db, log);
+            await EnsureUserAccessAsync(db, log);
             var users = scope.ServiceProvider.GetRequiredService<UserService>();
             var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
             await users.EnsureDefaultSuperAdminAsync(config, log);
@@ -79,6 +80,50 @@ CREATE TABLE `Users` (
     UNIQUE KEY `IX_Users_Username` (`Username`)
 ) CHARACTER SET=utf8mb4");
         log.LogInformation("Users jadvali yaratildi");
+    }
+
+    /// <summary>
+    /// Kirish muddati va bitta qurilma cheklovi: Users jadvaliga yangi ustunlar (bo'sh — ya'ni cheksiz muddat,
+    /// qurilma hali bog'lanmagan) va qurilma so'rovlari jadvali. Mavjud ma'lumotlar o'zgarmaydi.
+    /// </summary>
+    private static async Task EnsureUserAccessAsync(AppDbContext db, ILogger log)
+    {
+        var conn = db.Database.GetDbConnection();
+        if (conn.State != ConnectionState.Open) await conn.OpenAsync();
+
+        var columns = new (string name, string type)[]
+        {
+            ("AccessExpiresAt", "datetime(6) NULL"),
+            ("DeviceId", "varchar(64) CHARACTER SET utf8mb4 NULL"),
+            ("DeviceInfo", "varchar(255) CHARACTER SET utf8mb4 NULL"),
+            ("DeviceBoundAt", "datetime(6) NULL"),
+        };
+        foreach (var (name, type) in columns)
+        {
+            if (await ColumnExistsAsync(conn, "Users", name)) continue;
+            await ExecAsync(conn, $"ALTER TABLE `Users` ADD COLUMN `{name}` {type}");
+            log.LogInformation("Users.{Column} ustuni qo'shildi", name);
+        }
+
+        if (!await TableExistsAsync(conn, "UserDeviceRequests"))
+        {
+            await ExecAsync(conn, @"
+CREATE TABLE `UserDeviceRequests` (
+    `Id` int NOT NULL AUTO_INCREMENT,
+    `UserId` int NOT NULL,
+    `DeviceId` varchar(64) CHARACTER SET utf8mb4 NOT NULL,
+    `DeviceInfo` varchar(255) CHARACTER SET utf8mb4 NULL,
+    `IpAddress` varchar(64) CHARACTER SET utf8mb4 NULL,
+    `Status` varchar(16) CHARACTER SET utf8mb4 NOT NULL,
+    `CreatedAt` datetime(6) NOT NULL,
+    `ResolvedAt` datetime(6) NULL,
+    PRIMARY KEY (`Id`),
+    KEY `IX_UserDeviceRequests_Status_CreatedAt` (`Status`, `CreatedAt`),
+    KEY `IX_UserDeviceRequests_UserId_DeviceId` (`UserId`, `DeviceId`),
+    CONSTRAINT `FK_UserDeviceRequests_Users` FOREIGN KEY (`UserId`) REFERENCES `Users` (`Id`) ON DELETE CASCADE
+) CHARACTER SET=utf8mb4");
+            log.LogInformation("UserDeviceRequests jadvali yaratildi");
+        }
     }
 
     /// <summary>Test natijalari, javoblar va xato savollar jadvallari (foydalanuvchi kabineti uchun).</summary>

@@ -1377,4 +1377,190 @@
   <data name="common.close" xml:space="preserve">
     <value>Закрыть</value>
   </data>
+  <data name="login.expired" xml:space="preserve">
+    <value>Срок вашего доступа истёк. Для продления обратитесь к администратору.</value>
+  </data>
+  <data name="login.devicePending" xml:space="preserve">
+    <value>Этот аккаунт привязан к другому устройству. Администратору отправлен запрос — после подтверждения войдите снова с этого устройства.</value>
+  </data>
+  <data name="users.search" xml:space="preserve">
+    <value>Поиск по логину или имени...</value>
+  </data>
+  <data name="users.fAll" xml:space="preserve">
+    <value>Все статусы</value>
+  </data>
+  <data name="users.fActive" xml:space="preserve">
+    <value>Активные</value>
+  </data>
+  <data name="users.fInactive" xml:space="preserve">
+    <value>Неактивные</value>
+  </data>
+  <data name="users.fExpired" xml:space="preserve">
+    <value>Срок истёк</value>
+  </data>
+  <data name="users.fSoon" xml:space="preserve">
+    <value>Осталось меньше 7 дней</value>
+  </data>
+  <data name="users.fUnlimited" xml:space="preserve">
+    <value>Бессрочные</value>
+  </data>
+  <data name="users.fPending" xml:space="preserve">
+    <value>Есть запрос устройства</value>
+  </data>
+  <data name="users.fNoDevice" xml:space="preserve">
+    <value>Устройство не привязано</value>
+  </data>
+  <data name="users.fAllRoles" xml:space="preserve">
+    <value>Все роли</value>
+  </data>
+  <data name="users.found" xml:space="preserve">
+    <value>{n} из {total} пользователей</value>
+  </data>
+  <data name="users.noMatch" xml:space="preserve">
+    <value>По запросу пользователи не найдены</value>
+  </data>
+  <data name="users.access" xml:space="preserve">
+    <value>Срок доступа</value>
+  </data>
+  <data name="users.device" xml:space="preserve">
+    <value>Устройство</value>
+  </data>
+  <data name="users.unlimited" xml:space="preserve">
+    <value>Бессрочно</value>
+  </data>
+  <data name="users.expired" xml:space="preserve">
+    <value>Срок истёк</value>
+  </data>
+  <data name="users.daysLeft" xml:space="preserve">
+    <value>осталось дней: {n}</value>
+  </data>
+  <data name="users.noDevice" xml:space="preserve">
+    <value>Ещё не входил</value>
+  </data>
+  <data name="users.noDeviceLong" xml:space="preserve">
+    <value>Устройство не привязано — пользователь будет привязан к устройству, с которого войдёт в следующий раз.</value>
+  </data>
+  <data name="users.pendingDevice" xml:space="preserve">
+    <value>Запрос нового устройства</value>
+  </data>
+  <data name="users.currentAccess" xml:space="preserve">
+    <value>Текущий срок</value>
+  </data>
+  <data name="users.accessKeep" xml:space="preserve">
+    <value>Не менять</value>
+  </data>
+  <data name="users.accessSet" xml:space="preserve">
+    <value>Задать срок</value>
+  </data>
+  <data name="users.nDays" xml:space="preserve">
+    <value>{n} дн.</value>
+  </data>
+  <data name="users.nMonths" xml:space="preserve">
+    <value>{n} мес.</value>
+  </data>
+  <data name="users.unitDays" xml:space="preserve">
+    <value>дней</value>
+  </data>
+  <data name="users.unitMonths" xml:space="preserve">
+    <value>месяцев</value>
+  </data>
+  <data name="users.until" xml:space="preserve">
+    <value>до {date}</value>
+  </data>
+  <data name="users.accessHint" xml:space="preserve">
+    <value>Отсчёт с текущего момента: от 1 до 365 дней или от 1 до 12 месяцев.</value>
+  </data>
+  <data name="users.unlimitedHint" xml:space="preserve">
+    <value>Пользователь может входить без ограничения по сроку.</value>
+  </data>
+  <data name="users.adminNoLimits" xml:space="preserve">
+    <value>Для супер-админа срок доступа и ограничение одного устройства не применяются.</value>
+  </data>
+  <data name="users.boundAt" xml:space="preserve">
+    <value>Привязано</value>
+  </data>
+  <data name="users.resetDevice" xml:space="preserve">
+    <value>Отвязать устройство</value>
+  </data>
+  <data name="users.resetDeviceConfirm" xml:space="preserve">
+    <value>Отвязать устройство? Пользователь будет привязан к устройству, с которого войдёт в следующий раз.</value>
+  </data>
+  <data name="users.deviceHint" xml:space="preserve">
+    <value>Каждый пользователь может входить только с одного устройства. Для входа с другого нужно ваше подтверждение.</value>
+  </data>
+  <data name="err.accessRange" xml:space="preserve">
+    <value>Срок должен быть от 1 до 365 дней или от 1 до 12 месяцев</value>
+  </data>
+  <data name="dev.title" xml:space="preserve">
+    <value>Запросы устройств</value>
+  </data>
+  <data name="dev.subtitle" xml:space="preserve">
+    <value>Когда пользователь пытается войти с другого устройства, запрос появляется здесь</value>
+  </data>
+  <data name="dev.pending" xml:space="preserve">
+    <value>Ожидают решения</value>
+  </data>
+  <data name="dev.none" xml:space="preserve">
+    <value>Новых запросов нет</value>
+  </data>
+  <data name="dev.oldDevice" xml:space="preserve">
+    <value>Текущее устройство</value>
+  </data>
+  <data name="dev.newDevice" xml:space="preserve">
+    <value>Новое устройство</value>
+  </data>
+  <data name="dev.approve" xml:space="preserve">
+    <value>Подтвердить</value>
+  </data>
+  <data name="dev.reject" xml:space="preserve">
+    <value>Отклонить</value>
+  </data>
+  <data name="dev.approveHint" xml:space="preserve">
+    <value>После подтверждения пользователь переводится на новое устройство, а сеанс на старом завершается.</value>
+  </data>
+  <data name="dev.history" xml:space="preserve">
+    <value>Последние решения</value>
+  </data>
+  <data name="dev.requested" xml:space="preserve">
+    <value>Запрошено</value>
+  </data>
+  <data name="dev.resolved" xml:space="preserve">
+    <value>Решено</value>
+  </data>
+  <data name="dev.stApproved" xml:space="preserve">
+    <value>Подтверждён</value>
+  </data>
+  <data name="dev.stRejected" xml:space="preserve">
+    <value>Отклонён</value>
+  </data>
+  <data name="dev.approved" xml:space="preserve">
+    <value>Запрос подтверждён — пользователь теперь может войти с нового устройства</value>
+  </data>
+  <data name="dev.rejected" xml:space="preserve">
+    <value>Запрос отклонён</value>
+  </data>
+  <data name="dev.notFound" xml:space="preserve">
+    <value>Запрос не найден или уже обработан</value>
+  </data>
+  <data name="dev.resetDone" xml:space="preserve">
+    <value>Устройство отвязано</value>
+  </data>
+  <data name="dev.toast" xml:space="preserve">
+    <value>Новый запрос устройства — нажмите, чтобы посмотреть</value>
+  </data>
+  <data name="users.soonTitle" xml:space="preserve">
+    <value>Срок скоро истекает</value>
+  </data>
+  <data name="users.soonSub" xml:space="preserve">
+    <value>Доступ закончится в течение 7 дней</value>
+  </data>
+  <data name="users.expiredTitle" xml:space="preserve">
+    <value>Срок истёк</value>
+  </data>
+  <data name="users.expiredSub" xml:space="preserve">
+    <value>Не могут войти, пока срок не продлён</value>
+  </data>
+  <data name="users.extend" xml:space="preserve">
+    <value>Продлить</value>
+  </data>
 </root>

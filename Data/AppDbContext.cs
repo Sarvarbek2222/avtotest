@@ -10,6 +10,7 @@ public class AppDbContext : DbContext
     public DbSet<TestAttempt> TestAttempts { get; set; }
     public DbSet<TestAnswer> TestAnswers { get; set; }
     public DbSet<UserMistake> UserMistakes { get; set; }
+    public DbSet<DeviceRequest> DeviceRequests { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -38,6 +39,14 @@ public class AppDbContext : DbContext
         {
             b.ToTable("UserMistakes");
             b.HasIndex(m => new { m.UserId, m.QuestionId }).IsUnique();
+        });
+
+        modelBuilder.Entity<DeviceRequest>(b =>
+        {
+            b.ToTable("UserDeviceRequests");
+            b.HasIndex(r => new { r.Status, r.CreatedAt });
+            b.HasIndex(r => new { r.UserId, r.DeviceId });
+            b.HasOne(r => r.User).WithMany().HasForeignKey(r => r.UserId).OnDelete(DeleteBehavior.Cascade);
         });
     }
 }

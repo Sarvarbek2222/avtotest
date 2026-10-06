@@ -23,7 +23,7 @@ public class UsersController : Controller
     private string T(string key) => _t[key];
     private int CurrentUserId => int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var id) ? id : 0;
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string? q, string? status)
     {
         var list = await _db.Users.AsNoTracking()
             .OrderByDescending(u => u.Role == Roles.SuperAdmin)
@@ -31,11 +31,18 @@ public class UsersController : Controller
             .ToListAsync();
 
         ViewBag.CurrentUserId = CurrentUserId;
+        ViewBag.Q = q;
+        ViewBag.Status = status;
+        ViewBag.PendingUsers = (await _db.DeviceRequests.AsNoTracking()
+                .Where(r => r.Status == DeviceRequestStatus.Pending)
+                .Select(r => r.UserId)
+                .ToListAsync())
+            .ToHashSet();
         return View(list);
     }
 
     [HttpGet]
-    public IActionResult Create() => View("Form", new UserForm { Role = Roles.User, IsActive = true });
+    public IActionResult Create() => View("Form", new UserForm { Role = Roles.User, IsActive = true, AccessMode = UserForm.Unlimited, AccessUnit = "m", AccessAmount = 1 });
 
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -51,6 +58,7 @@ public class UsersController : Controller
             FullName = Clean(form.FullName),
             Role = form.Role!,
             IsActive = form.IsActive,
+            AccessExpiresAt = form.ResolveExpiry(null, DateTime.UtcNow),
         };
         _users.SetPassword(user, form.Password!);
         _db.Users.Add(user);
@@ -66,14 +74,29 @@ public class UsersController : Controller
         var user = await _db.Users.FindAsync(id);
         if (user == null) return NotFound();
 
-        return View("Form", new UserForm
+        var form = new UserForm
         {
             Id = user.Id,
             Username = user.Username,
             FullName = user.FullName,
             Role = user.Role,
             IsActive = user.IsActive,
-        });
+            AccessMode = UserForm.Keep,
+            AccessUnit = "m",
+            AccessAmount = 1,
+        };
+        await FillInfoAsync(form, user);
+        return View("Form", form);
+    }
+
+    /// <summary>Formada ko'rsatiladigan joriy holat: muddat va bog'langan qurilma.</summary>
+    private async Task FillInfoAsync(UserForm form, AppUser user)
+    {
+        form.CurrentExpiresAt = user.AccessExpiresAt;
+        form.DeviceInfo = user.DeviceInfo;
+        form.DeviceBoundAt = user.DeviceBoundAt;
+        form.HasDevice = user.DeviceId != null;
+        form.PendingRequests = await _db.DeviceRequests.CountAsync(r => r.UserId == user.Id && r.Status == DeviceRequestStatus.Pending);
     }
 
     [HttpPost]
@@ -94,7 +117,11 @@ public class UsersController : Controller
         if (user.Id == CurrentUserId && !form.IsActive)
             ModelState.AddModelError("", T("err.deactivateSelf"));
 
-        if (!ModelState.IsValid) return View("Form", form);
+        if (!ModelState.IsValid)
+        {
+            await FillInfoAsync(form, user);
+            return View("Form", form);
+        }
 
         bool accessChanged = user.Role != form.Role || user.IsActive != form.IsActive;
 
@@ -102,6 +129,7 @@ public class UsersController : Controller
         user.FullName = Clean(form.FullName);
         user.Role = form.Role!;
         user.IsActive = form.IsActive;
+        user.AccessExpiresAt = form.ResolveExpiry(user.AccessExpiresAt, DateTime.UtcNow);
 
         if (!string.IsNullOrEmpty(form.Password))
             _users.SetPassword(user, form.Password); // SecurityStamp ham yangilanadi
@@ -147,6 +175,64 @@ public class UsersController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    /// <summary>Qurilmani bo'shatish: keyingi kirishda foydalanuvchi qaysi qurilmadan kirsa, o'shanga bog'lanadi.</summary>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ResetDevice(int id)
+    {
+        var user = await _db.Users.FindAsync(id);
+        if (user == null) return NotFound();
+
+        user.DeviceId = null;
+        user.DeviceInfo = null;
+        user.DeviceBoundAt = null;
+        await _db.SaveChangesAsync();
+
+        TempData["MsgKey"] = "dev.resetDone";
+        return RedirectToAction(nameof(Edit), new { id });
+    }
+
+    /// <summary>Boshqa qurilmadan kirish so'rovlari (bildirishnomalar).</summary>
+    [HttpGet]
+    public async Task<IActionResult> Devices()
+    {
+        var pending = await _db.DeviceRequests.AsNoTracking().Include(r => r.User)
+            .Where(r => r.Status == DeviceRequestStatus.Pending)
+            .OrderByDescending(r => r.CreatedAt)
+            .ToListAsync();
+        var history = await _db.DeviceRequests.AsNoTracking().Include(r => r.User)
+            .Where(r => r.Status != DeviceRequestStatus.Pending)
+            .OrderByDescending(r => r.ResolvedAt)
+            .Take(30)
+            .ToListAsync();
+
+        ViewBag.History = history;
+        return View(pending);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ApproveDevice(int id)
+    {
+        if (await _users.ApproveDeviceAsync(id)) TempData["MsgKey"] = "dev.approved";
+        else TempData["ErrKey"] = "dev.notFound";
+        return RedirectToAction(nameof(Devices));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> RejectDevice(int id)
+    {
+        if (await _users.RejectDeviceAsync(id)) TempData["MsgKey"] = "dev.rejected";
+        else TempData["ErrKey"] = "dev.notFound";
+        return RedirectToAction(nameof(Devices));
+    }
+
+    /// <summary>Admin panelidagi bildirishnoma belgisi uchun (bir necha soniyada bir so'raladi).</summary>
+    [HttpGet]
+    public async Task<IActionResult> PendingCount() =>
+        Json(new { count = await _users.PendingDeviceRequestCountAsync() });
+
     private async Task ValidateAsync(UserForm form, bool isNew)
     {
         form.Username = form.Username?.Trim();
@@ -170,6 +256,9 @@ public class UsersController : Controller
             else if (form.Password != form.ConfirmPassword)
                 ModelState.AddModelError(nameof(form.ConfirmPassword), T("err.passwordMismatch"));
         }
+
+        if (form.AccessMode == UserForm.Set && !form.IsAmountValid)
+            ModelState.AddModelError(nameof(form.AccessAmount), T("err.accessRange"));
     }
 
     private static string? Clean(string? v) => string.IsNullOrWhiteSpace(v) ? null : v.Trim();
@@ -187,4 +276,33 @@ public class UserForm
     public string? ConfirmPassword { get; set; }
 
     public bool IsNew => Id == 0;
+
+    // Kirish muddati: "keep" — o'zgartirmaslik, "set" — hozirdan boshlab N kun/oy, "unlimited" — cheksiz
+    public const string Keep = "keep";
+    public const string Set = "set";
+    public const string Unlimited = "unlimited";
+    public const int MaxDays = 365;
+    public const int MaxMonths = 12;
+
+    public string? AccessMode { get; set; }
+    public int? AccessAmount { get; set; }
+    /// <summary>"d" — kun, "m" — oy</summary>
+    public string? AccessUnit { get; set; }
+
+    public bool IsAmountValid => AccessAmount is int n && n >= 1 &&
+        (AccessUnit == "m" ? n <= MaxMonths : AccessUnit == "d" && n <= MaxDays);
+
+    public DateTime? ResolveExpiry(DateTime? current, DateTime utcNow) => AccessMode switch
+    {
+        Unlimited => null,
+        Set when IsAmountValid => AccessUnit == "m" ? utcNow.AddMonths(AccessAmount!.Value) : utcNow.AddDays(AccessAmount!.Value),
+        _ => current,
+    };
+
+    // Faqat ko'rsatish uchun (tahrirlash formasida)
+    public DateTime? CurrentExpiresAt { get; set; }
+    public string? DeviceInfo { get; set; }
+    public DateTime? DeviceBoundAt { get; set; }
+    public bool HasDevice { get; set; }
+    public int PendingRequests { get; set; }
 }

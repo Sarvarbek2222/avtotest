@@ -24,6 +24,7 @@ public class AuthController : Controller
             return RedirectAfterLogin(User.IsInRole(Roles.SuperAdmin), returnUrl);
 
         ViewBag.ReturnUrl = returnUrl;
+        DeviceGuard.GetOrCreateDeviceId(HttpContext); // qurilma identifikatori login sahifasidayoq beriladi
         return View();
     }
 
@@ -41,10 +42,18 @@ public class AuthController : Controller
             ViewBag.Error = _t["login.error"].Value;
             return View();
         }
-        if (!user.IsActive)
+        var check = await _users.CheckAccessAsync(user, HttpContext);
+        if (check != LoginCheck.Ok)
         {
-            ViewBag.ErrorKey = "login.inactive";
-            ViewBag.Error = _t["login.inactive"].Value;
+            var key = check switch
+            {
+                LoginCheck.Inactive => "login.inactive",
+                LoginCheck.Expired => "login.expired",
+                _ => "login.devicePending",
+            };
+            ViewBag.ErrorKey = key;
+            ViewBag.Error = _t[key].Value;
+            if (check == LoginCheck.DevicePending) ViewBag.Notice = true;
             return View();
         }
 

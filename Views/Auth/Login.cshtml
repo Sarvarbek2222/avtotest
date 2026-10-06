@@ -175,6 +175,13 @@
 
             .lg-alert svg { width: 18px; height: 18px; flex-shrink: 0; margin-top: 1px; }
 
+            .lg-alert.notice {
+                background: rgba(245,158,11,.10);
+                border-color: rgba(245,158,11,.40);
+                color: #fcd34d;
+                animation: none;
+            }
+
         @@keyframes lg-shake {
             20%, 60% { transform: translateX(-6px); }
             40%, 80% { transform: translateX(6px); }
@@ -337,7 +344,7 @@
 
                     @if (hasError)
                     {
-                        <div class="lg-alert" role="alert">
+                        <div class="lg-alert @(ViewBag.Notice == true ? "notice" : "")" role="alert">
                             @Icons.Alert
                             <span data-i18n="@ViewBag.ErrorKey">@ViewBag.Error</span>
                         </div>

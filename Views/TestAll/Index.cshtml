@@ -346,9 +346,16 @@
 
             .container {
                 max-width: 100%;
+                width: auto; /* margin: 6px bilan 100% kenglik ekrandan chiqib ketmasin */
                 padding: 4px;
                 margin: 6px;
                 box-sizing: border-box;
+            }
+
+            /* Bootstrap .row manfiy chetlari (-12px) gorizontal aylantirish paydo qilmasin */
+            .container-fluid > .row {
+                margin-left: 0;
+                margin-right: 0;
             }
 
             @@media (max-width:768px) {
@@ -377,6 +384,21 @@
                     gap: 2px;
                     margin: 20px 8px 0 8px;
                 }
+            }
+
+            /* Telefon/planshet: 20 ustunli raqamlar qatori (~777px) ekranga sig'maydi — 10 ustunga o'tadi */
+            @@media (max-width: 860px) {
+                #questionNav {
+                    grid-template-columns: repeat(10, minmax(0, 36px));
+                    max-width: 100%;
+                }
+
+                    #questionNav button {
+                        width: 100%;
+                        height: auto;
+                        aspect-ratio: 1 / 1;
+                        min-width: 0;
+                    }
             }
     </style>
 </head>

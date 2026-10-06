@@ -1377,4 +1377,190 @@
   <data name="common.close" xml:space="preserve">
     <value>Yopish</value>
   </data>
+  <data name="login.expired" xml:space="preserve">
+    <value>Kirish muddatingiz tugagan. Muddatni uzaytirish uchun administratorga murojaat qiling.</value>
+  </data>
+  <data name="login.devicePending" xml:space="preserve">
+    <value>Bu akkaunt boshqa qurilmaga bog'langan. Administratorga so'rov yuborildi — u tasdiqlagach, shu qurilmadan qaytadan kiring.</value>
+  </data>
+  <data name="users.search" xml:space="preserve">
+    <value>Login yoki ism bo'yicha qidirish...</value>
+  </data>
+  <data name="users.fAll" xml:space="preserve">
+    <value>Barcha holatlar</value>
+  </data>
+  <data name="users.fActive" xml:space="preserve">
+    <value>Faol</value>
+  </data>
+  <data name="users.fInactive" xml:space="preserve">
+    <value>Nofaol</value>
+  </data>
+  <data name="users.fExpired" xml:space="preserve">
+    <value>Muddati tugagan</value>
+  </data>
+  <data name="users.fSoon" xml:space="preserve">
+    <value>7 kundan kam qolgan</value>
+  </data>
+  <data name="users.fUnlimited" xml:space="preserve">
+    <value>Cheksiz muddat</value>
+  </data>
+  <data name="users.fPending" xml:space="preserve">
+    <value>Qurilma so'rovi bor</value>
+  </data>
+  <data name="users.fNoDevice" xml:space="preserve">
+    <value>Qurilma bog'lanmagan</value>
+  </data>
+  <data name="users.fAllRoles" xml:space="preserve">
+    <value>Barcha rollar</value>
+  </data>
+  <data name="users.found" xml:space="preserve">
+    <value>{n} / {total} ta foydalanuvchi</value>
+  </data>
+  <data name="users.noMatch" xml:space="preserve">
+    <value>Qidiruv bo'yicha foydalanuvchi topilmadi</value>
+  </data>
+  <data name="users.access" xml:space="preserve">
+    <value>Kirish muddati</value>
+  </data>
+  <data name="users.device" xml:space="preserve">
+    <value>Qurilma</value>
+  </data>
+  <data name="users.unlimited" xml:space="preserve">
+    <value>Cheksiz</value>
+  </data>
+  <data name="users.expired" xml:space="preserve">
+    <value>Muddati tugagan</value>
+  </data>
+  <data name="users.daysLeft" xml:space="preserve">
+    <value>{n} kun qoldi</value>
+  </data>
+  <data name="users.noDevice" xml:space="preserve">
+    <value>Hali kirmagan</value>
+  </data>
+  <data name="users.noDeviceLong" xml:space="preserve">
+    <value>Qurilma bog'lanmagan — foydalanuvchi keyingi safar qaysi qurilmadan kirsa, o'shanga bog'lanadi.</value>
+  </data>
+  <data name="users.pendingDevice" xml:space="preserve">
+    <value>Yangi qurilma so'rovi</value>
+  </data>
+  <data name="users.currentAccess" xml:space="preserve">
+    <value>Hozirgi muddat</value>
+  </data>
+  <data name="users.accessKeep" xml:space="preserve">
+    <value>O'zgartirmaslik</value>
+  </data>
+  <data name="users.accessSet" xml:space="preserve">
+    <value>Muddat belgilash</value>
+  </data>
+  <data name="users.nDays" xml:space="preserve">
+    <value>{n} kun</value>
+  </data>
+  <data name="users.nMonths" xml:space="preserve">
+    <value>{n} oy</value>
+  </data>
+  <data name="users.unitDays" xml:space="preserve">
+    <value>kun</value>
+  </data>
+  <data name="users.unitMonths" xml:space="preserve">
+    <value>oy</value>
+  </data>
+  <data name="users.until" xml:space="preserve">
+    <value>{date} gacha</value>
+  </data>
+  <data name="users.accessHint" xml:space="preserve">
+    <value>Hozirdan boshlab hisoblanadi: 1 kundan 365 kungacha yoki 1 oydan 12 oygacha.</value>
+  </data>
+  <data name="users.unlimitedHint" xml:space="preserve">
+    <value>Foydalanuvchi muddat cheklovisiz kira oladi.</value>
+  </data>
+  <data name="users.adminNoLimits" xml:space="preserve">
+    <value>Super admin uchun kirish muddati va bitta qurilma cheklovi qo'llanmaydi.</value>
+  </data>
+  <data name="users.boundAt" xml:space="preserve">
+    <value>Bog'langan vaqti</value>
+  </data>
+  <data name="users.resetDevice" xml:space="preserve">
+    <value>Qurilmani bo'shatish</value>
+  </data>
+  <data name="users.resetDeviceConfirm" xml:space="preserve">
+    <value>Qurilmani bo'shatasizmi? Foydalanuvchi keyingi safar qaysi qurilmadan kirsa, o'shanga bog'lanadi.</value>
+  </data>
+  <data name="users.deviceHint" xml:space="preserve">
+    <value>Har bir foydalanuvchi faqat bitta qurilmadan kira oladi. Boshqa qurilmadan kirish uchun sizning tasdig'ingiz kerak.</value>
+  </data>
+  <data name="err.accessRange" xml:space="preserve">
+    <value>Muddat 1 kundan 365 kungacha yoki 1 oydan 12 oygacha bo'lishi kerak</value>
+  </data>
+  <data name="dev.title" xml:space="preserve">
+    <value>Qurilma so'rovlari</value>
+  </data>
+  <data name="dev.subtitle" xml:space="preserve">
+    <value>Foydalanuvchi boshqa qurilmadan kirmoqchi bo'lsa, so'rov shu yerga keladi</value>
+  </data>
+  <data name="dev.pending" xml:space="preserve">
+    <value>Kutilayotgan so'rovlar</value>
+  </data>
+  <data name="dev.none" xml:space="preserve">
+    <value>Hozircha yangi so'rov yo'q</value>
+  </data>
+  <data name="dev.oldDevice" xml:space="preserve">
+    <value>Hozirgi qurilma</value>
+  </data>
+  <data name="dev.newDevice" xml:space="preserve">
+    <value>Yangi qurilma</value>
+  </data>
+  <data name="dev.approve" xml:space="preserve">
+    <value>Tasdiqlash</value>
+  </data>
+  <data name="dev.reject" xml:space="preserve">
+    <value>Rad etish</value>
+  </data>
+  <data name="dev.approveHint" xml:space="preserve">
+    <value>Tasdiqlansa, foydalanuvchi yangi qurilmaga o'tkaziladi va eski qurilmadagi sessiyasi yopiladi.</value>
+  </data>
+  <data name="dev.history" xml:space="preserve">
+    <value>So'nggi qarorlar</value>
+  </data>
+  <data name="dev.requested" xml:space="preserve">
+    <value>So'ralgan</value>
+  </data>
+  <data name="dev.resolved" xml:space="preserve">
+    <value>Hal qilingan</value>
+  </data>
+  <data name="dev.stApproved" xml:space="preserve">
+    <value>Tasdiqlangan</value>
+  </data>
+  <data name="dev.stRejected" xml:space="preserve">
+    <value>Rad etilgan</value>
+  </data>
+  <data name="dev.approved" xml:space="preserve">
+    <value>So'rov tasdiqlandi — foydalanuvchi endi yangi qurilmadan kira oladi</value>
+  </data>
+  <data name="dev.rejected" xml:space="preserve">
+    <value>So'rov rad etildi</value>
+  </data>
+  <data name="dev.notFound" xml:space="preserve">
+    <value>So'rov topilmadi yoki allaqachon hal qilingan</value>
+  </data>
+  <data name="dev.resetDone" xml:space="preserve">
+    <value>Qurilma bo'shatildi</value>
+  </data>
+  <data name="dev.toast" xml:space="preserve">
+    <value>Yangi qurilma so'rovi keldi — ko'rish uchun bosing</value>
+  </data>
+  <data name="users.soonTitle" xml:space="preserve">
+    <value>Muddati tugayotganlar</value>
+  </data>
+  <data name="users.soonSub" xml:space="preserve">
+    <value>Kirish muddati 7 kun ichida tugaydi</value>
+  </data>
+  <data name="users.expiredTitle" xml:space="preserve">
+    <value>Muddati tugaganlar</value>
+  </data>
+  <data name="users.expiredSub" xml:space="preserve">
+    <value>Muddat uzaytirilmaguncha tizimga kira olmaydi</value>
+  </data>
+  <data name="users.extend" xml:space="preserve">
+    <value>Uzaytirish</value>
+  </data>
 </root>

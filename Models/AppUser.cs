@@ -27,6 +27,55 @@ public class AppUser
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public DateTime? LastLoginAt { get; set; }
+
+    /// <summary>Kirish muddati (UTC). null — cheksiz. Muddat tugagach foydalanuvchi tizimga kira olmaydi.</summary>
+    public DateTime? AccessExpiresAt { get; set; }
+
+    /// <summary>Foydalanuvchi bog'langan qurilma identifikatori (brauzer cookie'si). null — hali bog'lanmagan.</summary>
+    [MaxLength(64)]
+    public string? DeviceId { get; set; }
+
+    /// <summary>Bog'langan qurilma haqida qisqa ma'lumot (brauzer · tizim).</summary>
+    [MaxLength(255)]
+    public string? DeviceInfo { get; set; }
+
+    public DateTime? DeviceBoundAt { get; set; }
+
+    /// <summary>Super admin uchun muddat va qurilma cheklovi qo'llanmaydi (o'zini bloklab qo'ymasligi uchun).</summary>
+    public bool IsRestricted => Role != Roles.SuperAdmin;
+
+    public bool IsExpired(DateTime utcNow) => IsRestricted && AccessExpiresAt != null && AccessExpiresAt <= utcNow;
+}
+
+/// <summary>Foydalanuvchi boshqa qurilmadan kirmoqchi bo'lganda adminga boradigan so'rov.</summary>
+public class DeviceRequest
+{
+    public int Id { get; set; }
+    public int UserId { get; set; }
+    public AppUser? User { get; set; }
+
+    [MaxLength(64)]
+    public string DeviceId { get; set; } = "";
+
+    [MaxLength(255)]
+    public string? DeviceInfo { get; set; }
+
+    [MaxLength(64)]
+    public string? IpAddress { get; set; }
+
+    /// <summary>DeviceRequestStatus.*</summary>
+    [MaxLength(16)]
+    public string Status { get; set; } = DeviceRequestStatus.Pending;
+
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? ResolvedAt { get; set; }
+}
+
+public static class DeviceRequestStatus
+{
+    public const string Pending = "pending";
+    public const string Approved = "approved";
+    public const string Rejected = "rejected";
 }
 
 public static class Roles

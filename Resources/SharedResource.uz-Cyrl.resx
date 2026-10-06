@@ -1377,4 +1377,190 @@
   <data name="common.close" xml:space="preserve">
     <value>Ёпиш</value>
   </data>
+  <data name="login.expired" xml:space="preserve">
+    <value>Кириш муддатингиз тугаган. Муддатни узайтириш учун администраторга мурожаат қилинг.</value>
+  </data>
+  <data name="login.devicePending" xml:space="preserve">
+    <value>Бу аккаунт бошқа қурилмага боғланган. Администраторга сўров юборилди — у тасдиқлагач, шу қурилмадан қайтадан киринг.</value>
+  </data>
+  <data name="users.search" xml:space="preserve">
+    <value>Логин ёки исм бўйича қидириш...</value>
+  </data>
+  <data name="users.fAll" xml:space="preserve">
+    <value>Барча ҳолатлар</value>
+  </data>
+  <data name="users.fActive" xml:space="preserve">
+    <value>Фаол</value>
+  </data>
+  <data name="users.fInactive" xml:space="preserve">
+    <value>Нофаол</value>
+  </data>
+  <data name="users.fExpired" xml:space="preserve">
+    <value>Муддати тугаган</value>
+  </data>
+  <data name="users.fSoon" xml:space="preserve">
+    <value>7 кундан кам қолган</value>
+  </data>
+  <data name="users.fUnlimited" xml:space="preserve">
+    <value>Чексиз муддат</value>
+  </data>
+  <data name="users.fPending" xml:space="preserve">
+    <value>Қурилма сўрови бор</value>
+  </data>
+  <data name="users.fNoDevice" xml:space="preserve">
+    <value>Қурилма боғланмаган</value>
+  </data>
+  <data name="users.fAllRoles" xml:space="preserve">
+    <value>Барча роллар</value>
+  </data>
+  <data name="users.found" xml:space="preserve">
+    <value>{n} / {total} та фойдаланувчи</value>
+  </data>
+  <data name="users.noMatch" xml:space="preserve">
+    <value>Қидирув бўйича фойдаланувчи топилмади</value>
+  </data>
+  <data name="users.access" xml:space="preserve">
+    <value>Кириш муддати</value>
+  </data>
+  <data name="users.device" xml:space="preserve">
+    <value>Қурилма</value>
+  </data>
+  <data name="users.unlimited" xml:space="preserve">
+    <value>Чексиз</value>
+  </data>
+  <data name="users.expired" xml:space="preserve">
+    <value>Муддати тугаган</value>
+  </data>
+  <data name="users.daysLeft" xml:space="preserve">
+    <value>{n} кун қолди</value>
+  </data>
+  <data name="users.noDevice" xml:space="preserve">
+    <value>Ҳали кирмаган</value>
+  </data>
+  <data name="users.noDeviceLong" xml:space="preserve">
+    <value>Қурилма боғланмаган — фойдаланувчи кейинги сафар қайси қурилмадан кирса, ўшанга боғланади.</value>
+  </data>
+  <data name="users.pendingDevice" xml:space="preserve">
+    <value>Янги қурилма сўрови</value>
+  </data>
+  <data name="users.currentAccess" xml:space="preserve">
+    <value>Ҳозирги муддат</value>
+  </data>
+  <data name="users.accessKeep" xml:space="preserve">
+    <value>Ўзгартирмаслик</value>
+  </data>
+  <data name="users.accessSet" xml:space="preserve">
+    <value>Муддат белгилаш</value>
+  </data>
+  <data name="users.nDays" xml:space="preserve">
+    <value>{n} кун</value>
+  </data>
+  <data name="users.nMonths" xml:space="preserve">
+    <value>{n} ой</value>
+  </data>
+  <data name="users.unitDays" xml:space="preserve">
+    <value>кун</value>
+  </data>
+  <data name="users.unitMonths" xml:space="preserve">
+    <value>ой</value>
+  </data>
+  <data name="users.until" xml:space="preserve">
+    <value>{date} гача</value>
+  </data>
+  <data name="users.accessHint" xml:space="preserve">
+    <value>Ҳозирдан бошлаб ҳисобланади: 1 кундан 365 кунгача ёки 1 ойдан 12 ойгача.</value>
+  </data>
+  <data name="users.unlimitedHint" xml:space="preserve">
+    <value>Фойдаланувчи муддат чекловисиз кира олади.</value>
+  </data>
+  <data name="users.adminNoLimits" xml:space="preserve">
+    <value>Супер админ учун кириш муддати ва битта қурилма чеклови қўлланмайди.</value>
+  </data>
+  <data name="users.boundAt" xml:space="preserve">
+    <value>Боғланган вақти</value>
+  </data>
+  <data name="users.resetDevice" xml:space="preserve">
+    <value>Қурилмани бўшатиш</value>
+  </data>
+  <data name="users.resetDeviceConfirm" xml:space="preserve">
+    <value>Қурилмани бўшатасизми? Фойдаланувчи кейинги сафар қайси қурилмадан кирса, ўшанга боғланади.</value>
+  </data>
+  <data name="users.deviceHint" xml:space="preserve">
+    <value>Ҳар бир фойдаланувчи фақат битта қурилмадан кира олади. Бошқа қурилмадан кириш учун сизнинг тасдиғингиз керак.</value>
+  </data>
+  <data name="err.accessRange" xml:space="preserve">
+    <value>Муддат 1 кундан 365 кунгача ёки 1 ойдан 12 ойгача бўлиши керак</value>
+  </data>
+  <data name="dev.title" xml:space="preserve">
+    <value>Қурилма сўровлари</value>
+  </data>
+  <data name="dev.subtitle" xml:space="preserve">
+    <value>Фойдаланувчи бошқа қурилмадан кирмоқчи бўлса, сўров шу ерга келади</value>
+  </data>
+  <data name="dev.pending" xml:space="preserve">
+    <value>Кутилаётган сўровлар</value>
+  </data>
+  <data name="dev.none" xml:space="preserve">
+    <value>Ҳозирча янги сўров йўқ</value>
+  </data>
+  <data name="dev.oldDevice" xml:space="preserve">
+    <value>Ҳозирги қурилма</value>
+  </data>
+  <data name="dev.newDevice" xml:space="preserve">
+    <value>Янги қурилма</value>
+  </data>
+  <data name="dev.approve" xml:space="preserve">
+    <value>Тасдиқлаш</value>
+  </data>
+  <data name="dev.reject" xml:space="preserve">
+    <value>Рад этиш</value>
+  </data>
+  <data name="dev.approveHint" xml:space="preserve">
+    <value>Тасдиқланса, фойдаланувчи янги қурилмага ўтказилади ва эски қурилмадаги сессияси ёпилади.</value>
+  </data>
+  <data name="dev.history" xml:space="preserve">
+    <value>Сўнгги қарорлар</value>
+  </data>
+  <data name="dev.requested" xml:space="preserve">
+    <value>Сўралган</value>
+  </data>
+  <data name="dev.resolved" xml:space="preserve">
+    <value>Ҳал қилинган</value>
+  </data>
+  <data name="dev.stApproved" xml:space="preserve">
+    <value>Тасдиқланган</value>
+  </data>
+  <data name="dev.stRejected" xml:space="preserve">
+    <value>Рад этилган</value>
+  </data>
+  <data name="dev.approved" xml:space="preserve">
+    <value>Сўров тасдиқланди — фойдаланувчи энди янги қурилмадан кира олади</value>
+  </data>
+  <data name="dev.rejected" xml:space="preserve">
+    <value>Сўров рад этилди</value>
+  </data>
+  <data name="dev.notFound" xml:space="preserve">
+    <value>Сўров топилмади ёки аллақачон ҳал қилинган</value>
+  </data>
+  <data name="dev.resetDone" xml:space="preserve">
+    <value>Қурилма бўшатилди</value>
+  </data>
+  <data name="dev.toast" xml:space="preserve">
+    <value>Янги қурилма сўрови келди — кўриш учун босинг</value>
+  </data>
+  <data name="users.soonTitle" xml:space="preserve">
+    <value>Муддати тугаётганлар</value>
+  </data>
+  <data name="users.soonSub" xml:space="preserve">
+    <value>Кириш муддати 7 кун ичида тугайди</value>
+  </data>
+  <data name="users.expiredTitle" xml:space="preserve">
+    <value>Муддати тугаганлар</value>
+  </data>
+  <data name="users.expiredSub" xml:space="preserve">
+    <value>Муддат узайтирилмагунча тизимга кира олмайди</value>
+  </data>
+  <data name="users.extend" xml:space="preserve">
+    <value>Узайтириш</value>
+  </data>
 </root>
