@@ -81,6 +81,14 @@ builder.Services
         };
     });
 
+// 📱 Mobil ilova: /api/... JWT token bilan ishlaydi (saytning cookie'siga ta'sir qilmaydi)
+builder.Services.AddAuthentication()
+    .AddJwtBearer(ApiTokens.Scheme, o => ApiTokens.Configure(o, builder.Configuration, builder.Environment));
+
+// 💳 Obuna va to'lovlar (Click, Payme). Sozlamalar: appsettings.json → "Payments"
+builder.Services.Configure<PaymentOptions>(builder.Configuration.GetSection("Payments"));
+builder.Services.AddScoped<SubscriptionService>();
+
 builder.Services.AddAuthorization(options =>
 {
     // Butun dastur faqat login qilgan foydalanuvchilar uchun ([AllowAnonymous] — login va til sahifalari)

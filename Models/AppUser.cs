@@ -41,6 +41,14 @@ public class AppUser
 
     public DateTime? DeviceBoundAt { get; set; }
 
+    /// <summary>Telefon raqami (mobil ilovada ro'yxatdan o'tganda, ixtiyoriy).</summary>
+    [MaxLength(32)]
+    public string? Phone { get; set; }
+
+    /// <summary>RegisteredVia.App — o'zi ilovada ro'yxatdan o'tgan; null — admin qo'shgan.</summary>
+    [MaxLength(16)]
+    public string? RegisteredVia { get; set; }
+
     /// <summary>Super admin uchun muddat va qurilma cheklovi qo'llanmaydi (o'zini bloklab qo'ymasligi uchun).</summary>
     public bool IsRestricted => Role != Roles.SuperAdmin;
 

@@ -123,6 +123,16 @@ public class UserService
 
         var deviceId = DeviceGuard.GetOrCreateDeviceId(http);
         var info = DeviceGuard.Describe(http.Request.Headers.UserAgent.ToString());
+        return await CheckDeviceAsync(user, deviceId, info, DeviceGuard.ClientIp(http));
+    }
+
+    /// <summary>
+    /// Bitta qurilma qoidasi (sayt va mobil ilova uchun umumiy): bog'lanmagan bo'lsa — shu qurilmaga bog'lanadi,
+    /// boshqa qurilma bo'lsa — adminga so'rov yuboriladi.
+    /// </summary>
+    public async Task<LoginCheck> CheckDeviceAsync(AppUser user, string deviceId, string? info, string? ip)
+    {
+        if (!user.IsRestricted) return LoginCheck.Ok;
 
         if (user.DeviceId == null)
         {
@@ -143,13 +153,13 @@ public class UserService
                 UserId = user.Id,
                 DeviceId = deviceId,
                 DeviceInfo = info,
-                IpAddress = DeviceGuard.ClientIp(http),
+                IpAddress = ip,
             });
         }
         else
         {
             pending.CreatedAt = DateTime.UtcNow; // qayta urinish — so'rov ro'yxat boshiga chiqadi
-            pending.IpAddress = DeviceGuard.ClientIp(http);
+            pending.IpAddress = ip;
         }
         await _db.SaveChangesAsync();
         return LoginCheck.DevicePending;

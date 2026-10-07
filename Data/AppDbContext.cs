@@ -11,6 +11,8 @@ public class AppDbContext : DbContext
     public DbSet<TestAnswer> TestAnswers { get; set; }
     public DbSet<UserMistake> UserMistakes { get; set; }
     public DbSet<DeviceRequest> DeviceRequests { get; set; }
+    public DbSet<SubscriptionPlan> SubscriptionPlans { get; set; }
+    public DbSet<Payment> Payments { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -47,6 +49,18 @@ public class AppDbContext : DbContext
             b.HasIndex(r => new { r.Status, r.CreatedAt });
             b.HasIndex(r => new { r.UserId, r.DeviceId });
             b.HasOne(r => r.User).WithMany().HasForeignKey(r => r.UserId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<SubscriptionPlan>(b => b.ToTable("SubscriptionPlans"));
+
+        modelBuilder.Entity<Payment>(b =>
+        {
+            b.ToTable("Payments");
+            b.HasIndex(p => new { p.UserId, p.CreatedAt });
+            b.HasIndex(p => new { p.Status, p.PaidAt });
+            b.HasIndex(p => new { p.Provider, p.ProviderTransId });
+            b.HasOne(p => p.User).WithMany().HasForeignKey(p => p.UserId).OnDelete(DeleteBehavior.Cascade);
+            b.HasOne(p => p.Plan).WithMany().HasForeignKey(p => p.PlanId).OnDelete(DeleteBehavior.SetNull);
         });
     }
 }

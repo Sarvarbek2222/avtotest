@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+# Mobil ilova API tokenlari imzo kaliti (maxfiy, avtomatik yaratiladi)
+App_Data/jwt.key

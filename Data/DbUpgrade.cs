@@ -48,6 +48,15 @@ public static class DbUpgrade
 
         try
         {
+            await EnsureSubscriptionTablesAsync(db, log);
+        }
+        catch (Exception ex)
+        {
+            log.LogError(ex, "Obuna va to'lov jadvallarini tayyorlashda xatolik");
+        }
+
+        try
+        {
             await UpgradeSchemaAsync(db, log);
             await MigrateDataAsync(db, log);
         }
@@ -97,6 +106,8 @@ CREATE TABLE `Users` (
             ("DeviceId", "varchar(64) CHARACTER SET utf8mb4 NULL"),
             ("DeviceInfo", "varchar(255) CHARACTER SET utf8mb4 NULL"),
             ("DeviceBoundAt", "datetime(6) NULL"),
+            ("Phone", "varchar(32) CHARACTER SET utf8mb4 NULL"),
+            ("RegisteredVia", "varchar(16) CHARACTER SET utf8mb4 NULL"),
         };
         foreach (var (name, type) in columns)
         {
@@ -195,6 +206,77 @@ CREATE TABLE `UserMistakes` (
     CONSTRAINT `FK_UserMistakes_Users` FOREIGN KEY (`UserId`) REFERENCES `Users` (`Id`) ON DELETE CASCADE" + fk + @"
 ) CHARACTER SET=utf8mb4");
             log.LogInformation("UserMistakes jadvali yaratildi");
+        }
+    }
+
+    /// <summary>
+    /// Mobil ilova obunasi: tariflar va to'lovlar jadvallari. Tariflar bo'sh bo'lsa — 1 oy, 3 oy, 1 yil
+    /// boshlang'ich narxlar bilan qo'shiladi (admin ilovada o'zgartiradi).
+    /// </summary>
+    private static async Task EnsureSubscriptionTablesAsync(AppDbContext db, ILogger log)
+    {
+        var conn = db.Database.GetDbConnection();
+        if (conn.State != ConnectionState.Open) await conn.OpenAsync();
+
+        if (!await TableExistsAsync(conn, "SubscriptionPlans"))
+        {
+            await ExecAsync(conn, @"
+CREATE TABLE `SubscriptionPlans` (
+    `Id` int NOT NULL AUTO_INCREMENT,
+    `Name` varchar(64) CHARACTER SET utf8mb4 NOT NULL,
+    `Months` int NOT NULL,
+    `Price` bigint NOT NULL,
+    `Badge` varchar(64) CHARACTER SET utf8mb4 NULL,
+    `IsActive` tinyint(1) NOT NULL DEFAULT 1,
+    `SortOrder` int NOT NULL DEFAULT 0,
+    `UpdatedAt` datetime(6) NOT NULL,
+    PRIMARY KEY (`Id`)
+) CHARACTER SET=utf8mb4");
+            log.LogInformation("SubscriptionPlans jadvali yaratildi");
+        }
+
+        if (!await TableExistsAsync(conn, "Payments"))
+        {
+            await ExecAsync(conn, @"
+CREATE TABLE `Payments` (
+    `Id` int NOT NULL AUTO_INCREMENT,
+    `UserId` int NOT NULL,
+    `PlanId` int NULL,
+    `Months` int NOT NULL,
+    `Days` int NOT NULL,
+    `Amount` bigint NOT NULL,
+    `Provider` varchar(16) CHARACTER SET utf8mb4 NOT NULL,
+    `Status` varchar(16) CHARACTER SET utf8mb4 NOT NULL,
+    `ProviderTransId` varchar(64) CHARACTER SET utf8mb4 NULL,
+    `ProviderState` int NOT NULL DEFAULT 0,
+    `ProviderCreateTime` bigint NOT NULL DEFAULT 0,
+    `ProviderPerformTime` bigint NOT NULL DEFAULT 0,
+    `ProviderCancelTime` bigint NOT NULL DEFAULT 0,
+    `CancelReason` int NULL,
+    `CreatedAt` datetime(6) NOT NULL,
+    `PaidAt` datetime(6) NULL,
+    `PeriodStart` datetime(6) NULL,
+    `PeriodEnd` datetime(6) NULL,
+    `GrantedByUserId` int NULL,
+    PRIMARY KEY (`Id`),
+    KEY `IX_Payments_UserId_CreatedAt` (`UserId`, `CreatedAt`),
+    KEY `IX_Payments_Status_PaidAt` (`Status`, `PaidAt`),
+    KEY `IX_Payments_Provider_ProviderTransId` (`Provider`, `ProviderTransId`),
+    CONSTRAINT `FK_Payments_Users` FOREIGN KEY (`UserId`) REFERENCES `Users` (`Id`) ON DELETE CASCADE,
+    CONSTRAINT `FK_Payments_SubscriptionPlans` FOREIGN KEY (`PlanId`) REFERENCES `SubscriptionPlans` (`Id`) ON DELETE SET NULL
+) CHARACTER SET=utf8mb4");
+            log.LogInformation("Payments jadvali yaratildi");
+        }
+
+        if (!await db.SubscriptionPlans.AnyAsync())
+        {
+            var now = DateTime.UtcNow;
+            db.SubscriptionPlans.AddRange(
+                new SubscriptionPlan { Name = "1 oy", Months = 1, Price = 49_000, SortOrder = 1, UpdatedAt = now },
+                new SubscriptionPlan { Name = "3 oy", Months = 3, Price = 129_000, Badge = "Eng ommabop", SortOrder = 2, UpdatedAt = now },
+                new SubscriptionPlan { Name = "1 yil", Months = 12, Price = 399_000, Badge = "Eng foydali", SortOrder = 3, UpdatedAt = now });
+            await db.SaveChangesAsync();
+            log.LogWarning("Boshlang'ich obuna tariflari qo'shildi — narxlarni admin panelida tekshiring!");
         }
     }
 

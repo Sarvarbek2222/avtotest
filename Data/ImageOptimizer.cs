@@ -9,10 +9,11 @@ using SkiaSharp;
 ///   /uploads/a.png          → eng uzun tomoni 1600px gacha WebP (test sahifasi, kattalashtirish oynasi)
 ///   /uploads/a.png?w=480    → 480px (kabinetdagi rasmlar)
 ///   /uploads/a.png?w=160    → 160px (admin ro'yxatidagi kichik rasmlar)
+///   /uploads/a.png?w=800&fmt=webp → 800px (mobil ilova: Android/iOS "image/webp" deb so'ramaydi, lekin WebP'ni o'qiydi)
 /// </summary>
 public class ImageOptimizer
 {
-    public static readonly int[] Sizes = { 160, 480, 1600 };
+    public static readonly int[] Sizes = { 160, 480, 800, 1600 };
     public const int DefaultSize = 1600;
     private const int Quality = 80;
 
@@ -122,7 +123,7 @@ public class ImageOptimizer
         if ((HttpMethods.IsGet(ctx.Request.Method) || HttpMethods.IsHead(ctx.Request.Method)) &&
             path != null &&
             (path.StartsWith("/uploads/", StringComparison.OrdinalIgnoreCase) || path.StartsWith("/images/", StringComparison.OrdinalIgnoreCase)) &&
-            ctx.Request.Headers.Accept.ToString().Contains("image/webp") &&
+            (ctx.Request.Headers.Accept.ToString().Contains("image/webp") || ctx.Request.Query["fmt"] == "webp") &&
             IsSupported(path))
         {
             var optimizer = ctx.RequestServices.GetRequiredService<ImageOptimizer>();
