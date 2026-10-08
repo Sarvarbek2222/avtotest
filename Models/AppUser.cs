@@ -41,6 +41,12 @@ public class AppUser
 
     public DateTime? DeviceBoundAt { get; set; }
 
+    /// <summary>
+    /// O'quv markazidagi kompyuter hisobi: bitta kompyuterga bog'lanadi va u yerda login doim saqlanadi
+    /// (kompyuter o'chib-yonsa ham qayta login so'ralmaydi). Unda turli o'quvchilar ishlaydi.
+    /// </summary>
+    public bool IsComputer { get; set; }
+
     /// <summary>Telefon raqami (mobil ilovada ro'yxatdan o'tganda, ixtiyoriy).</summary>
     [MaxLength(32)]
     public string? Phone { get; set; }

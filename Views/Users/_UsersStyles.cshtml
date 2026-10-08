@@ -139,6 +139,34 @@
     .us-form-actions { display: flex; gap: 10px; justify-content: space-between; margin-top: 8px; }
 
     .us-page [hidden] { display: none !important; }
+
+    /* Hisob turi tanlovi */
+    .us-kind { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .us-kind-opt {
+        position: relative; display: flex; align-items: flex-start; gap: 12px; padding: 14px; cursor: pointer;
+        border: 1px solid var(--border); border-radius: 6px; background: var(--surface2); transition: border-color .15s, background .15s;
+    }
+    .us-kind-opt:hover { border-color: rgba(255,255,255,0.25); }
+    .us-kind-opt input { position: absolute; opacity: 0; pointer-events: none; }
+    .us-kind-opt:has(input:checked) { border-color: #29b6f6; background: rgba(41,182,246,0.08); }
+    .us-kind-opt:has(input:focus-visible) { outline: 2px solid #29b6f6; outline-offset: 2px; }
+    .us-kind-ic { width: 38px; height: 38px; flex-shrink: 0; border-radius: 8px; display: grid; place-items: center; background: rgba(255,255,255,0.05); color: var(--muted); }
+    .us-kind-ic svg { width: 20px; height: 20px; }
+    .us-kind-opt:has(input:checked) .us-kind-ic { background: rgba(41,182,246,0.18); color: #29b6f6; }
+    .us-kind-opt b { display: block; color: #fff; font-size: 0.92rem; }
+    .us-kind-opt small { display: block; margin-top: 3px; color: var(--muted); font-size: 0.78rem; line-height: 1.4; }
+    .us-pill.comp { background: rgba(245,158,11,0.12); color: #fbbf24; border: 1px solid rgba(245,158,11,0.35); margin-left: 4px; }
+
+    /* Parol maydoni + ko'zcha */
+    .us-pwd { position: relative; }
+    .us-pwd .us-input { width: 100%; padding-right: 46px; }
+    .us-eye {
+        position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; border: 0; border-radius: 4px;
+        background: transparent; color: var(--muted); display: grid; place-items: center; cursor: pointer;
+    }
+    .us-eye:hover { color: #fff; background: rgba(255,255,255,0.06); }
+    .us-eye:focus-visible { outline: 2px solid #29b6f6; }
+    .us-eye svg { width: 18px; height: 18px; }
     .us-header-actions { display: flex; gap: 10px; flex-wrap: wrap; }
     .us-btn-sm { padding: 8px 14px; font-size: 0.78rem; }
     .us-nowrap { white-space: nowrap; }
@@ -250,6 +278,7 @@
     }
 
     @@media (max-width: 700px) {
+        .us-kind { grid-template-columns: 1fr; }
         .us-grid-2 { grid-template-columns: 1fr; }
         .us-table .hide-sm { display: none; }
         .us-search { max-width: none; flex-basis: 100%; }

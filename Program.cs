@@ -138,6 +138,13 @@ app.UseStaticFiles(new StaticFileOptions
 
 app.UseRequestLocalization();
 
+// Qurilma identifikatori cookie'si muddatini yangilash (statik fayllardan keyin — faqat sahifa va API so'rovlarida)
+app.Use(async (ctx, next) =>
+{
+    DeviceGuard.Refresh(ctx);
+    await next();
+});
+
 app.UseRouting();
 
 app.UseAuthentication();

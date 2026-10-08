@@ -67,11 +67,37 @@
             <span class="us-hint" data-i18n="users.roleHint">@L["users.roleHint"]</span>
         </div>
 
+        @* Hisob turi: shaxsiy o'quvchi yoki o'quv markazidagi kompyuter (super admin uchun yashirin) *@
+        <div class="us-field" id="kindSection">
+            <span class="us-label" data-i18n="users.kind">@L["users.kind"]</span>
+            <div class="us-kind" role="radiogroup">
+                <label class="us-kind-opt">
+                    <input type="radio" name="IsComputer" value="false" @(Model.IsComputer ? "" : "checked") />
+                    <span class="us-kind-ic">@Icons.User</span>
+                    <span>
+                        <b data-i18n="users.kindStudent">@L["users.kindStudent"]</b>
+                        <small data-i18n="users.kindStudentHint">@L["users.kindStudentHint"]</small>
+                    </span>
+                </label>
+                <label class="us-kind-opt">
+                    <input type="radio" name="IsComputer" value="true" @(Model.IsComputer ? "checked" : "") />
+                    <span class="us-kind-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" /><path d="M8 21h8M12 17v4" /></svg></span>
+                    <span>
+                        <b data-i18n="users.kindComputer">@L["users.kindComputer"]</b>
+                        <small data-i18n="users.kindComputerHint">@L["users.kindComputerHint"]</small>
+                    </span>
+                </label>
+            </div>
+        </div>
+
         <div class="us-grid-2">
             <div class="us-field">
                 <label class="us-label" for="Password" data-i18n="@(Model.IsNew ? "users.password" : "users.newPassword")">@L[Model.IsNew ? "users.password" : "users.newPassword"]</label>
-                <input asp-for="Password" type="password" class="us-input @(FieldError("Password") != null ? "invalid" : "")"
-                       autocomplete="new-password" />
+                <div class="us-pwd">
+                    <input asp-for="Password" type="password" class="us-input @(FieldError("Password") != null ? "invalid" : "")"
+                           autocomplete="new-password" />
+                    <button type="button" class="us-eye" data-pwd-toggle aria-pressed="false" title="@L["users.showPassword"]" data-i18n-title="users.showPassword" aria-label="@L["users.showPassword"]">@Icons.Eye</button>
+                </div>
                 @if (FieldError("Password") is string pe)
                 {
                     <span class="us-field-err">@pe</span>
@@ -84,8 +110,11 @@
 
             <div class="us-field">
                 <label class="us-label" for="ConfirmPassword" data-i18n="users.confirmPassword">@L["users.confirmPassword"]</label>
-                <input asp-for="ConfirmPassword" type="password" class="us-input @(FieldError("ConfirmPassword") != null ? "invalid" : "")"
-                       autocomplete="new-password" />
+                <div class="us-pwd">
+                    <input asp-for="ConfirmPassword" type="password" class="us-input @(FieldError("ConfirmPassword") != null ? "invalid" : "")"
+                           autocomplete="new-password" />
+                    <button type="button" class="us-eye" data-pwd-toggle aria-pressed="false" title="@L["users.showPassword"]" data-i18n-title="users.showPassword" aria-label="@L["users.showPassword"]">@Icons.Eye</button>
+                </div>
                 @if (FieldError("ConfirmPassword") is string ce)
                 {
                     <span class="us-field-err">@ce</span>
@@ -252,8 +281,26 @@
         }
 
         // Super admin uchun muddat va qurilma cheklovi yo'q — bo'limlar yashiriladi
+        // 👁 Parolni ko'rsatish / yashirish
+        var eyeOn = @Json.Serialize(Icons.Eye.ToString()), eyeOff = @Json.Serialize(Icons.EyeOff.ToString());
+        document.querySelectorAll("[data-pwd-toggle]").forEach(function (btn) {
+            btn.addEventListener("click", function () {
+                var inp = btn.parentNode.querySelector("input");
+                var show = inp.type === "password";
+                inp.type = show ? "text" : "password";
+                btn.innerHTML = show ? eyeOff : eyeOn;
+                btn.setAttribute("aria-pressed", show ? "true" : "false");
+                var key = show ? "users.hidePassword" : "users.showPassword";
+                btn.title = I18n.t(key);
+                btn.setAttribute("aria-label", I18n.t(key));
+                btn.setAttribute("data-i18n-title", key);
+                inp.focus();
+            });
+        });
+
         function refreshRole() {
             var admin = role.value === "superadmin";
+            document.getElementById("kindSection").hidden = admin;
             document.getElementById("accessSection").hidden = admin;
             document.getElementById("adminNote").hidden = !admin;
             var dev = document.getElementById("deviceSection");

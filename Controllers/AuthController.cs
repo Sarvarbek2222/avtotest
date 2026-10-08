@@ -79,6 +79,6 @@ public class AuthController : Controller
 
         return isSuperAdmin
             ? RedirectToAction("Index1", "Question")
-            : RedirectToAction("Index", "Cabinet");
+            : RedirectToAction("Index", "Home");
     }
 }

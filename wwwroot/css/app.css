@@ -438,6 +438,14 @@
 .ui-testbar-back svg { width: 18px; height: 18px; }
 @media (max-width: 640px) { .ui-testbar-back { padding: 0 10px; margin-right: 6px; } .ui-testbar-back span { display: none; } }
 .ca-topbar-search svg { width: 17px; height: 17px; }
+.ui-home-link {
+    display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 14px; border-radius: 12px; flex-shrink: 0;
+    border: 1px solid var(--ca-border); background: var(--ca-surface); color: var(--ca-text);
+    font-size: .85rem; font-weight: 700; text-decoration: none; white-space: nowrap; transition: all .15s;
+}
+.ui-home-link:hover { color: #fff; border-color: var(--ca-brand); }
+.ui-home-link svg { width: 17px; height: 17px; }
+@media (max-width: 640px) { .ui-home-link { width: 40px; padding: 0; justify-content: center; } .ui-home-link span { display: none; } }
 @media (max-width: 640px) { .ca-topbar-search { width: 40px; padding: 0; justify-content: center; } .ca-topbar-search span { display: none; } }
 
 .ca-content { width: 100%; max-width: 1400px; margin: 0 auto; padding: clamp(16px, 3vw, 32px); flex: 1; }
@@ -527,6 +535,7 @@
 .ca-hero-title { margin: 0 0 6px; font-size: 1.15rem; font-weight: 800; color: #fff; }
 .ca-hero-date { font-size: 1.45rem; font-weight: 800; color: #fff; }
 .ca-hero-note { color: var(--ca-muted); font-size: .88rem; margin: 4px 0 0; }
+.ca-forecast-why { margin-top: 10px; padding: 10px 12px; border-radius: 10px; background: var(--ca-info-soft); border: 1px solid rgba(56,189,248,.25); color: var(--ca-text); line-height: 1.45; max-width: 52ch; }
 
 /* Progress bar */
 .ca-bar { height: 8px; border-radius: 999px; background: rgba(255, 255, 255, 0.07); overflow: hidden; }

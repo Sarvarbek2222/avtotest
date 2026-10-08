@@ -13,6 +13,13 @@ public class UserService
 {
     public const string StampClaim = "stamp";
     public const string DeviceClaim = "did";
+    /// <summary>Kompyuter hisobi belgisi (menyuda "Chiqish" ko'rsatilmaydi).</summary>
+    public const string ComputerClaim = "comp";
+    /// <summary>
+    /// Kompyuter hisobida login muddati. Brauzerlar cookie'ni ko'pi bilan 400 kun saqlaydi, shuning uchun 300 kun:
+    /// muddatning yarmi o'tgach (sahifa ochilganda) avtomatik yangilanadi — kompyuter ishlatilib tursa, login hech qachon so'ralmaydi.
+    /// </summary>
+    public static readonly TimeSpan ComputerLoginLifetime = TimeSpan.FromDays(300);
     public const int MinPasswordLength = 6;
 
     private static readonly Regex UsernameRx = new(@"^[A-Za-z0-9._-]{3,64}$", RegexOptions.Compiled);
@@ -71,6 +78,8 @@ public class UserService
             claims.Add(new Claim(ClaimTypes.GivenName, user.FullName));
         if (!string.IsNullOrEmpty(deviceId))
             claims.Add(new Claim(DeviceClaim, deviceId));
+        if (user.IsComputer && user.IsRestricted)
+            claims.Add(new Claim(ComputerClaim, "1"));
 
         return new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme));
     }
@@ -81,7 +90,12 @@ public class UserService
         await _db.SaveChangesAsync();
         await http.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
             CreatePrincipal(user, DeviceGuard.CurrentDeviceId(http)),
-            new AuthenticationProperties { IsPersistent = true });
+            new AuthenticationProperties
+            {
+                IsPersistent = true,
+                // Oddiy o'quvchi — 7 kun (Program.cs); kompyuter — ~10 yil, qayta login so'ralmasin
+                ExpiresUtc = user.IsComputer && user.IsRestricted ? DateTimeOffset.UtcNow.Add(ComputerLoginLifetime) : null,
+            });
     }
 
     /// <summary>

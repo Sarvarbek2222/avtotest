@@ -1650,4 +1650,136 @@
   <data name="sq.solveAll" xml:space="preserve">
     <value>Решить все как тест</value>
   </data>
+  <data name="cab.limitCoverage" xml:space="preserve">
+    <value>Дату в основном определяет охват базы вопросов: нужно правильно решить ещё {n} вопросов (текущий темп — ~{pace} новых вопросов в день). Чем больше новых вопросов вы решаете, тем ближе дата.</value>
+  </data>
+  <data name="cab.limitAccuracy" xml:space="preserve">
+    <value>Дату в основном определяет точность: доля правильных ответов в последних ответах должна достичь 90%.</value>
+  </data>
+  <data name="cab.limitExams" xml:space="preserve">
+    <value>Вы почти готовы — осталось сдать 3 экзаменационных теста (20 вопросов) подряд.</value>
+  </data>
+  <data name="hm.lead" xml:space="preserve">
+    <value>Выберите вид экзамена и начните тренировку. Нужный вопрос можно найти здесь по его тексту.</value>
+  </data>
+  <data name="hm.searchPlaceholder" xml:space="preserve">
+    <value>Введите текст вопроса... например: светофор</value>
+  </data>
+  <data name="hm.searchBtn" xml:space="preserve">
+    <value>Найти</value>
+  </data>
+  <data name="hm.searchHint" xml:space="preserve">
+    <value>Можно писать латиницей, кириллицей или по-русски. Можно искать и по номеру вопроса: #125</value>
+  </data>
+  <data name="hm.allResults" xml:space="preserve">
+    <value>Все результаты ({n})</value>
+  </data>
+  <data name="hm.examBadge" xml:space="preserve">
+    <value>Режим экзамена</value>
+  </data>
+  <data name="hm.examDesc" xml:space="preserve">
+    <value>Как на настоящем экзамене: 20 случайных вопросов из базы. Проверьте себя — результат сохранится в кабинете.</value>
+  </data>
+  <data name="hm.examFact1" xml:space="preserve">
+    <value>20 вопросов</value>
+  </data>
+  <data name="hm.examFact2" xml:space="preserve">
+    <value>Проходной: 18 правильных (90%)</value>
+  </data>
+  <data name="hm.examFact3" xml:space="preserve">
+    <value>Результат сохраняется в кабинете</value>
+  </data>
+  <data name="hm.examStart" xml:space="preserve">
+    <value>Начать экзамен</value>
+  </data>
+  <data name="hm.practiceTitle" xml:space="preserve">
+    <value>Тренировочные тесты</value>
+  </data>
+  <data name="hm.practiceSub" xml:space="preserve">
+    <value>Вопросы выбираются из базы случайно — каждый раз новый набор</value>
+  </data>
+  <data name="hm.questions" xml:space="preserve">
+    <value>вопросов</value>
+  </data>
+  <data name="hm.lvl1" xml:space="preserve">
+    <value>Быстрый</value>
+  </data>
+  <data name="hm.lvl2" xml:space="preserve">
+    <value>Средний</value>
+  </data>
+  <data name="hm.lvl3" xml:space="preserve">
+    <value>Углублённый</value>
+  </data>
+  <data name="hm.lvl4" xml:space="preserve">
+    <value>Большой тест</value>
+  </data>
+  <data name="hm.lvl5" xml:space="preserve">
+    <value>Самый большой тест</value>
+  </data>
+  <data name="hm.modesTitle" xml:space="preserve">
+    <value>Другие виды экзамена</value>
+  </data>
+  <data name="hm.modesSub" xml:space="preserve">
+    <value>Тренировка по билетам или по всей базе</value>
+  </data>
+  <data name="hm.biletsDesc" xml:space="preserve">
+    <value>{n} билетов по 20 вопросов — решайте по порядку.</value>
+  </data>
+  <data name="hm.topicsDesc" xml:space="preserve">
+    <value>{n} тем — выберите нужную и решайте только её вопросы.</value>
+  </data>
+  <data name="hm.marathonDesc" xml:space="preserve">
+    <value>Все {n} вопросов базы подряд — для полной подготовки.</value>
+  </data>
+  <data name="hm.open" xml:space="preserve">
+    <value>Открыть</value>
+  </data>
+  <data name="hm.start" xml:space="preserve">
+    <value>Начать</value>
+  </data>
+  <data name="hm.topicsBadge" xml:space="preserve">
+    <value>Подготовка по темам</value>
+  </data>
+  <data name="hm.topicsBannerDesc" xml:space="preserve">
+    <value>Выберите нужную тему и решайте только её вопросы — лучший способ отдельно закрепить трудные места.</value>
+  </data>
+  <data name="hm.topicsFact1" xml:space="preserve">
+    <value>{n} тем</value>
+  </data>
+  <data name="hm.topicsFact2" xml:space="preserve">
+    <value>Отдельный тест по каждой теме</value>
+  </data>
+  <data name="hm.topicsFact3" xml:space="preserve">
+    <value>Закрепите слабые темы</value>
+  </data>
+  <data name="hm.topicsStart" xml:space="preserve">
+    <value>Выбрать тему</value>
+  </data>
+  <data name="users.kind" xml:space="preserve">
+    <value>Тип аккаунта</value>
+  </data>
+  <data name="users.kindStudent" xml:space="preserve">
+    <value>Ученик</value>
+  </data>
+  <data name="users.kindStudentHint" xml:space="preserve">
+    <value>Личный аккаунт: входит со своего телефона или компьютера, результаты только его.</value>
+  </data>
+  <data name="users.kindComputer" xml:space="preserve">
+    <value>Компьютер (учебный центр)</value>
+  </data>
+  <data name="users.kindComputerHint" xml:space="preserve">
+    <value>Для одного компьютера в центре. После первого входа логин не запрашивается, даже после выключения. С другого компьютера с этим логином войти нельзя.</value>
+  </data>
+  <data name="users.compShort" xml:space="preserve">
+    <value>Комп</value>
+  </data>
+  <data name="users.fComputers" xml:space="preserve">
+    <value>Компьютеры</value>
+  </data>
+  <data name="users.showPassword" xml:space="preserve">
+    <value>Показать пароль</value>
+  </data>
+  <data name="users.hidePassword" xml:space="preserve">
+    <value>Скрыть пароль</value>
+  </data>
 </root>

@@ -1,1109 +1,409 @@
-﻿@{
+@model HomeModel
+@{
+    Layout = null;
     ViewData["TitleKey"] = "home.pageTitle";
     ViewData["Title"] = L["home.pageTitle"];
+
+
+    // Mashq turlari: (controller, matn kaliti, savollar soni, daraja kaliti)
+    var practice = new[]
+    {
+        ("Testforty", "nav.q20", 20, "hm.lvl1"),
+        ("Testsixty", "nav.q40", 40, "hm.lvl2"),
+        ("Testeighty", "nav.q80", 80, "hm.lvl3"),
+        ("Testhundred", "nav.q100", 100, "hm.lvl4"),
+        ("Testhundredsixty", "nav.q200", 200, "hm.lvl5"),
+    };
 }
+<!DOCTYPE html>
+<html lang="@L.HtmlLang" data-lang="@L.Lang" data-title-key="home.pageTitle" data-title-suffix=" — AVTOPRAVA_SAM" data-lang-reload>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <title>@ViewData["Title"] — AVTOPRAVA_SAM</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" />
+    <link rel="stylesheet" href="~/css/app.css" asp-append-version="true" />
+    <partial name="_I18nScripts" />
+    <style>
+        body.hm { margin: 0; background: var(--ca-bg); color: var(--ca-text); font-family: var(--ca-font); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+        .hm *, .hm *::before, .hm *::after { box-sizing: border-box; }
+        .hm [hidden] { display: none !important; }
+        .hm-wrap { width: min(1240px, 100%); margin: 0 auto; padding: 0 clamp(16px, 3vw, 32px); }
+        .hm-section { margin-top: clamp(28px, 4vw, 48px); }
+        .hm-sec-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+        .hm-sec-title { margin: 0; font-size: clamp(1.15rem, 2vw, 1.45rem); font-weight: 800; color: #fff; letter-spacing: -.01em; }
+        .hm-sec-sub { margin: 4px 0 0; color: var(--ca-muted); font-size: .9rem; }
 
-<style>
-    :root {
-        --red: #ff1a30;
-        --black: #060606;
-        --card-bg: #0e0e11;
-        --text: #f5f2ee;
-    }
-
-    *, *::before, *::after {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-    }
-
-    html {
-        scroll-behavior: smooth;
-    }
-
-    body {
-        background: var(--black);
-        color: var(--text);
-        font-family: sans-serif;
-        font-size: 16px;
-        overflow-x: hidden;
-        cursor: none;
-    }
-
-    /* CURSOR */
-    .cursor {
-        width: 12px;
-        height: 12px;
-        background: var(--red);
-        border-radius: 50%;
-        position: fixed;
-        top: 0;
-        left: 0;
-        pointer-events: none;
-        z-index: 9999;
-        transform: translate(-50%,-50%);
-        transition: transform 0.08s ease;
-        mix-blend-mode: exclusion;
-        box-shadow: 0 0 10px rgba(255,26,48,0.45);
-    }
-
-    .cursor-ring {
-        width: 36px;
-        height: 36px;
-        border: 1.5px solid rgba(255,26,48,0.75);
-        border-radius: 50%;
-        position: fixed;
-        top: 0;
-        left: 0;
-        pointer-events: none;
-        z-index: 9998;
-        transform: translate(-50%,-50%);
-        transition: transform 0.18s ease, width 0.25s, height 0.25s, opacity 0.2s;
-    }
-
-    /* ══ HERO ══ */
-    .hero {
-        width: 100vw;
-        left: 50%;
-        margin-left: -50vw;
-        margin-right: -50vw;
-        position: relative;
-        background: #0a0a0a;
-        overflow: hidden;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: 1fr auto;
-        min-height: 100vh;
-    }
-
-    .hero-bg-gradient {
-        position: absolute;
-        inset: 0;
-        background: radial-gradient(ellipse 80% 90% at 75% 55%, #1a1a1a 0%, #080808 65%);
-        z-index: 0;
-    }
-
-    .hero-bg-grid {
-        position: absolute;
-        inset: 0;
-        background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-        background-size: 72px 72px;
-        z-index: 0;
-    }
-
-    .hero-glow {
-        position: absolute;
-        top: -140px;
-        left: -100px;
-        width: 600px;
-        height: 600px;
-        background: radial-gradient(circle, rgba(255,26,48,0.12) 0%, transparent 65%);
-        z-index: 0;
-        pointer-events: none;
-    }
-
-    /* LEFT */
-    .hero-left {
-        grid-column: 1;
-        grid-row: 1;
-        position: relative;
-        z-index: 2;
-        padding: clamp(40px, 5vw, 80px) clamp(24px, 4vw, 60px) clamp(40px, 5vw, 80px) clamp(24px, 6vw, 100px);
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: flex-start;
-    }
-
-    .hero-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        background: rgba(255,26,48,0.10);
-        border: 1px solid rgba(255,26,48,0.28);
-        border-radius: 2px;
-        padding: 7px 16px;
-        margin-bottom: 28px;
-        opacity: 0;
-        animation: fadeUp 0.6s 0.1s forwards;
-    }
-
-    .hero-badge-dot {
-        width: 7px;
-        height: 7px;
-        background: var(--red);
-        border-radius: 50%;
-        animation: dotPulse 2s infinite;
-        box-shadow: 0 0 8px var(--red);
-    }
-
-    .hero-badge-text {
-        font-size: clamp(0.6rem, 1vw, 0.68rem);
-        font-weight: 700;
-        letter-spacing: 0.2em;
-        text-transform: uppercase;
-        color: var(--red);
-    }
-
-    .hero-title {
-        font-size: clamp(2rem, 5vw, 4.4rem);
-        line-height: 0.9;
-        color: #fff;
-        font-weight: 900;
-        margin-bottom: 22px;
-        opacity: 0;
-        animation: fadeUp 0.7s 0.25s forwards;
-    }
-
-    .hero-desc {
-        font-size: clamp(0.85rem, 1.2vw, 0.95rem);
-        color: rgba(255,255,255,0.62);
-        max-width: 400px;
-        line-height: 1.8;
-        font-weight: 300;
-        margin-bottom: 36px;
-        opacity: 0;
-        animation: fadeUp 0.7s 0.4s forwards;
-    }
-
-    .hero-actions {
-        display: flex;
-        gap: 12px;
-        align-items: center;
-        flex-wrap: wrap;
-        opacity: 0;
-        animation: fadeUp 0.7s 0.55s forwards;
-    }
-
-    .btn-outline {
-        color: #fff;
-        text-decoration: none;
-        padding: clamp(11px,1.5vw,13px) clamp(20px,2.5vw,32px);
-        font-weight: 700;
-        font-size: clamp(0.72rem,1vw,0.78rem);
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        border: 1.5px solid rgba(255,255,255,0.65);
-        border-radius: 2px;
-        transition: all 0.22s;
-        position: relative;
-        overflow: hidden;
-        white-space: nowrap;
-    }
-
-        .btn-outline::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: rgba(255,255,255,0.10);
-            transform: translateX(-100%);
-            transition: transform 0.28s ease;
+        /* ── Yuqori qism ── */
+        .hm-hero { position: relative; padding: clamp(24px, 4vw, 44px) 0 0; }
+        .hm-hero::before {
+            content: ""; position: absolute; inset: -80px 0 auto 0; height: 520px; z-index: -1; pointer-events: none;
+            background: radial-gradient(600px 300px at 15% 20%, rgba(255,45,74,.16), transparent 70%),
+                        radial-gradient(500px 280px at 85% 10%, rgba(56,189,248,.10), transparent 70%);
         }
+        .hm-hero-grid { text-align: center; }
+        .hm-hero-grid .hm-lead { margin-left: auto; margin-right: auto; }
+        .hm-hero-grid .hm-search { margin: 0 auto; text-align: left; }
+        .hm-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+        .hm-lead { margin: 0 0 22px; color: var(--ca-muted); font-size: clamp(.95rem, 1.4vw, 1.08rem); line-height: 1.55; max-width: 56ch; }
 
-        .btn-outline:hover::before {
-            transform: translateX(0);
+        /* Qidiruv */
+        .hm-search { position: relative; max-width: 680px; }
+        .hm-search-field { position: relative; display: block; }
+        .hm-search-field > svg { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; color: var(--ca-faint); pointer-events: none; }
+        .hm-search-input {
+            width: 100%; height: 62px; padding: 0 128px 0 54px; border-radius: 18px; outline: none;
+            border: 1px solid var(--ca-border-strong); background: var(--ca-surface); color: var(--ca-text);
+            font: 600 1.02rem var(--ca-font); box-shadow: var(--ca-shadow); transition: border-color .15s, box-shadow .15s;
         }
-
-        .btn-outline:hover {
-            border-color: #fff;
+        .hm-search-input::placeholder { color: var(--ca-faint); font-weight: 500; }
+        .hm-search-input::-webkit-search-cancel-button { display: none; }
+        .hm-search-input:focus { border-color: var(--ca-brand); box-shadow: 0 0 0 4px var(--ca-brand-soft), var(--ca-shadow); }
+        .hm-search-btn {
+            position: absolute; right: 8px; top: 8px; height: 46px; padding: 0 20px; border: 0; border-radius: 12px; cursor: pointer;
+            background: linear-gradient(135deg, #ff2d4a, #ff5a3c); color: #fff; font: 700 .9rem var(--ca-font);
         }
-
-    .btn-ghost2 {
-        color: rgba(255,255,255,0.65);
-        text-decoration: none;
-        padding: clamp(11px,1.5vw,13px) clamp(20px,2.5vw,32px);
-        font-weight: 700;
-        font-size: clamp(0.72rem,1vw,0.78rem);
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        border: 1.5px solid rgba(255,255,255,0.22);
-        border-radius: 2px;
-        transition: all 0.22s;
-        white-space: nowrap;
-    }
-
-        .btn-ghost2:hover {
-            border-color: rgba(255,255,255,0.55);
-            color: #fff;
+        .hm-search-btn:hover { filter: brightness(1.08); }
+        .hm-suggest {
+            position: absolute; left: 0; right: 0; top: 70px; z-index: 30; overflow: hidden; border-radius: 16px;
+            background: var(--ca-bg-2); border: 1px solid var(--ca-border-strong); box-shadow: var(--ca-shadow-lg);
         }
+        .hm-sg-item { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 12px; align-items: center; padding: 10px 14px; text-decoration: none; border-bottom: 1px solid var(--ca-border); color: var(--ca-text); }
+        .hm-sg-item:hover, .hm-sg-item.on { background: var(--ca-surface-2); }
+        .hm-sg-thumb { width: 48px; height: 38px; border-radius: 8px; overflow: hidden; background: var(--ca-surface-2); display: grid; place-items: center; color: var(--ca-faint); }
+        .hm-sg-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .hm-sg-thumb svg { width: 18px; height: 18px; }
+        .hm-sg-text { font-size: .9rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .hm-sg-text mark { background: rgba(255,45,74,.22); color: #fff; border-radius: 3px; padding: 0 2px; }
+        .hm-sg-num { font-size: .72rem; font-weight: 700; color: var(--ca-faint); margin-right: 6px; }
+        .hm-sg-foot { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 14px; color: var(--ca-brand); font-weight: 700; font-size: .86rem; text-decoration: none; }
+        .hm-sg-foot:hover, .hm-sg-foot.on { background: var(--ca-surface-2); }
+        .hm-sg-empty { padding: 16px 14px; color: var(--ca-muted); font-size: .9rem; }
+        .hm-search-hint { margin-top: 10px; color: var(--ca-faint); font-size: .8rem; }
 
-    /* RIGHT — IMG bilan */
-    .hero-right {
-        grid-column: 2;
-        grid-row: 1;
-        position: relative;
-        z-index: 2;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-    }
 
-    .hero-car-img {
-        width: 75%; /* kichikroq qilish */
-        height: 80%;
-        object-fit: contain;
-        object-position: left center; /* chapga surish */
-        transform: translateX(-10%); /* yana biroz chapga tortish */
-        opacity: 0;
-        animation: fadeIn 1.1s 0.6s forwards;
-        filter: brightness(0.95) contrast(1.08);
-        display: block;
-    }
-
-    /* STATS BAR */
-    .hero-stats {
-        grid-column: 1 / -1;
-        grid-row: 2;
-        position: relative;
-        z-index: 5;
-        display: flex;
-        justify-content: flex-end;
-        opacity: 0;
-        animation: fadeIn 0.8s 1s forwards;
-    }
-
-    .hero-stats-inner {
-        display: flex;
-        flex-wrap: wrap;
-        background: rgba(6,6,6,0.98);
-        border-top: 1px solid rgba(255,255,255,0.12);
-        border-left: 1px solid rgba(255,255,255,0.12);
-    }
-
-    .stat-item {
-        padding: clamp(12px,2vw,20px) clamp(16px,2.5vw,32px);
-        border-right: 1px solid rgba(255,255,255,0.10);
-        text-align: center;
-        flex: 1 1 auto;
-    }
-
-        .stat-item:last-child {
-            border-right: none;
+        /* Real imtihon banneri */
+        .hm-exam {
+            position: relative; overflow: hidden; display: grid; grid-template-columns: minmax(0, 1fr) minmax(220px, 42%); align-items: center; gap: 16px;
+            border-radius: 24px; padding: clamp(22px, 3.5vw, 36px); text-decoration: none; isolation: isolate; color: var(--ca-text);
+            background: linear-gradient(120deg, #2a0a12 0%, #160a10 45%, #0f1018 100%); border: 1px solid rgba(255,45,74,.35);
+            transition: transform .2s, box-shadow .2s, border-color .2s;
         }
+        .hm-exam::after { content: ""; position: absolute; inset: auto -20% -60% 30%; height: 120%; background: radial-gradient(closest-side, rgba(255,45,74,.28), transparent); z-index: -1; }
+        .hm-exam:hover { transform: translateY(-3px); border-color: rgba(255,45,74,.7); box-shadow: 0 24px 60px rgba(255,45,74,.18); color: var(--ca-text); }
+        .hm-exam-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; background: rgba(255,45,74,.16); color: #ff8a9b; font-size: .76rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+        .hm-exam-badge i { width: 8px; height: 8px; border-radius: 50%; background: #ff2d4a; box-shadow: 0 0 0 4px rgba(255,45,74,.25); animation: hm-pulse 1.8s infinite; }
+        @@keyframes hm-pulse { 50% { box-shadow: 0 0 0 8px rgba(255,45,74,0); } }
+        .hm-exam h2 { margin: 14px 0 8px; font-size: clamp(1.6rem, 3.4vw, 2.4rem); font-weight: 900; color: #fff; letter-spacing: -.02em; }
+        .hm-exam p { margin: 0 0 20px; color: #d6d8e0; font-size: .98rem; line-height: 1.55; max-width: 48ch; }
+        .hm-exam-facts { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+        .hm-exam-facts span { padding: 6px 12px; border-radius: 10px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.08); font-size: .82rem; font-weight: 600; color: #e9eaf0; }
+        .hm-cta { display: inline-flex; align-items: center; gap: 10px; padding: 14px 22px; border-radius: 14px; background: linear-gradient(135deg, #ff2d4a, #ff5a3c); color: #fff; font-weight: 800; font-size: .95rem; box-shadow: 0 10px 30px rgba(255,45,74,.35); }
+        .hm-cta svg { width: 18px; height: 18px; }
+        .hm-exam-final { grid-template-columns: minmax(0, 1fr) auto; }
+        .hm-final-ic { width: clamp(120px, 16vw, 180px); aspect-ratio: 1; border-radius: 32px; display: grid; place-items: center; margin-right: clamp(0px, 3vw, 40px);
+            background: radial-gradient(circle at 30% 25%, rgba(255,122,69,.35), rgba(255,45,74,.12) 60%, transparent); border: 1px solid rgba(255,45,74,.35); color: #ffb199; transition: transform .3s; }
+        .hm-final-ic svg { width: 46%; height: 46%; }
+        .hm-exam-final:hover .hm-final-ic { transform: rotate(-6deg) scale(1.04); }
+        .hm-exam-img { width: 100%; max-height: 240px; object-fit: contain; filter: drop-shadow(0 30px 40px rgba(0,0,0,.6)); transition: transform .3s; }
+        .hm-exam:hover .hm-exam-img { transform: translateX(8px) scale(1.02); }
 
-    .stat-num {
-        font-size: clamp(1.4rem,2.5vw,2rem);
-        color: var(--red);
-        line-height: 1;
-        font-weight: 900;
-    }
-
-    .stat-label {
-        font-size: clamp(0.55rem,0.8vw,0.6rem);
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-        color: #aaa;
-        margin-top: 3px;
-    }
-
-    .scroll-hint {
-        position: absolute;
-        bottom: 90px;
-        right: 48px;
-        z-index: 5;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-        opacity: 0;
-        animation: fadeIn 1s 1.3s forwards;
-    }
-
-        .scroll-hint span {
-            font-size: 0.6rem;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: #aaa;
-            writing-mode: vertical-rl;
+        /* Mashq turlari */
+        .hm-practice { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+        .hm-tile {
+            position: relative; display: flex; flex-direction: column; gap: 6px; padding: 18px; border-radius: 18px; text-decoration: none; color: var(--ca-text);
+            background: var(--ca-surface); border: 1px solid var(--ca-border); transition: transform .18s, border-color .18s, box-shadow .18s;
         }
+        .hm-tile:hover { transform: translateY(-3px); border-color: var(--ca-border-strong); box-shadow: var(--ca-shadow); color: var(--ca-text); }
+        .hm-tile-num { font-size: 2.3rem; font-weight: 900; line-height: 1; color: #fff; letter-spacing: -.03em; }
+        .hm-tile-unit { font-size: .82rem; font-weight: 700; color: var(--ca-muted); }
+        .hm-tile-lvl { margin-top: 8px; align-self: flex-start; font-size: .72rem; font-weight: 700; padding: 4px 9px; border-radius: 999px; background: var(--ca-brand-soft); color: #ff8a9b; }
+        .hm-tile-go { position: absolute; right: 14px; top: 16px; width: 30px; height: 30px; border-radius: 10px; display: grid; place-items: center; background: rgba(255,255,255,.04); color: var(--ca-muted); transition: all .18s; }
+        .hm-tile-go svg { width: 16px; height: 16px; }
+        .hm-tile:hover .hm-tile-go { background: var(--ca-brand); color: #fff; }
 
-    .scroll-line {
-        width: 1px;
-        height: 55px;
-        background: linear-gradient(to bottom, var(--red), transparent);
-        animation: scrollPulse 2s ease-in-out infinite;
-    }
-
-    /* ══ ANIMATIONS ══ */
-    @@keyframes dotPulse {
-        0%, 100% {
-            opacity: 1;
-            transform: scale(1)
+        /* Bo'limlar */
+        .hm-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+        .hm-card {
+            display: flex; flex-direction: column; gap: 10px; padding: 20px; border-radius: 18px; text-decoration: none; min-height: 170px; color: var(--ca-text);
+            background: var(--ca-surface); border: 1px solid var(--ca-border); transition: transform .18s, border-color .18s, box-shadow .18s;
         }
+        .hm-card:hover { transform: translateY(-3px); border-color: var(--ca-border-strong); box-shadow: var(--ca-shadow); color: var(--ca-text); }
+        .hm-ic { width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; }
+        .hm-ic svg { width: 22px; height: 22px; }
+        .hm-ic.red { background: rgba(255,45,74,.14); color: #ff6b81; }
+        .hm-ic.blue { background: rgba(56,189,248,.14); color: #38bdf8; }
+        .hm-ic.green { background: rgba(34,197,94,.14); color: #4ade80; }
+        .hm-ic.amber { background: rgba(245,165,36,.14); color: #fbbf24; }
+        .hm-ic.violet { background: rgba(167,139,250,.14); color: #c4b5fd; }
+        .hm-card h3 { margin: 4px 0 0; font-size: 1.05rem; font-weight: 800; color: #fff; }
+        .hm-card p { margin: 0; color: var(--ca-muted); font-size: .86rem; line-height: 1.5; }
+        .hm-card-foot { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: .82rem; font-weight: 700; color: var(--ca-text); }
+        .hm-card-foot svg { width: 16px; height: 16px; color: var(--ca-muted); transition: transform .18s, color .18s; }
+        .hm-card:hover .hm-card-foot svg { transform: translateX(3px); color: var(--ca-brand); }
 
-        50% {
-            opacity: .4;
-            transform: scale(1.5)
+        .hm-footer { margin-top: clamp(40px, 6vw, 72px); border-top: 1px solid var(--ca-border); padding: 22px 0 28px; color: var(--ca-faint); font-size: .82rem; }
+        .hm-footer .hm-wrap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+        .hm-footer b { color: #fff; }
+
+        @@media (max-width: 1100px) {
+            .hm-practice { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+            .hm-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         }
-    }
-
-    @@keyframes fadeUp {
-        from {
-            opacity: 0;
-            transform: translateY(28px)
+        @@media (max-width: 900px) {
+            .hm-exam { grid-template-columns: 1fr; }
+            .hm-exam-img { max-height: 180px; order: -1; }
+            .hm-exam-final { grid-template-columns: 1fr; }
+            .hm-final-ic { display: none; }
         }
-
-        to {
-            opacity: 1;
-            transform: translateY(0)
+        @@media (max-width: 560px) {
+            .hm-practice { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .hm-practice .hm-tile:last-child { grid-column: 1 / -1; }
+            .hm-cards { grid-template-columns: 1fr; }
+            .hm-card { min-height: 0; }
+            .hm-search-input { height: 56px; padding-right: 16px; font-size: .98rem; }
+            .hm-search-btn { display: none; }
+            .hm-suggest { top: 64px; }
         }
-    }
+        @@media (prefers-reduced-motion: reduce) { .hm *, .hm *::after { animation: none !important; transition: none !important; } }
+    </style>
+</head>
+<body class="hm">
+    <header class="ui-header">
+        <div class="ui-header-inner">
+            <a class="ui-brand" asp-controller="Home" asp-action="Index" aria-label="AVTOPRAVA_SAM">
+                <img src="~/images/logo-96.png" alt="" />
+                <span>AVTOPRAVA_SAM</span>
+            </a>
+            <div class="ui-header-actions">
+                <a class="ui-home-link" asp-controller="Cabinet" asp-action="Index">
+                    @Icons.Grid <span data-i18n="nav.myCabinet">@L["nav.myCabinet"]</span>
+                </a>
+                <partial name="_LangDropdown" />
+                <partial name="_UserMenu" />
+            </div>
+        </div>
+    </header>
 
-    @@keyframes fadeIn {
-        from {
-            opacity: 0
+    <main>
+        <!-- Savol qidirish -->
+        <section class="hm-hero">
+            <div class="hm-wrap hm-hero-grid">
+                <div>
+                    <h1 class="hm-sr" data-i18n="home.pageTitle">@L["home.pageTitle"]</h1>
+                    <p class="hm-lead" data-i18n="hm.lead">@L["hm.lead"]</p>
+
+                    <form class="hm-search" id="hmSearch" action="/Cabinet/Search" method="get" role="search" autocomplete="off">
+                        <label class="hm-search-field">
+                            @Icons.Search
+                            <input type="search" name="q" id="hmQ" class="hm-search-input" maxlength="200" spellcheck="false"
+                                   placeholder="@L["hm.searchPlaceholder"]" data-i18n-placeholder="hm.searchPlaceholder"
+                                   aria-label="@L["sq.title"]" aria-autocomplete="list" aria-controls="hmSuggest" aria-expanded="false" />
+                        </label>
+                        <button type="submit" class="hm-search-btn" data-i18n="hm.searchBtn">@L["hm.searchBtn"]</button>
+                        <div class="hm-suggest" id="hmSuggest" role="listbox" hidden></div>
+                    </form>
+                    <div class="hm-search-hint" data-i18n="hm.searchHint">@L["hm.searchHint"]</div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Mavzular (asosiy banner) -->
+        <section class="hm-section">
+            <div class="hm-wrap">
+                <a class="hm-exam" asp-controller="Topic" asp-action="Index">
+                    <div>
+                        <span class="hm-exam-badge"><i></i><span data-i18n="hm.topicsBadge">@L["hm.topicsBadge"]</span></span>
+                        <h2 data-i18n="nav.topics">@L["nav.topics"]</h2>
+                        <p data-i18n="hm.topicsBannerDesc">@L["hm.topicsBannerDesc"]</p>
+                        <div class="hm-exam-facts">
+                            <span>@L.F("hm.topicsFact1", ("n", Model.TopicCount))</span>
+                            <span data-i18n="hm.topicsFact2">@L["hm.topicsFact2"]</span>
+                            <span data-i18n="hm.topicsFact3">@L["hm.topicsFact3"]</span>
+                        </div>
+                        <span class="hm-cta">@Icons.Book <span data-i18n="hm.topicsStart">@L["hm.topicsStart"]</span></span>
+                    </div>
+                    <img class="hm-exam-img" src="~/images/avprsm1 rrr.png" alt="" decoding="async" />
+                </a>
+            </div>
+        </section>
+
+        <!-- Mashq turlari -->
+        <section class="hm-section">
+            <div class="hm-wrap">
+                <div class="hm-sec-head">
+                    <div>
+                        <h2 class="hm-sec-title" data-i18n="hm.practiceTitle">@L["hm.practiceTitle"]</h2>
+                        <p class="hm-sec-sub" data-i18n="hm.practiceSub">@L["hm.practiceSub"]</p>
+                    </div>
+                </div>
+                <div class="hm-practice">
+                    @foreach (var (ctrl, key, n, lvl) in practice)
+                    {
+                        <a class="hm-tile" asp-controller="@ctrl" asp-action="Index" aria-label="@L[key]">
+                            <span class="hm-tile-go">@Icons.ArrowRight</span>
+                            <span class="hm-tile-num">@n</span>
+                            <span class="hm-tile-unit" data-i18n="hm.questions">@L["hm.questions"]</span>
+                            <span class="hm-tile-lvl" data-i18n="@lvl">@L[lvl]</span>
+                        </a>
+                    }
+                </div>
+            </div>
+        </section>
+
+        <!-- Boshqa bo'limlar -->
+        <section class="hm-section">
+            <div class="hm-wrap">
+                <div class="hm-sec-head">
+                    <div>
+                        <h2 class="hm-sec-title" data-i18n="hm.modesTitle">@L["hm.modesTitle"]</h2>
+                        <p class="hm-sec-sub" data-i18n="hm.modesSub">@L["hm.modesSub"]</p>
+                    </div>
+                </div>
+                <div class="hm-cards">
+                    <a class="hm-card" asp-controller="Bilet" asp-action="Index">
+                        <span class="hm-ic blue">@Icons.List</span>
+                        <h3 data-i18n="nav.bilets">@L["nav.bilets"]</h3>
+                        <p>@L.F("hm.biletsDesc", ("n", Model.BiletCount))</p>
+                        <span class="hm-card-foot"><span data-i18n="hm.open">@L["hm.open"]</span>@Icons.ArrowRight</span>
+                    </a>
+                    <a class="hm-card" asp-controller="TestAll" asp-action="Index">
+                        <span class="hm-ic amber">@Icons.Flame</span>
+                        <h3 data-i18n="nav.marathon">@L["nav.marathon"]</h3>
+                        <p>@L.F("hm.marathonDesc", ("n", Model.BankSize))</p>
+                        <span class="hm-card-foot"><span data-i18n="hm.start">@L["hm.start"]</span>@Icons.ArrowRight</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Real imtihon — eng oxirida: mashqlardan keyingi yakuniy sinov -->
+        <section class="hm-section">
+            <div class="hm-wrap">
+                <a class="hm-exam hm-exam-final" asp-controller="Test" asp-action="Index">
+                    <div>
+                        <span class="hm-exam-badge"><i></i><span data-i18n="hm.examBadge">@L["hm.examBadge"]</span></span>
+                        <h2 data-i18n="nav.real">@L["nav.real"]</h2>
+                        <p data-i18n="hm.examDesc">@L["hm.examDesc"]</p>
+                        <div class="hm-exam-facts">
+                            <span data-i18n="hm.examFact1">@L["hm.examFact1"]</span>
+                            <span data-i18n="hm.examFact2">@L["hm.examFact2"]</span>
+                            <span data-i18n="hm.examFact3">@L["hm.examFact3"]</span>
+                        </div>
+                        <span class="hm-cta">@Icons.Play <span data-i18n="hm.examStart">@L["hm.examStart"]</span></span>
+                    </div>
+                    <span class="hm-final-ic" aria-hidden="true">@Icons.Trophy</span>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="hm-footer">
+        <div class="hm-wrap">
+            <span><b>AVTOPRAVA_SAM</b> · © @DateTime.Now.Year</span>
+            <span data-i18n="footer.rights">@L["footer.rights"]</span>
+        </div>
+    </footer>
+
+    <script src="~/js/ui.js" asp-append-version="true"></script>
+    <script>
+    (function () {
+        "use strict";
+
+        // ── Savol qidirish: yozish davomida eng mos 6 ta savol; Enter — barcha natijalar sahifasi ──
+        var form = document.getElementById("hmSearch"), input = document.getElementById("hmQ"), box = document.getElementById("hmSuggest");
+        var timer = null, seq = 0, active = -1;
+        var ICON_IMG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>';
+
+        function esc(s) {
+            return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+                return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+            });
         }
-
-        to {
-            opacity: 1
+        function tokens(q) {
+            var base = q.toLowerCase().replace(/['`´‘’ʻʼ]/g, "").split(/[^\p{L}\p{N}]+/u).filter(function (t) { return t.length >= 2; });
+            var res = base.slice();
+            base.forEach(function (t) { var c = I18n.toCyrillic ? I18n.toCyrillic(t).toLowerCase() : t; if (c && res.indexOf(c) < 0) res.push(c); });
+            return res.sort(function (a, b) { return b.length - a.length; });
         }
-    }
-
-    @@keyframes scrollPulse {
-        0%, 100% {
-            opacity: .3
-        }
-
-        50% {
-            opacity: 1
-        }
-    }
-
-    @@keyframes marquee {
-        from {
-            transform: translateX(0)
-        }
-
-        to {
-            transform: translateX(-50%)
-        }
-    }
-
-    .reveal {
-        opacity: 0;
-        transform: translateY(30px);
-        transition: opacity .75s ease,transform .75s ease;
-    }
-
-        .reveal.visible {
-            opacity: 1;
-            transform: none;
-        }
-
-    .reveal-delay-1 {
-        transition-delay: .1s;
-    }
-
-    .reveal-delay-2 {
-        transition-delay: .2s;
-    }
-
-    /* SECTION */
-    .section-label {
-        font-size: .68rem;
-        font-weight: 700;
-        letter-spacing: .22em;
-        text-transform: uppercase;
-        color: var(--red);
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 16px;
-    }
-
-        .section-label::before {
-            content: '';
-            width: 28px;
-            height: 1.5px;
-            background: var(--red);
-        }
-
-    .section-title {
-        font-size: clamp(1.8rem,5vw,5rem);
-        line-height: .95;
-        margin-bottom: 60px;
-        color: #fff;
-        font-weight: 900;
-    }
-
-    /* MARQUEE */
-    .marquee-band {
-        overflow: hidden;
-        background: var(--red);
-        padding: 14px 0;
-    }
-
-    .marquee-inner {
-        display: flex;
-        animation: marquee 18s linear infinite;
-        width: max-content;
-    }
-
-    .marquee-item {
-        font-size: clamp(1rem,2vw,1.4rem);
-        letter-spacing: .12em;
-        color: rgba(0,0,0,.85);
-        padding: 0 clamp(20px,3vw,40px);
-        white-space: nowrap;
-        font-weight: 900;
-        display: flex;
-        align-items: center;
-        gap: clamp(20px,3vw,40px);
-    }
-
-        .marquee-item::after {
-            content: '●';
-            font-size: .5rem;
-            color: rgba(0,0,0,.5);
-        }
-
-    /* COURSES */
-    .courses-section {
-        padding: clamp(60px,8vw,120px) clamp(16px,5vw,60px);
-        position: relative;
-    }
-
-        .courses-section::before {
-            content: '01';
-            position: absolute;
-            top: 80px;
-            right: 60px;
-            font-size: 9rem;
-            font-weight: 900;
-            color: rgba(255,255,255,.035);
-            pointer-events: none;
-        }
-
-    .courses-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit,minmax(260px,1fr));
-        gap: 1px;
-        background: rgba(255,255,255,.10);
-        border: 1px solid rgba(255,255,255,.10);
-    }
-
-    .course-card {
-        background: var(--card-bg);
-        padding: clamp(28px,3vw,48px) clamp(20px,2.5vw,40px);
-        position: relative;
-        overflow: hidden;
-        transition: background .3s;
-        cursor: none;
-        text-decoration: none;
-        display: block;
-        color: inherit;
-    }
-
-        .course-card::before {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: var(--red);
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform .4s ease;
-        }
-
-        .course-card:hover {
-            background: #181820;
-        }
-
-            .course-card:hover::before {
-                transform: scaleX(1);
+        function highlight(text, toks) {
+            text = String(text == null ? "" : text);
+            if (!toks.length) return esc(text);
+            var re;
+            try {
+                re = new RegExp(toks.map(function (t) {
+                    return Array.from(t).map(function (ch) { return ch.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }).join("['`´‘’ʻʼ]?");
+                }).join("|"), "giu");
+            } catch (e) { return esc(text); }
+            var out = "", last = 0, m;
+            while ((m = re.exec(text)) !== null) {
+                if (!m[0]) { re.lastIndex++; continue; }
+                out += esc(text.slice(last, m.index)) + "<mark>" + esc(m[0]) + "</mark>";
+                last = m.index + m[0].length;
             }
+            return out + esc(text.slice(last));
+        }
+        function tooShort(q) { return q.replace(/['`´‘’ʻʼ\s]/g, "").length < 2 && !/^#?\d+$/.test(q); }
+        function close() { box.hidden = true; active = -1; input.setAttribute("aria-expanded", "false"); }
 
-    .card-num {
-        font-size: clamp(3rem,5vw,5rem);
-        color: white;
-        line-height: 1;
-        margin-bottom: -10px;
-        transition: color .3s;
-        font-weight: 900;
-    }
-
-    .course-card:hover .card-num {
-        color: var(--red);
-    }
-
-    .card-icon {
-        width: 48px;
-        height: 48px;
-        background: rgba(255,26,48,.14);
-        border-radius: 4px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 20px;
-        font-size: 1.3rem;
-        border: 1px solid rgba(255,26,48,.15);
-    }
-
-    .card-title {
-        font-size: clamp(1rem,1.5vw,1.25rem);
-        font-weight: 800;
-        margin-bottom: 12px;
-        color: #fff;
-    }
-
-    .card-text {
-        font-size: .875rem;
-        color: #999;
-        line-height: 1.7;
-        font-weight: 300;
-    }
-
-    .card-arrow {
-        margin-top: 36px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-size: .75rem;
-        font-weight: 700;
-        letter-spacing: .14em;
-        text-transform: uppercase;
-        color: #888;
-        transition: color .2s;
-    }
-
-    .course-card:hover .card-arrow {
-        color: var(--red);
-    }
-
-    .card-arrow-line {
-        flex: 1;
-        height: 1px;
-        background: currentColor;
-        max-width: 40px;
-        transition: max-width .3s;
-    }
-
-    .course-card:hover .card-arrow-line {
-        max-width: 64px;
-    }
-
-    /* STATS SECTION */
-    .stats-section {
-        padding: clamp(60px,8vw,120px) clamp(16px,5vw,60px);
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: clamp(32px,5vw,80px);
-        align-items: center;
-        position: relative;
-    }
-
-        .stats-section::before {
-            content: '02';
-            position: absolute;
-            top: 80px;
-            right: 60px;
-            font-size: 9rem;
-            font-weight: 900;
-            color: rgba(255,255,255,.035);
-            pointer-events: none;
+        function suggest() {
+            var q = input.value.trim();
+            if (tooShort(q)) { close(); return; }
+            var my = ++seq;
+            fetch("/Cabinet/SearchQuestions?q=" + encodeURIComponent(q), { headers: { Accept: "application/json" }, cache: "no-store" })
+                .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+                .then(function (d) {
+                    if (my !== seq || input.value.trim() !== q) return;
+                    var toks = tokens(q), items = (d.items || []).slice(0, 6), html = "";
+                    if (!items.length) html = '<div class="hm-sg-empty">' + esc(I18n.t("sq.emptyTitle")) + "</div>";
+                    items.forEach(function (it) {
+                        var x = it.question;
+                        var thumb = x.imageUrl ? '<img alt="" loading="lazy" src="/uploads/' + encodeURIComponent(x.imageUrl) + '?w=160">' : ICON_IMG;
+                        html += '<a class="hm-sg-item" role="option" href="/Cabinet/Practice?ids=' + x.id + "&q=" + encodeURIComponent(q) + '">' +
+                            '<span class="hm-sg-thumb">' + thumb + "</span>" +
+                            '<span class="hm-sg-text"><span class="hm-sg-num">#' + x.id + "</span>" +
+                            highlight(I18n.pick(x.questionUZ, x.questionRU, x.questionUZK), toks) + "</span></a>";
+                    });
+                    if (d.total > 0) {
+                        html += '<a class="hm-sg-foot" href="/Cabinet/Search?q=' + encodeURIComponent(q) + '"><span>' +
+                            esc(I18n.t("hm.allResults", { n: d.total })) + "</span><span>→</span></a>";
+                    }
+                    box.innerHTML = html;
+                    box.hidden = false;
+                    active = -1;
+                    input.setAttribute("aria-expanded", "true");
+                })
+                .catch(function () { if (my === seq) close(); });
         }
 
-    .stats-left .section-title {
-        margin-bottom: 24px;
-    }
-
-    .stats-desc {
-        font-size: .95rem;
-        color: #999;
-        line-height: 1.8;
-        font-weight: 300;
-        max-width: 360px;
-    }
-
-    .stats-right {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1px;
-        background: rgba(255,255,255,.10);
-        border: 1px solid rgba(255,255,255,.10);
-    }
-
-    .stat-block {
-        background: var(--card-bg);
-        padding: clamp(24px,3vw,44px) clamp(14px,2.5vw,36px);
-        position: relative;
-        overflow: hidden;
-        transition: background .3s;
-    }
-
-        .stat-block:hover {
-            background: #181820;
-        }
-
-        .stat-block::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 3px;
-            height: 100%;
-            background: var(--red);
-            transform: scaleY(0);
-            transform-origin: top;
-            transition: transform .4s ease;
-        }
-
-        .stat-block:hover::after {
-            transform: scaleY(1);
-        }
-
-    .stat-big {
-        font-size: clamp(2rem,3.5vw,3.8rem);
-        color: #fff;
-        line-height: 1;
-        font-weight: 900;
-    }
-
-        .stat-big span {
-            color: var(--red);
-        }
-
-    .stat-desc {
-        font-size: .78rem;
-        letter-spacing: .1em;
-        text-transform: uppercase;
-        color: #999;
-        margin-top: 8px;
-        font-weight: 500;
-    }
-
-    /* TIPS */
-    .tips-section {
-        padding: clamp(60px,8vw,120px) clamp(16px,5vw,60px);
-        position: relative;
-    }
-
-        .tips-section::before {
-            content: '03';
-            position: absolute;
-            top: 80px;
-            right: 60px;
-            font-size: 9rem;
-            font-weight: 900;
-            color: rgba(255,255,255,.035);
-            pointer-events: none;
-        }
-
-    .tips-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit,minmax(240px,1fr));
-        gap: 24px;
-    }
-
-    .tip-card {
-        padding: clamp(28px,3vw,44px) clamp(20px,2.5vw,36px);
-        border: 1px solid rgba(255,255,255,.10);
-        border-radius: 4px;
-        position: relative;
-        overflow: hidden;
-        transition: border-color .3s,transform .3s;
-        background: var(--card-bg);
-    }
-
-        .tip-card:hover {
-            border-color: rgba(255,26,48,.4);
-            transform: translateY(-6px);
-            box-shadow: 0 12px 40px rgba(255,26,48,.1);
-        }
-
-    .tip-number {
-        font-size: 1rem;
-        color: var(--red);
-        letter-spacing: .1em;
-        margin-bottom: 20px;
-        font-weight: 900;
-    }
-
-    .tip-title {
-        font-size: 1.1rem;
-        font-weight: 800;
-        margin-bottom: 14px;
-        color: #fff;
-    }
-
-    .tip-text {
-        font-size: .875rem;
-        color: #999;
-        line-height: 1.75;
-        font-weight: 300;
-    }
-
-    .tip-tag {
-        display: inline-block;
-        margin-top: 28px;
-        font-size: .65rem;
-        font-weight: 700;
-        letter-spacing: .18em;
-        text-transform: uppercase;
-        color: var(--red);
-        background: rgba(255,26,48,.14);
-        padding: 5px 14px;
-        border-radius: 2px;
-        border: 1px solid rgba(255,26,48,.2);
-    }
-
-    /* FOOTER CTA */
-    .footer-cta {
-        margin: 0 clamp(16px,5vw,60px) clamp(40px,6vw,80px);
-        background: var(--card-bg);
-        border: 1px solid rgba(255,255,255,.10);
-        padding: clamp(36px,5vw,80px);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 40px;
-        position: relative;
-        overflow: hidden;
-        flex-wrap: wrap;
-    }
-
-        .footer-cta::before {
-            content: '';
-            position: absolute;
-            right: -80px;
-            top: -80px;
-            width: 320px;
-            height: 320px;
-            background: var(--red);
-            border-radius: 50%;
-            opacity: .07;
-        }
-
-    .cta-text {
-        font-size: clamp(1.6rem,4vw,3.5rem);
-        line-height: 1;
-        max-width: 520px;
-        color: #fff;
-        font-weight: 900;
-    }
-
-        .cta-text span {
-            color: var(--red);
-        }
-
-    /* ══ RESPONSIVE ══ */
-
-    /* Tablet (≤1024px) */
-    @@media (max-width: 1024px) {
-        body {
-            cursor: auto;
-        }
-
-        .cursor, .cursor-ring {
-            display: none;
-        }
-
-        .hero {
-            display: flex;
-            flex-direction: column;
-            min-height: auto;
-        }
-
-        .hero-left {
-            order: 1;
-            width: 100%;
-            padding: 56px 40px 36px;
-        }
-
-        .hero-right {
-            order: 2;
-            width: 100%;
-            height: 380px;
-        }
-
-        .hero-car-img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            opacity: 1 !important;
-            animation: none !important;
-        }
-
-        .hero-stats {
-            order: 3;
-            position: static;
-        }
-
-        .hero-stats-inner {
-            width: 100%;
-            justify-content: space-around;
-        }
-
-        .scroll-hint {
-            display: none;
-        }
-
-        .courses-section::before, .stats-section::before, .tips-section::before {
-            display: none;
-        }
-
-        .stats-section {
-            grid-template-columns: 1fr;
-        }
-
-        .stats-desc {
-            max-width: 100%;
-        }
-    }
-
-    /* Mobile (≤768px) */
-    @@media (max-width: 768px) {
-        body {
-            cursor: auto;
-        }
-
-        .cursor, .cursor-ring {
-            display: none;
-        }
-
-        .hero-left {
-            padding: 44px 20px 28px;
-        }
-
-        .hero-right {
-            height: 280px;
-        }
-
-        .hero-actions {
-            flex-direction: column;
-            width: 100%;
-        }
-
-        .btn-outline, .btn-ghost2 {
-            width: 100%;
-            text-align: center;
-        }
-
-        .stat-item {
-            flex: 1 1 50%;
-        }
-
-        .section-title {
-            margin-bottom: 32px;
-        }
-
-        .stats-section {
-            gap: 28px;
-        }
-
-        .footer-cta {
-            flex-direction: column;
-        }
-    }
-
-    /* Small (≤480px) */
-    @@media (max-width: 480px) {
-        .hero-left {
-            padding: 36px 16px 24px;
-        }
-
-        .hero-right {
-            height: 220px;
-        }
-
-        .stat-item {
-            flex: 1 1 50%;
-            padding: 12px 8px;
-        }
-    }
-
-    /* Very small (≤360px) */
-    @@media (max-width: 360px) {
-        .hero-right {
-            height: 180px;
-        }
-
-        .stat-item {
-            flex: 1 1 100%;
-        }
-
-        .stats-right {
-            grid-template-columns: 1fr;
-        }
-    }
-</style>
-
-<div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="cursorRing"></div>
-
-<section class="hero">
-    <div class="hero-bg-gradient"></div>
-    <div class="hero-bg-grid"></div>
-    <div class="hero-glow"></div>
-
-    <div class="hero-left">
-        <div class="hero-badge">
-            <div class="hero-badge-dot"></div>
-            <span class="hero-badge-text">AVTOPRAVA_SAM</span>
-        </div>
-        <h1 class="hero-title" data-i18n-html="home.heroTitle">@L.Html("home.heroTitle")</h1>
-        <p class="hero-desc" data-i18n="home.heroDesc">@L["home.heroDesc"]</p>
-        <div class="hero-actions">
-            @if (User.IsInRole(Roles.SuperAdmin))
-            {
-                <a asp-controller="Question" asp-action="Index1" class="btn-outline" data-i18n="home.admin">@L["home.admin"]</a>
-            }
-            <a href="#courses" class="btn-ghost2" data-i18n="home.more">@L["home.more"]</a>
-        </div>
-    </div>
-
-    <div class="hero-right">
-        <img src="/images/avprsm1 rrr.png" alt="Avto" class="hero-car-img" />
-    </div>
-
-    <div class="hero-stats">
-        <div class="hero-stats-inner">
-            <div class="stat-item"><div class="stat-num">1350+</div><div class="stat-label" data-i18n="home.statQuestions">@L["home.statQuestions"]</div></div>
-            <div class="stat-item"><div class="stat-num">700+</div><div class="stat-label" data-i18n="home.statStudents">@L["home.statStudents"]</div></div>
-            <div class="stat-item"><div class="stat-num">550+</div><div class="stat-label" data-i18n="home.statLicensed">@L["home.statLicensed"]</div></div>
-            <div class="stat-item"><div class="stat-num">4+</div><div class="stat-label" data-i18n="home.statYears">@L["home.statYears"]</div></div>
-        </div>
-    </div>
-
-    <div class="scroll-hint">
-        <span data-i18n="home.scroll">@L["home.scroll"]</span>
-        <div class="scroll-line"></div>
-    </div>
-</section>
-
-<div class="marquee-band" aria-hidden="true">
-    <div class="marquee-inner">
-        <span class="marquee-item" data-i18n="home.mFast">@L["home.mFast"]</span>
-        <span class="marquee-item" data-i18n="home.mNormal">@L["home.mNormal"]</span>
-        <span class="marquee-item" data-i18n="home.mReal">@L["home.mReal"]</span>
-        <span class="marquee-item" data-i18n="home.mRules">@L["home.mRules"]</span>
-        <span class="marquee-item" data-i18n="home.mCount">@L["home.mCount"]</span>
-        <span class="marquee-item" data-i18n="home.mCert">@L["home.mCert"]</span>
-        <span class="marquee-item" data-i18n="home.mFast">@L["home.mFast"]</span>
-        <span class="marquee-item" data-i18n="home.mNormal">@L["home.mNormal"]</span>
-        <span class="marquee-item" data-i18n="home.mReal">@L["home.mReal"]</span>
-        <span class="marquee-item" data-i18n="home.mRules">@L["home.mRules"]</span>
-        <span class="marquee-item" data-i18n="home.mCount">@L["home.mCount"]</span>
-        <span class="marquee-item" data-i18n="home.mCert">@L["home.mCert"]</span>
-    </div>
-</div>
-
-<section class="courses-section" id="courses">
-    <div class="section-label reveal" data-i18n="home.coursesLabel">@L["home.coursesLabel"]</div>
-    <h2 class="section-title reveal" data-i18n-html="home.coursesTitle">@L.Html("home.coursesTitle")</h2>
-    <div class="courses-grid reveal">
-        <a href="/Testforty/Index" class="course-card">
-            <div class="card-num">01</div>
-            <div class="card-icon">&#9889;</div>
-            <div class="card-title" data-i18n="home.fastTitle">@L["home.fastTitle"]</div>
-            <p class="card-text" data-i18n="home.fastDesc">@L["home.fastDesc"]</p>
-            <div class="card-arrow"><span data-i18n="home.view">@L["home.view"]</span> <div class="card-arrow-line"></div> &#8594;</div>
-        </a>
-        <a href="/Testsixty/Index" class="course-card">
-            <div class="card-num">02</div>
-            <div class="card-icon">&#128218;</div>
-            <div class="card-title" data-i18n="home.normalTitle">@L["home.normalTitle"]</div>
-            <p class="card-text" data-i18n="home.normalDesc">@L["home.normalDesc"]</p>
-            <div class="card-arrow"><span data-i18n="home.view">@L["home.view"]</span> <div class="card-arrow-line"></div> &#8594;</div>
-        </a>
-        <a href="/Test/Index" class="course-card">
-            <div class="card-num">03</div>
-            <div class="card-icon">&#127919;</div>
-            <div class="card-title" data-i18n="home.realTitle">@L["home.realTitle"]</div>
-            <p class="card-text" data-i18n="home.realDesc">@L["home.realDesc"]</p>
-            <div class="card-arrow"><span data-i18n="home.start">@L["home.start"]</span> <div class="card-arrow-line"></div> &#8594;</div>
-        </a>
-        <a href="/Topic/Index" class="course-card">
-            <div class="card-num">04</div>
-            <div class="card-icon">&#128218;</div>
-            <div class="card-title" data-i18n="home.topicsTitle">@L["home.topicsTitle"]</div>
-            <p class="card-text" data-i18n="home.topicsDesc">@L["home.topicsDesc"]</p>
-            <div class="card-arrow"><span data-i18n="home.view">@L["home.view"]</span> <div class="card-arrow-line"></div> &#8594;</div>
-        </a>
-    </div>
-</section>
-
-<section class="stats-section" id="stats">
-    <div class="stats-left">
-        <div class="section-label reveal" data-i18n="home.aboutLabel">@L["home.aboutLabel"]</div>
-        <h2 class="section-title reveal" data-i18n-html="home.aboutTitle">@L.Html("home.aboutTitle")</h2>
-        <p class="stats-desc reveal" data-i18n="home.aboutDesc">@L["home.aboutDesc"]</p>
-    </div>
-    <div class="stats-right reveal">
-        <div class="stat-block"><div class="stat-big"><span>+</span>1250</div><div class="stat-desc" data-i18n="home.aboutQuestions">@L["home.aboutQuestions"]</div></div>
-        <div class="stat-block"><div class="stat-big"><span>+</span>200</div><div class="stat-desc" data-i18n="home.aboutStudents">@L["home.aboutStudents"]</div></div>
-        <div class="stat-block"><div class="stat-big"><span>+</span>150</div><div class="stat-desc" data-i18n="home.aboutLicensed">@L["home.aboutLicensed"]</div></div>
-        <div class="stat-block"><div class="stat-big"><span>+</span>4</div><div class="stat-desc" data-i18n="home.aboutYears">@L["home.aboutYears"]</div></div>
-    </div>
-</section>
-
-<section class="tips-section" id="tips">
-    <div class="section-label reveal" data-i18n="home.tipsLabel">@L["home.tipsLabel"]</div>
-    <h2 class="section-title reveal" data-i18n-html="home.tipsTitle">@L.Html("home.tipsTitle")</h2>
-    <div class="tips-grid">
-        <div class="tip-card reveal">
-            <div class="tip-number">&#8212; 01</div>
-            <div class="tip-title" data-i18n="home.tip1Title">@L["home.tip1Title"]</div>
-            <p class="tip-text" data-i18n="home.tip1Desc">@L["home.tip1Desc"]</p>
-            <span class="tip-tag" data-i18n="home.tip1Tag">@L["home.tip1Tag"]</span>
-        </div>
-        <div class="tip-card reveal reveal-delay-1">
-            <div class="tip-number">&#8212; 02</div>
-            <div class="tip-title" data-i18n="home.tip2Title">@L["home.tip2Title"]</div>
-            <p class="tip-text" data-i18n="home.tip2Desc">@L["home.tip2Desc"]</p>
-            <span class="tip-tag" data-i18n="home.tip2Tag">@L["home.tip2Tag"]</span>
-        </div>
-        <div class="tip-card reveal reveal-delay-2">
-            <div class="tip-number">&#8212; 03</div>
-            <div class="tip-title" data-i18n="home.tip3Title">@L["home.tip3Title"]</div>
-            <p class="tip-text" data-i18n="home.tip3Desc">@L["home.tip3Desc"]</p>
-            <span class="tip-tag" data-i18n="home.tip3Tag">@L["home.tip3Tag"]</span>
-        </div>
-    </div>
-</section>
-
-<script>
-    if (window.innerWidth > 1024) {
-        const cursor = document.getElementById('cursor');
-        const ring   = document.getElementById('cursorRing');
-        let mx=0,my=0,rx=0,ry=0;
-        document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
-        (function animCursor(){
-            cursor.style.left=mx+'px'; cursor.style.top=my+'px';
-            rx+=(mx-rx)*0.14; ry+=(my-ry)*0.14;
-            ring.style.left=rx+'px'; ring.style.top=ry+'px';
-            requestAnimationFrame(animCursor);
-        })();
-        document.querySelectorAll('a,button,.course-card,.stat-block,.tip-card').forEach(el=>{
-            el.addEventListener('mouseenter',()=>{ cursor.style.transform='translate(-50%,-50%) scale(2.5)'; ring.style.width='60px'; ring.style.height='60px'; ring.style.opacity='0.4'; });
-            el.addEventListener('mouseleave',()=>{ cursor.style.transform='translate(-50%,-50%) scale(1)';   ring.style.width='36px'; ring.style.height='36px'; ring.style.opacity='1'; });
-        });
-    }
-
-    const obs = new IntersectionObserver(entries=>{
-        entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
-    },{threshold:0.15});
-    document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
-
-    document.querySelectorAll('a[href^="#"]').forEach(a=>{
-        a.addEventListener('click',e=>{
-            const t=document.querySelector(a.getAttribute('href'));
-            if(t){ e.preventDefault(); t.scrollIntoView({behavior:'smooth'}); }
-        });
-    });
-
-    const numValues=[1250,200,150,4];
-    const statObs=new IntersectionObserver(entries=>{
-        entries.forEach((e,i)=>{
-            if(e.isIntersecting){
-                let s=0; const target=numValues[i]; const step=target/(1400/16);
-                const t=setInterval(()=>{ s+=step; if(s>=target){e.target.textContent=target+'+';clearInterval(t);return;} e.target.textContent=Math.floor(s)+'+'; },16);
-                statObs.unobserve(e.target);
+        input.addEventListener("input", function () { clearTimeout(timer); timer = setTimeout(suggest, 200); });
+        input.addEventListener("focus", function () { if (box.innerHTML && !tooShort(input.value.trim())) box.hidden = false; });
+        input.addEventListener("keydown", function (e) {
+            var links = box.hidden ? [] : box.querySelectorAll("a");
+            if (e.key === "Escape") { close(); return; }
+            if (!links.length) return;
+            if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+                e.preventDefault();
+                active = (active + (e.key === "ArrowDown" ? 1 : -1) + links.length) % links.length;
+                links.forEach(function (a, i) { a.classList.toggle("on", i === active); });
+            } else if (e.key === "Enter" && active >= 0) {
+                e.preventDefault();
+                location.href = links[active].href;
             }
         });
-    },{threshold:0.5});
-    document.querySelectorAll('.stat-big').forEach(el=>statObs.observe(el));
-</script>
+        form.addEventListener("submit", function (e) { if (!input.value.trim()) { e.preventDefault(); input.focus(); } });
+        document.addEventListener("click", function (e) { if (!form.contains(e.target)) close(); });
+        document.addEventListener("keydown", function (e) {
+            var tag = document.activeElement ? document.activeElement.tagName : "";
+            if (e.key === "/" && !/INPUT|TEXTAREA|SELECT/.test(tag)) { e.preventDefault(); input.focus(); }
+        });
+        // Orqaga qaytilganda (brauzer keshi) eski ro'yxat ochiq qolmasin
+        window.addEventListener("pageshow", function () { close(); });
+    })();
+    </script>
+</body>
+</html>

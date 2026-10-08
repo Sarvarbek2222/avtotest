@@ -27,6 +27,19 @@
                 {
                     <div class="ca-hero-date">@L.Date(date)</div>
                     <p class="ca-hero-note">@L.F("cab.forecastDays", ("n", Model.DaysToReady))</p>
+                    @* Sanani nima belgilayotgani — aks holda yuqori foiz va uzoq sana bir-biriga zid ko'rinadi *@
+                    @switch (Model.ForecastLimit)
+                    {
+                        case ForecastLimits.Coverage:
+                            <p class="ca-hero-note ca-forecast-why">@L.F("cab.limitCoverage", ("n", Model.CoverageNeeded), ("pace", Math.Max(1, (int)Math.Round(Model.CoveragePerDay))))</p>
+                            break;
+                        case ForecastLimits.Accuracy:
+                            <p class="ca-hero-note ca-forecast-why" data-i18n="cab.limitAccuracy">@L["cab.limitAccuracy"]</p>
+                            break;
+                        case ForecastLimits.Exams:
+                            <p class="ca-hero-note ca-forecast-why" data-i18n="cab.limitExams">@L["cab.limitExams"]</p>
+                            break;
+                    }
                 }
                 else if (Model.NeedMoreData)
                 {
@@ -40,10 +53,19 @@
                 }
             }
 
-            <div style="margin-top:14px;">
+            @* Tayyorlikning uchala tarkibi: aniqlik (50%), imtihon testlari (30%), savollar bazasini qamrab olish (20%) *@
+            <div style="margin-top:14px;display:grid;gap:10px;">
                 <div class="ca-factor">
-                    <div class="ca-factor-top"><span data-i18n="cab.factorAccuracy">@L["cab.factorAccuracy"]</span><b>@Score.Pct(Model.RecentAccuracy)%</b></div>
-                    <div class="ca-bar @Score.BarClass(Model.RecentAccuracy * 100)"><i data-w="@Score.Pct(Model.RecentAccuracy)"></i></div>
+                    <div class="ca-factor-top"><span data-i18n="cab.factorAccuracy">@L["cab.factorAccuracy"]</span><b>@Score.Pct(Model.RecentAccuracy)% <span class="ca-muted ca-small">/ @L.F("cab.factorTarget", ("n", 90))</span></b></div>
+                    <div class="ca-bar @Score.BarClass(Model.AccuracyScore)"><i data-w="@Score.Pct(Model.RecentAccuracy)"></i></div>
+                </div>
+                <div class="ca-factor">
+                    <div class="ca-factor-top"><span data-i18n="cab.factorExams">@L["cab.factorExams"]</span><b>@Model.ExamScore%</b></div>
+                    <div class="ca-bar @Score.BarClass(Model.ExamScore)"><i data-w="@Model.ExamScore"></i></div>
+                </div>
+                <div class="ca-factor">
+                    <div class="ca-factor-top"><span data-i18n="cab.factorCoverage">@L["cab.factorCoverage"]</span><b>@Model.DistinctCorrect / @Model.BankSize <span class="ca-muted ca-small">/ @L.F("cab.factorTarget", ("n", 70))</span></b></div>
+                    <div class="ca-bar @Score.BarClass(Model.CoverageScore)"><i data-w="@Score.Pct(Model.Coverage)"></i></div>
                 </div>
             </div>
         </div>

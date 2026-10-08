@@ -9,6 +9,9 @@ public static class DeviceGuard
 {
     public const string CookieName = "propro.did";
 
+    /// <summary>Brauzerlar cookie'ni ko'pi bilan 400 kun saqlaydi — muddat har bir sahifa ochilganda yangilanadi.</summary>
+    private static readonly TimeSpan Lifetime = TimeSpan.FromDays(395);
+
     private static readonly Regex IdRx = new("^[a-f0-9]{32}$", RegexOptions.Compiled);
 
     /// <summary>Brauzerdagi qurilma identifikatori; bo'lmasa — yangisi yaratilib cookie'ga yoziladi.</summary>
@@ -18,17 +21,30 @@ public static class DeviceGuard
         if (id != null && IdRx.IsMatch(id)) return id;
 
         id = Guid.NewGuid().ToString("N");
+        Write(http, id);
+        // Shu so'rov davomida ham bir xil qiymat o'qilsin
+        http.Items[CookieName] = id;
+        return id;
+    }
+
+    private static void Write(HttpContext http, string id) =>
         http.Response.Cookies.Append(CookieName, id, new CookieOptions
         {
             HttpOnly = true,
             IsEssential = true,
             SameSite = SameSiteMode.Lax,
             Secure = http.Request.IsHttps,
-            Expires = DateTimeOffset.UtcNow.AddYears(10),
+            Expires = DateTimeOffset.UtcNow.Add(Lifetime),
         });
-        // Shu so'rov davomida ham bir xil qiymat o'qilsin
-        http.Items[CookieName] = id;
-        return id;
+
+    /// <summary>
+    /// Mavjud qurilma identifikatorining muddatini yangilaydi (sahifa so'rovlarida). Aks holda ~400 kundan keyin
+    /// brauzer uni o'chirib, kompyuter "yangi qurilma" bo'lib qolardi va admin tasdig'isiz kira olmasdi.
+    /// </summary>
+    public static void Refresh(HttpContext http)
+    {
+        var id = http.Request.Cookies[CookieName];
+        if (id != null && IdRx.IsMatch(id)) Write(http, id);
     }
 
     public static string? CurrentDeviceId(HttpContext http)

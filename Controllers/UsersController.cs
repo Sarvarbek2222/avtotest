@@ -58,6 +58,7 @@ public class UsersController : Controller
             FullName = Clean(form.FullName),
             Role = form.Role!,
             IsActive = form.IsActive,
+            IsComputer = form.IsComputer && form.Role == Roles.User,
             AccessExpiresAt = form.ResolveExpiry(null, DateTime.UtcNow),
         };
         _users.SetPassword(user, form.Password!);
@@ -81,6 +82,7 @@ public class UsersController : Controller
             FullName = user.FullName,
             Role = user.Role,
             IsActive = user.IsActive,
+            IsComputer = user.IsComputer,
             AccessMode = UserForm.Keep,
             AccessUnit = "m",
             AccessAmount = 1,
@@ -123,12 +125,15 @@ public class UsersController : Controller
             return View("Form", form);
         }
 
-        bool accessChanged = user.Role != form.Role || user.IsActive != form.IsActive;
+        bool isComputer = form.IsComputer && form.Role == Roles.User;
+        // Hisob turi o'zgarsa ham qayta login — yangi cookie muddati (kompyuter: uzoq) qo'llansin
+        bool accessChanged = user.Role != form.Role || user.IsActive != form.IsActive || user.IsComputer != isComputer;
 
         user.Username = form.Username!.Trim();
         user.FullName = Clean(form.FullName);
         user.Role = form.Role!;
         user.IsActive = form.IsActive;
+        user.IsComputer = isComputer;
         user.AccessExpiresAt = form.ResolveExpiry(user.AccessExpiresAt, DateTime.UtcNow);
 
         if (!string.IsNullOrEmpty(form.Password))
@@ -272,6 +277,8 @@ public class UserForm
     public string? FullName { get; set; }
     public string? Role { get; set; }
     public bool IsActive { get; set; }
+    /// <summary>Hisob turi: true — o'quv markazidagi kompyuter, false — shaxsiy o'quvchi.</summary>
+    public bool IsComputer { get; set; }
     public string? Password { get; set; }
     public string? ConfirmPassword { get; set; }
 

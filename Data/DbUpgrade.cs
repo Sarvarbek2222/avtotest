@@ -106,6 +106,7 @@ CREATE TABLE `Users` (
             ("DeviceId", "varchar(64) CHARACTER SET utf8mb4 NULL"),
             ("DeviceInfo", "varchar(255) CHARACTER SET utf8mb4 NULL"),
             ("DeviceBoundAt", "datetime(6) NULL"),
+            ("IsComputer", "tinyint(1) NOT NULL DEFAULT 0"),
             ("Phone", "varchar(32) CHARACTER SET utf8mb4 NULL"),
             ("RegisteredVia", "varchar(16) CHARACTER SET utf8mb4 NULL"),
         };

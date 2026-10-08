@@ -268,32 +268,16 @@
                 <span>AVTOPRAVA_SAM</span>
             </a>
 
-            @if (showFullNav && User.Identity?.IsAuthenticated == true)
-            {
-                string Active(string c) => string.Equals(controller, c, StringComparison.OrdinalIgnoreCase) ? "active" : "";
-                <nav class="ui-nav" id="siteNav" aria-label="@L["nav.tests"]">
-                    <a id="nav40" asp-controller="Testforty" asp-action="Index" class="ui-nav-link" data-i18n="nav.q20">@L["nav.q20"]</a>
-                    <a id="nav60" asp-controller="Testsixty" asp-action="Index" class="ui-nav-link" data-i18n="nav.q40">@L["nav.q40"]</a>
-                    <a id="nav80" asp-controller="Testeighty" asp-action="Index" class="ui-nav-link" data-i18n="nav.q80">@L["nav.q80"]</a>
-                    <a id="nav100" asp-controller="Testhundred" asp-action="Index" class="ui-nav-link" data-i18n="nav.q100">@L["nav.q100"]</a>
-                    <a id="nav160" asp-controller="Testhundredsixty" asp-action="Index" class="ui-nav-link" data-i18n="nav.q200">@L["nav.q200"]</a>
-                    <a id="bilet" asp-controller="Bilet" asp-action="Index" class="ui-nav-link @Active("Bilet")" data-i18n="nav.bilets">@L["nav.bilets"]</a>
-                    <a id="testall" asp-controller="TestAll" asp-action="Index" class="ui-nav-link" data-i18n="nav.marathon">@L["nav.marathon"]</a>
-                    <a id="navTopic" asp-controller="Topic" asp-action="Index" class="ui-nav-link @Active("Topic")" data-i18n="nav.topics">@L["nav.topics"]</a>
-                    <a id="navReal" asp-controller="Test" asp-action="Index" class="ui-nav-link accent" data-i18n="nav.real">@L["nav.real"]</a>
-                </nav>
-            }
-
+            @* Test bo'limlari endi bosh sahifada — bu yerda faqat bosh sahifaga qaytish *@
             <div class="ui-header-actions">
+                @if (showFullNav && !isHomePage && User.Identity?.IsAuthenticated == true)
+                {
+                    <a class="ui-home-link" asp-controller="Home" asp-action="Index">
+                        @Icons.Home <span data-i18n="home.pageTitle">@L["home.pageTitle"]</span>
+                    </a>
+                }
                 <partial name="_LangDropdown" />
                 <partial name="_UserMenu" />
-                @if (showFullNav && User.Identity?.IsAuthenticated == true)
-                {
-                    <button type="button" class="ui-burger" data-nav-toggle aria-controls="siteNav" aria-expanded="false"
-                            aria-label="@L["nav.menu"]" data-i18n-title="nav.menu" title="@L["nav.menu"]">
-                        @Icons.Menu
-                    </button>
-                }
             </div>
         </div>
     </header>

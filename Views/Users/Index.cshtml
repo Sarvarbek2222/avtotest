@@ -111,7 +111,7 @@
             @foreach (var (val, key) in new[] {
                 ("", "users.fAll"), ("active", "users.fActive"), ("inactive", "users.fInactive"),
                 ("expired", "users.fExpired"), ("soon", "users.fSoon"), ("unlimited", "users.fUnlimited"),
-                ("pending", "users.fPending"), ("nodevice", "users.fNoDevice") })
+                ("pending", "users.fPending"), ("nodevice", "users.fNoDevice"), ("computer", "users.fComputers") })
             {
                 <option value="@val" selected="@(val == status)" data-i18n="@key">@L[key]</option>
             }
@@ -163,6 +163,7 @@
                             if (unlimited) tags.Add("unlimited");
                             if (hasPending) tags.Add("pending");
                             if (u.IsRestricted && u.DeviceId == null) tags.Add("nodevice");
+                            if (u.IsComputer && u.IsRestricted) tags.Add("computer");
 
                             <tr data-search="@((u.Username + " " + u.FullName).ToLowerInvariant())" data-tags="@string.Join(" ", tags)" data-role="@u.Role">
                                 <td>
@@ -175,6 +176,10 @@
                                 <td class="hide-sm">@(u.FullName ?? "—")</td>
                                 <td>
                                     <span class="us-pill @(u.Role == Roles.SuperAdmin ? "admin" : "user")" data-i18n="@roleKey">@L[roleKey]</span>
+                                    @if (u.IsComputer && u.IsRestricted)
+                                    {
+                                        <span class="us-pill comp" title="@L["users.kindComputer"]" data-i18n="users.compShort">@L["users.compShort"]</span>
+                                    }
                                 </td>
                                 <td>
                                     @if (u.IsActive)

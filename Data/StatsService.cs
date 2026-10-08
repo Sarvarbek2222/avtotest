@@ -225,21 +225,31 @@ public class StatsService
         if (needCorrect <= 0) covDays = 0;
         else
         {
+            var windowStart = DateTime.UtcNow.AddDays(-14);
             var firstCorrect = answered.Where(a => a.IsCorrect).GroupBy(a => a.QuestionId)
-                .Select(g => g.Min(a => a.At)).Where(d => d >= DateTime.UtcNow.AddDays(-14)).ToList();
-            int activeDays = answered.Where(a => a.At >= DateTime.UtcNow.AddDays(-14))
-                .Select(a => a.At.ToLocalTime().Date).Distinct().Count();
-            double pace = activeDays > 0 ? (double)firstCorrect.Count / 14 : 0; // kalendar kuni hisobida
+                .Select(g => g.Min(a => a.At)).Where(d => d >= windowStart).ToList();
+
+            // Sur'at = yangi to'g'ri ishlangan savollar / o'tgan kalendar kunlar (o'quvchi 14 kundan kam
+            // vaqt oldin boshlagan bo'lsa — boshlagan kunidan beri). Kamida 1 kun.
+            var firstAnswer = answered.Count > 0 ? answered.Min(a => a.At) : DateTime.UtcNow;
+            var from = firstAnswer > windowStart ? firstAnswer : windowStart;
+            double elapsedDays = Math.Clamp((DateTime.Now.Date - from.ToLocalTime().Date).TotalDays + 1, 1, 14);
+            double pace = firstCorrect.Count / elapsedDays;
+            s.CoveragePerDay = pace;
             if (pace > 0) covDays = (int)Math.Ceiling(needCorrect / pace);
         }
 
         // 3) Imtihon testlari: tayyor bo'lsa ham kamida 3 ta real imtihonni o'tish kerak (~2 kun)
         int examDays = s.LastExamsPassed ? 0 : 2;
 
+        s.CoverageNeeded = Math.Max(0, needCorrect);
         if (accDays is int a && covDays is int c)
         {
             s.DaysToReady = Math.Clamp(Math.Max(Math.Max(a, c), examDays), 1, 365);
             s.PredictedReadyDate = DateTime.Now.Date.AddDays(s.DaysToReady.Value);
+            s.ForecastLimit = c >= a && c >= examDays ? ForecastLimits.Coverage
+                            : a >= examDays ? ForecastLimits.Accuracy
+                            : ForecastLimits.Exams;
         }
     }
 
@@ -334,7 +344,21 @@ public class UserStats
     public DateTime? PredictedReadyDate { get; set; }
     public double? DailyGrowth { get; set; }
 
+    /// <summary>Sanani asosan qaysi shart belgilaydi (ForecastLimits.*) — ekranda tushuntirish uchun.</summary>
+    public string? ForecastLimit { get; set; }
+    /// <summary>Qamrov maqsadigacha yana nechta savolni to'g'ri ishlash kerak.</summary>
+    public int CoverageNeeded { get; set; }
+    /// <summary>Kuniga o'rtacha nechta yangi savol to'g'ri ishlanmoqda.</summary>
+    public double CoveragePerDay { get; set; }
+
     public List<Insight> Insights { get; set; } = new();
+}
+
+public static class ForecastLimits
+{
+    public const string Accuracy = "accuracy";
+    public const string Coverage = "coverage";
+    public const string Exams = "exams";
 }
 
 public record TypeStat(string Type, int Attempts, double AvgPercent, double BestPercent, int Passed, DateTime LastAt);

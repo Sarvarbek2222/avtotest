@@ -1650,4 +1650,136 @@
   <data name="sq.solveAll" xml:space="preserve">
     <value>Hammasini test qilib ishlash</value>
   </data>
+  <data name="cab.limitCoverage" xml:space="preserve">
+    <value>Sanani asosan savollar bazasini qamrab olish belgilaydi: yana {n} ta savolni to'g'ri ishlash kerak (hozirgi sur'at — kuniga ~{pace} ta yangi savol). Ko'proq yangi savollar ishlasangiz, sana yaqinlashadi.</value>
+  </data>
+  <data name="cab.limitAccuracy" xml:space="preserve">
+    <value>Sanani asosan aniqlik belgilaydi: oxirgi javoblaringizda to'g'ri javoblar ulushi 90% ga yetishi kerak.</value>
+  </data>
+  <data name="cab.limitExams" xml:space="preserve">
+    <value>Deyarli tayyorsiz — ketma-ket 3 ta imtihon testini (20 savol) o'tish qoldi.</value>
+  </data>
+  <data name="hm.lead" xml:space="preserve">
+    <value>Imtihon turini tanlang va mashqni boshlang. Kerakli savolni matni bo'yicha shu yerdan topishingiz mumkin.</value>
+  </data>
+  <data name="hm.searchPlaceholder" xml:space="preserve">
+    <value>Savol matnini yozing... masalan: svetofor</value>
+  </data>
+  <data name="hm.searchBtn" xml:space="preserve">
+    <value>Qidirish</value>
+  </data>
+  <data name="hm.searchHint" xml:space="preserve">
+    <value>Lotin, kirill yoki rus tilida yozish mumkin. Savol raqami bilan ham qidiring: #125</value>
+  </data>
+  <data name="hm.allResults" xml:space="preserve">
+    <value>Barcha natijalar ({n})</value>
+  </data>
+  <data name="hm.examBadge" xml:space="preserve">
+    <value>Imtihon rejimi</value>
+  </data>
+  <data name="hm.examDesc" xml:space="preserve">
+    <value>Haqiqiy imtihondagidek: bazadan tasodifiy 20 ta savol. O'zingizni sinab ko'ring — natija kabinetingizga yoziladi.</value>
+  </data>
+  <data name="hm.examFact1" xml:space="preserve">
+    <value>20 ta savol</value>
+  </data>
+  <data name="hm.examFact2" xml:space="preserve">
+    <value>O'tish: 18 ta to'g'ri (90%)</value>
+  </data>
+  <data name="hm.examFact3" xml:space="preserve">
+    <value>Natija kabinetga yoziladi</value>
+  </data>
+  <data name="hm.examStart" xml:space="preserve">
+    <value>Imtihonni boshlash</value>
+  </data>
+  <data name="hm.practiceTitle" xml:space="preserve">
+    <value>Mashq testlari</value>
+  </data>
+  <data name="hm.practiceSub" xml:space="preserve">
+    <value>Savollar bazadan tasodifiy tanlanadi — har safar yangi to'plam</value>
+  </data>
+  <data name="hm.questions" xml:space="preserve">
+    <value>savol</value>
+  </data>
+  <data name="hm.lvl1" xml:space="preserve">
+    <value>Tezkor</value>
+  </data>
+  <data name="hm.lvl2" xml:space="preserve">
+    <value>O'rtacha</value>
+  </data>
+  <data name="hm.lvl3" xml:space="preserve">
+    <value>Chuqur</value>
+  </data>
+  <data name="hm.lvl4" xml:space="preserve">
+    <value>Katta sinov</value>
+  </data>
+  <data name="hm.lvl5" xml:space="preserve">
+    <value>Eng katta sinov</value>
+  </data>
+  <data name="hm.modesTitle" xml:space="preserve">
+    <value>Boshqa imtihon turlari</value>
+  </data>
+  <data name="hm.modesSub" xml:space="preserve">
+    <value>Biletlar tartibida yoki butun baza bo'yicha mashq</value>
+  </data>
+  <data name="hm.biletsDesc" xml:space="preserve">
+    <value>{n} ta bilet, har birida 20 tadan savol — tartib bilan ishlab chiqing.</value>
+  </data>
+  <data name="hm.topicsDesc" xml:space="preserve">
+    <value>{n} ta mavzu — kerakli mavzuni tanlab, faqat shu savollarni ishlang.</value>
+  </data>
+  <data name="hm.marathonDesc" xml:space="preserve">
+    <value>Bazadagi barcha {n} ta savol ketma-ket — to'liq tayyorgarlik uchun.</value>
+  </data>
+  <data name="hm.open" xml:space="preserve">
+    <value>Ochish</value>
+  </data>
+  <data name="hm.start" xml:space="preserve">
+    <value>Boshlash</value>
+  </data>
+  <data name="hm.topicsBadge" xml:space="preserve">
+    <value>Mavzu bo'yicha tayyorgarlik</value>
+  </data>
+  <data name="hm.topicsBannerDesc" xml:space="preserve">
+    <value>Kerakli mavzuni tanlang va faqat shu mavzu savollarini ishlang — qiyin joylarni alohida mustahkamlash uchun eng yaxshi yo'l.</value>
+  </data>
+  <data name="hm.topicsFact1" xml:space="preserve">
+    <value>{n} ta mavzu</value>
+  </data>
+  <data name="hm.topicsFact2" xml:space="preserve">
+    <value>Har bir mavzu alohida test</value>
+  </data>
+  <data name="hm.topicsFact3" xml:space="preserve">
+    <value>Zaif mavzularni mustahkamlang</value>
+  </data>
+  <data name="hm.topicsStart" xml:space="preserve">
+    <value>Mavzuni tanlash</value>
+  </data>
+  <data name="users.kind" xml:space="preserve">
+    <value>Hisob turi</value>
+  </data>
+  <data name="users.kindStudent" xml:space="preserve">
+    <value>O'quvchi</value>
+  </data>
+  <data name="users.kindStudentHint" xml:space="preserve">
+    <value>Shaxsiy hisob: o'z telefoni yoki kompyuteridan kiradi, natijalari faqat o'ziniki.</value>
+  </data>
+  <data name="users.kindComputer" xml:space="preserve">
+    <value>Kompyuter (o'quv markazi)</value>
+  </data>
+  <data name="users.kindComputerHint" xml:space="preserve">
+    <value>Markazdagi bitta kompyuter uchun. Bir marta kirilgach, kompyuter o'chib-yonsa ham login qayta so'ralmaydi. Boshqa kompyuterdan bu login bilan kirib bo'lmaydi.</value>
+  </data>
+  <data name="users.compShort" xml:space="preserve">
+    <value>Komp</value>
+  </data>
+  <data name="users.fComputers" xml:space="preserve">
+    <value>Kompyuterlar</value>
+  </data>
+  <data name="users.showPassword" xml:space="preserve">
+    <value>Parolni ko'rsatish</value>
+  </data>
+  <data name="users.hidePassword" xml:space="preserve">
+    <value>Parolni yashirish</value>
+  </data>
 </root>

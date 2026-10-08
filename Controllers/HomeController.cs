@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -11,14 +12,33 @@ public class HomeController : Controller
 {
 
     private readonly AppDbContext _context;
+    private readonly QuestionBank _bank;
 
-    public HomeController(AppDbContext context) => _context = context;
+    public HomeController(AppDbContext context, QuestionBank bank)
+    {
+        _context = context;
+        _bank = bank;
+    }
 
 
 
-    // Super admin uchun sayt bosh sahifasi kerak emas — admin paneliga
-    public IActionResult Index() =>
-        User.IsInRole(Roles.SuperAdmin) ? RedirectToAction("Index1", "Question") : View();
+    /// <summary>
+    /// Bosh sahifa — o'quvchi login qilgandan keyin shu yerga tushadi: imtihon va test turlari hamda savol qidirish.
+    /// Natijalar, xatolar va tahlil — kabinetda. Super admin uchun kerak emas — admin paneliga.
+    /// </summary>
+    public async Task<IActionResult> Index()
+    {
+        if (User.IsInRole(Roles.SuperAdmin)) return RedirectToAction("Index1", "Question");
+
+        var all = await _bank.AllAsync();
+        var model = new HomeModel
+        {
+            BankSize = all.Count,
+            BiletCount = (int)Math.Ceiling(all.Count / 20.0),
+            TopicCount = all.Select(q => q.Topic?.Trim()).Where(t => !string.IsNullOrEmpty(t)).Distinct().Count(),
+        };
+        return View(model);
+    }
 
 
 

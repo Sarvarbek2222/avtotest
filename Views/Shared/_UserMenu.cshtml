@@ -48,12 +48,16 @@
                     @Icons.Play <span data-i18n="cab.startTest">@L["cab.startTest"]</span>
                 </a>
             }
-            <div class="ui-dd-sep"></div>
-            <form asp-controller="Auth" asp-action="Logout" method="post">
-                <button type="submit" class="ui-dd-item danger" role="menuitem">
-                    @Icons.Logout <span data-i18n="nav.logout">@L["nav.logout"]</span>
-                </button>
-            </form>
+            @* Kompyuter hisobida "Chiqish" yo'q — o'quvchi tasodifan chiqib, kompyuter parolsiz qolmasin *@
+            @if (!User.HasClaim(UserService.ComputerClaim, "1"))
+            {
+                <div class="ui-dd-sep"></div>
+                <form asp-controller="Auth" asp-action="Logout" method="post">
+                    <button type="submit" class="ui-dd-item danger" role="menuitem">
+                        @Icons.Logout <span data-i18n="nav.logout">@L["nav.logout"]</span>
+                    </button>
+                </form>
+            }
         </div>
     </div>
 }
